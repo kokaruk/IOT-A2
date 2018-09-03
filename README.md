@@ -1,5 +1,5 @@
 # IOT Assignment 2
-
+{: .gitlab-orange}
 ## Scenario
 Your team has been contacted by a medical office in Melbourne to advise them on an office automation project to automate the medical appointments process known as **MAPS** _(medical appointment system)_, usually handled by medical receptionists.
 
