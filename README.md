@@ -39,6 +39,7 @@ The pages must be professionally styled using Bootstrap. You will be marked on t
 Please note that no actual implementation of booking is required for this part. You are setting up the web pages for the further parts.
 1. (5 marks) Your team are expected to set up private github/bitbucket repositories and work on separate branches individually. Everyone will have to explain what they have done in each branch during the demonstration.
 1. (5 marks) Complete documentation of the project using [PyDoc and Sphinx](https://projects.raspberrypi.org/en/projects/documenting-your-code/)
+
 ##### Part B – APIs (Patient and Doctor) [30 marks]
 You will now implement<br>
 1. (5 marks) The patient registration and booking feature. All the data must be saved to Cloud.
@@ -47,11 +48,13 @@ You will now implement<br>
 1. (5 marks) Since the interface is web, all the user inputs must be validated
 1. (5 marks) Complete documentation using PyDoc and Sphinx<br>
 *It is your responsibilities to make sure that you do not exceed the free tier limit on the Google Cloud Platform.
+
 ##### Part C – API (Medical Clerk) [10 marks]
 You will now implement<br>
 1. (4 marks) All of the medical clerk features: add/delete appointment and list of the doctor appointments. Once again use an API to talk to cloud.
 1. (3 marks) Add an extra feature where the clerk can generate a visual representation of the doctors appointment(s) (number of patients seen) week wise.
 1. (3 marks) Complete documentation using PyDoc and Sphinx
+
 ##### Part D - Advanced Implementation [30 marks]
 1. (10 marks) Your team will be tasked to create custom actions and traits on Google Assistant SDK to interact with the doctors and patients. This involves
    1. implementing the interaction between Reception and Advisor Rapsberry Pi s
