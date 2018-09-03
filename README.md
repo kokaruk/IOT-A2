@@ -19,15 +19,15 @@ For this assignment, you will be making extensive use of the Google Calendar API
 [YouTube about the SDK](https://www.youtube.com/watch?v=FBXRwu6hgy8)
 
 All of data is now saved in **cloud database(s).**
-##### Important
+#### Important
 You must adhere to the following requirements:<br>
 - Only Raspberry Pi model 3 should be used
 - You must use Python 3.5 or >3.5 to complete the tasks. Older versions must not be used.
 - You must use a version control system of some sorts such as GitHub, Bitbucket, etc. A private repository is to be used ONLY.
 - You must stick to the standard [style guide for your Python code](https://www.python.org/dev/peps/pep-0008/)
-- You must attend a 25 minutes demo session to get the assignment 1 marked during week 6 (Oct 08- 12, 2018). A schedule and a booking document will be published soon. You must submit the assignment prior to demo. No submissionNo demoNo marks.
+- You must attend a 25 minutes demo session to get the assignment 1 marked during week 6 (Oct 08- 12, 2018). A schedule and a booking document will be published soon. You must submit the assignment prior to demo. <br>No submission➜No demo➜No marks.
 
-##Tasks
+## Tasks<br>
 _Note:_ This time the tasks are divided into four parts: A, B, C and D:<br>
 ##### Part A - Web Interface using Flask [30 marks]
 Your team will need to<br>
