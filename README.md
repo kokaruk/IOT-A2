@@ -62,3 +62,9 @@ You will now implement<br>
 facial recognition, deep learning for scheduling, Integration with Arduino, etc. **YOU WILL NEED TO GET THIS** approved by the lecturer or the head tutor (not your
 tutors) to receive marks in this section.
 1. (5 marks) Complete documentation using PyDoc and Sphinx
+
+##### Additional Information:
+
+- Trello Board used: [PioT Assignment 2](https://trello.com/b/crMRiEAv)
+- Process Diagram: [PoIT Assignment 2 - Workflow Consultation](https://www.lucidchart.com/invitations/accept/ddb41c0b-61ce-4865-a6ab-5db93f605ef8)
+- Entity Relationship Model: [PoIT Assignment 2 - ERM](https://www.lucidchart.com/invitations/accept/ddb41c0b-61ce-4865-a6ab-5db93f605ef8)
