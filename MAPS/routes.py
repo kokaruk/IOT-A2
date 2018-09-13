@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect
-from MAPS.forms import RegistrationForm
+from MAPS.forms import RegistrationForm, ConsultationForm
 from MAPS import app
 
 
@@ -18,3 +18,9 @@ def about():
 def register():
     form = RegistrationForm()
     return render_template('patient_register.html', title='Register', form=form)
+
+
+@app.route("/consultation", methods=['GET', 'POST'])
+def consultation():
+    form = ConsultationForm()
+    return render_template('consultation.html', title='Consultation', form=form)

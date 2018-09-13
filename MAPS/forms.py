@@ -29,3 +29,16 @@ class RegistrationForm(FlaskForm):
     pre_doctor = StringField('Previous Doctor')
     pre_clinic = StringField('Previous Clinic')
     submit = SubmitField('Register')
+
+
+class ConsultationForm(FlaskForm):
+    start = DateField('Start of Consultation', format='%Y-%m-%d',
+                      validators=[DataRequired()])
+    end = DateField('End of Consultation', format='%Y-%m-%d',
+                    validators=[DataRequired()])
+    description = TextAreaField('Consultation description',
+                                validators=[DataRequired()])
+    additional_notes = TextAreaField('Current Medication')
+    symptoms = TextAreaField('Symptoms')
+    diagnosis = TextAreaField('Diagnosis')
+    submit = SubmitField('Save Consultation Notes')
