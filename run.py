@@ -7,7 +7,7 @@
 * This program is created for Assignment 2 of Programming Internet of Things -  Course Master of IT - RMIT University.
 * This code has parts which are inspired by the course material of  - Programming Internet of Things  - RMIT University.
 *
-* The purpose of the Program is to simulate a automatized Medical Office.
+* The purpose of the Program is to simulate a automatize a Medical Office.
 * Booking of Consultations, Registration and Recording of Consultations Notes shall be managed via the MAPS Program
 * For more information please see: https://github.com/kokaruk/IOT-A1.
 *
