@@ -11,7 +11,7 @@ class RegistrationForm(FlaskForm):
     lastname = StringField('Last Name',
                            validators=[DataRequired(), Length(min=2, max=20)])
     dob = DateField('Date of Birth',
-                    validators=[DataRequired(), Length(min=2, max=20)])
+                    validators=[DataRequired()])
     gender = SelectField('Gender',
                          choices=[('m', 'Male'), ('f', 'Female')], validators=[DataRequired()])
     address = StringField('Address',
