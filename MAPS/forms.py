@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, SelectField, TextAreaField, DateField
+from wtforms import StringField, IntegerField, SubmitField, SelectField, TextAreaField
+from wtforms.fields.html5 import DateField, EmailField
 from wtforms.validators import DataRequired, Length, Email
 
 
@@ -10,14 +11,15 @@ class RegistrationForm(FlaskForm):
                              validators=[DataRequired(), Length(min=2, max=20)])
     lastname = StringField('Last Name',
                            validators=[DataRequired(), Length(min=2, max=20)])
-    dob = DateField('Date of Birth',
+    dob = DateField('Date of Birth', format='%Y-%m-%d',
                     validators=[DataRequired()])
-    gender = SelectField('Gender',
-                         choices=[('m', 'Male'), ('f', 'Female')], validators=[DataRequired()])
-    address = StringField('Address',
-                          validators=[DataRequired(), Length(min=1, max=100)])
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
+    gender = SelectField('Please select Gender',
+                         choices=[('', 'Please select'), ('m', 'Male'), ('f', 'Female'), ('o', 'other')],
+                         validators=[DataRequired()])
+    address = TextAreaField('Address',
+                            validators=[DataRequired()])
+    email = EmailField(label="Email", validators=[DataRequired(), Email()])
+
     phone = IntegerField('Telephone or Mobile',
                          validators=[DataRequired(), Length(min=1, max=9)])
     medicare = IntegerField('Medicare No',
