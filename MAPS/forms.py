@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, SelectField, TextAreaField
 from wtforms.fields.html5 import DateField, EmailField
+from wtforms_components import TimeField
 from wtforms.validators import DataRequired, Length, Email
 
 
@@ -32,9 +33,11 @@ class RegistrationForm(FlaskForm):
 
 
 class ConsultationForm(FlaskForm):
-    start = DateField('Start of Consultation', format='%Y-%m-%d',
+    date =  DateField('Consulation Date', format='%Y-%m-%d',
+                    validators=[DataRequired()])
+    start = TimeField('Start of Consultation',
                       validators=[DataRequired()])
-    end = DateField('End of Consultation', format='%Y-%m-%d',
+    end = TimeField('End of Consultation',
                     validators=[DataRequired()])
     description = TextAreaField('Consultation description',
                                 validators=[DataRequired()])
