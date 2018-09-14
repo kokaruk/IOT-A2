@@ -4,7 +4,7 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Consultation</legend>
+            <legend class="border-bottom mb-4">Consultation Booking</legend>
             <div class="form-group">
                 {{ form.date.label(class="form-control-label") }}
                 {% if form.date.errors %}
@@ -32,68 +32,42 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.end.label(class="form-control-label") }}
-                {% if form.end.errors %}
-                {{ form.end(class="form-control form-control-lg is-invalid") }}
+                {{ form.patient_name.label(class="form-control-label") }}
+                {% if form.patient_name.errors %}
+                {{ form.patient_name(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.end.errors %}
+                    {% for error in form.patient_name.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.end(class="form-control form-control-lg") }}
+                {{ form.patient_name(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.description.label(class="form-control-label") }}
-                {% if form.description.errors %}
-                {{ form.description(class="form-control form-control-lg is-invalid") }}
+                {{ form.reason.label(class="form-control-label") }}
+                {% if form.reason.errors %}
+                {{ form.reason(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.description.errors %}
+                    {% for error in form.reason.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.description(class="form-control form-control-lg") }}
+                {{ form.reason(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.additional_notes.label(class="form-control-label") }}
-                {% if form.additional_notes.errors %}
-                {{ form.additional_notes(class="form-control form-control-lg is-invalid") }}
+                {{ form.cancelled.label(class="form-control-label") }}
+                {% if form.cancelled.errors %}
+                {{ form.cancelled(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.additional_notes.errors %}
+                    {% for error in form.cancelled.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.additional_notes(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.symptoms.label(class="form-control-label") }}
-                {% if form.symptoms.errors %}
-                {{ form.symptoms(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.symptoms.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.symptoms(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.diagnosis.label(class="form-control-label") }}
-                {% if form.diagnosis.errors %}
-                {{ form.diagnosis(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.diagnosis.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.diagnosis(class="form-control form-control-lg") }}
+                {{ form.cancelled(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>
@@ -107,4 +81,4 @@
         Want to go back ? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
     </small>
 </div>
-{% endblock content %}
+{% endblock content%}
