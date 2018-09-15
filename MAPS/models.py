@@ -31,7 +31,7 @@ class Patient(Person):
     previousClinic = db.Column(db.String(120), nullable=True)
 
 
-class Conditions(db.Model):
+class Condition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patientId = db.Column(db.Integer, foreign_keys=Patient.patientId)
     condition = db.Column(db.String(120), nullable=True)
