@@ -20,7 +20,7 @@ class Person(db.Model, ma.Schema):
 class Doctor(Person):
     doctorId = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer, foreign_keys=Person.id, primary_key=True)
-    specialization = db.Column()
+    specialization = db.Column(db.String(120))
 
 
 class Patient(Person):
