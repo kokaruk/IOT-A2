@@ -39,3 +39,8 @@ def booking():
         flash('Appointment was successfully created!', 'success')
         return redirect(url_for('home'))
     return render_template('booking.html', title='Consultation Booking', form=form)
+
+
+@app.route("/calendar")
+def calendar():
+    return render_template('calendar.html', title='calendar')

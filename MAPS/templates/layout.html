@@ -36,11 +36,11 @@
                         <button class="btn btn-default bg-steel nav-item nav-link dropdown-toggle" type="button"
                                 id="dropdownMenu"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Doctors Area
+                            Medical Clerk Area
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu bg-steel" aria-label="Toggle navigation">
-                            <li><a class="nav-item nav-link" href="#">Weekly Overview</a></li>
+                            <li><a class="nav-item nav-link" href="{{ url_for('booking') }}">Weekly Overview</a></li>
                             <li><a class="nav-item nav-link" href="#">Statistics</a></li>
                             <li><a class="nav-item nav-link" href="{{ url_for('booking') }}">Book/Delete
                                 Consultation</a></li>
