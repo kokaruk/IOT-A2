@@ -17,62 +17,48 @@
 """
 from __future__ import print_function
 from datetime import datetime
+from wtforms import DateTimeField
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
+akbars_calendar = '6qu20tinkidnvhcg7snr19aqvc@group.calendar.google.com'
+gerrys_calendar = '1vp7utbb9quuha30ho09lf5j0o@group.calendar.google.com'
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = 'https://www.googleapis.com/auth/calendar'
-store = file.Storage('token.json')
+store = file.Storage('MAPS/credentials/token.json')
 creds = store.get()
 if not creds or creds.invalid:
-    flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
+    flow = client.flow_from_clientsecrets('MAPS/credentials/google_calendar_api_credentials.json', SCOPES)
     creds = tools.run_flow(flow, store)
 service = build('calendar', 'v3', http=creds.authorize(Http()))
 
 
 class Google_Calendar_API:
 
-    def call_api(self):
-        """Shows basic usage of the Google Calendar API.
-        Prints the start and name of the next 10 events on the user's calendar.
-        """
+    def insert_calendar_entry(self, title, date, patient_email, patient, doctor_email, doctor, duration):
 
-        # Call the Calendar API
-        now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        print('Getting the upcoming 10 events')
-        events_result = service.events().list(calendarId='primary', timeMin=now,
-                                              maxResults=10, singleEvents=True,
-                                              orderBy='startTime').execute()
-        events = events_result.get('items', [])
+        start_time = (date - timedelta(hours=10)).strftime("%Y-%m-%dT%H:%M:%S+10")
+        end_time = (date - timedelta(hours=10) + timedelta(minutes=duration)).strftime("%Y-%m-%dT%H:%M:%S+10")
 
-        if not events:
-            print('No upcoming events found.')
-        for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            print(start, event['summary'])
-
-    def insert_calandar(self):
-        date = datetime.now()
-        tomorrow = (date + timedelta(days=1)).strftime("%Y-%m-%d")
-        time_start = "{}T06:00:00+10:00".format(tomorrow)
-        time_end = "{}T07:00:00+10:00".format(tomorrow)
         event = {
-            'summary': 'New Programmatic Event',
-            'location': 'RMIT Building 14',
+            'summary': title,
+
+            'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
             'description': 'Adding new IoT event',
             'start': {
-                'dateTime': time_start,
+                'dateTime': str(start_time),
                 'timeZone': 'Australia/Melbourne',
             },
             'end': {
-                'dateTime': time_end,
+                'dateTime': str(end_time),
                 'timeZone': 'Australia/Melbourne',
             },
             'attendees': [
-                {'email': 'kevin@scare.you'},
-                {'email': 'shekhar@wake.you'},
+                {'email': str(patient_email)},
+                {'email': str(doctor_email)}
             ],
             'reminders': {
                 'useDefault': False,
@@ -82,6 +68,13 @@ class Google_Calendar_API:
                 ],
             }
         }
+        if doctor == "Dr Akbar Dakbar":
+            event = service.events().insert(calendarId=akbars_calendar, body=event).execute()
+            print('Event created: {}'.format(event.get('htmlLink')))
+        else:
+            event = service.events().insert(calendarId=gerrys_calendar, body=event).execute()
+            print('Event created: {}'.format(event.get('htmlLink')))
 
-        event = service.events().insert(calendarId='primary', body=event).execute()
-        print('Event created: {}'.format(event.get('htmlLink')))
+    def delete_calandar_entry(self, calendar_id='primary', event_id='eventId'):
+
+        service.events().delete(calendarId=calendar_id, eventId=event_id).execute()

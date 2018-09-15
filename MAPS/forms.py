@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
-from wtforms.fields.html5 import DateField, EmailField, TelField
+from wtforms.fields.html5 import EmailField, TelField, DateField, DateTimeField
 from wtforms_components import TimeField
 from wtforms.validators import DataRequired, Length, Email
 
@@ -11,8 +11,8 @@ class RegistrationForm(FlaskForm):
     secondname = StringField('Second Name', validators=[Length(max=20)])
     lastname = StringField('Last Name',
                            validators=[DataRequired(), Length(min=2, max=20)], default="Smith")
-    dob = DateField('Date of Birth', format='%d/%m/%Y',
-                    validators=[DataRequired()])
+    dob = DateTimeField('Date of Birth', format='%d/%m/%Y',
+                        validators=[DataRequired()])
     gender = SelectField('Please select Gender',
                          choices=[('', 'Please select'), ('m', 'Male'), ('f', 'Female'), ('o', 'other')],
                          validators=[DataRequired()])
@@ -49,12 +49,14 @@ class ConsultationForm(FlaskForm):
 
 
 class BookingForm(FlaskForm):
-    date = DateField('Consultation Date',
-                     validators=[DataRequired()])
+    date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
     patient_name = StringField('Patient Name',
                                validators=[DataRequired(), Length(min=2, max=20)], default="John Smith")
+    doctor_name = SelectField('Please select reason for doctors Visit',
+                              choices=[('', 'Please select'), ('1', 'Dr Akbar Dakbar'),
+                                       ('2', 'Dr Gerry Skinner')], validators=[DataRequired()])
     reason = SelectField('Please select reason for doctors Visit',
                          choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
                                   ('2', 'Serious illness - e.g. flu'),
