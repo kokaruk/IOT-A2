@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
-from wtforms.fields.html5 import EmailField, TelField, DateField, DateTimeField
+from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms_components import TimeField
 from wtforms.validators import DataRequired, Length, Email
 
@@ -11,15 +11,13 @@ class RegistrationForm(FlaskForm):
     secondname = StringField('Second Name', validators=[Length(max=20)])
     lastname = StringField('Last Name',
                            validators=[DataRequired(), Length(min=2, max=20)], default="Smith")
-    dob = DateTimeField('Date of Birth', format='%d/%m/%Y',
-                        validators=[DataRequired()])
+    dob = DateField('Date of Birth', validators=[DataRequired()])
     gender = SelectField('Please select Gender',
                          choices=[('', 'Please select'), ('m', 'Male'), ('f', 'Female'), ('o', 'other')],
                          validators=[DataRequired()])
     address = TextAreaField('Address',
                             validators=[DataRequired()], default="2012 Main Street, 3423 Central City ")
     email = EmailField(label="Email", validators=[DataRequired(), Email()], default="john.smith@hotmail.com")
-
     phone = TelField('Telephone or Mobile',
                      validators=[DataRequired()])
     medicare = StringField('Medicare No',
@@ -27,6 +25,11 @@ class RegistrationForm(FlaskForm):
                                        DataRequired()], default=1234567890)
     pre_conditions = TextAreaField('Previous Conditions')
     current_medications = TextAreaField('Current Medication')
+
+    # Test with FieldList for 1 to N fields - issue is it doesn't dynamically grow - stay at min entries
+    # pre_conditions = FieldList(StringField('Previous Conditions'), min_entries=1, max_entries=10)
+    # current_medications = FieldList(TextAreaField('Current Medication'), min_entries=1, max_entries=10)
+
     pre_doctor = StringField('Previous Doctor')
     pre_clinic = StringField('Previous Clinic')
     submit = SubmitField('Register')
