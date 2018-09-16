@@ -13,8 +13,8 @@ def get_doctor(id):
     pass
 
 
-# Create a doctor by id
-@bp.route('/doctors/<int:id>', methods=['POST'])
+# Create a doctor
+@bp.route('/doctors', methods=['POST'])
 def create_doctor(id):
     pass
 
