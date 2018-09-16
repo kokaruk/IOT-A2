@@ -3,14 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 from MAPS.api import bp
-from models import Patient, PatientSchema
+from MAPS.api.errors import bad_request
+from MAPS import db
+from MAPS.models import Patient, PatientSchema
 
 patient_schema = PatientSchema()
 patients_schema = PatientSchema(many=True)
 
+
 # Get all patients
-
-
 @bp.route('/patients', methods=['GET'])
 def get_patients():
     all_patients = Patient.query.all()
@@ -18,26 +19,48 @@ def get_patients():
     return jsonify(result.data)
 
 
-# Get all patients for a doctor
-# Reason for route order: https://blog.mwaysolutions.com/2014/06/05/10-best-practices-for-better-restful-api/
-@bp.route('/doctors/patients/<int:id>', methods=['GET'])
-def get_patients_for_doctor(id):
-    pass
-
-
 # Get a patient by id
 @bp.route('/patients/<int:id>', methods=['GET'])
 def get_patient(id):
-    pass
+    patient = Patient.query.get(id)
+    result = patient_schema.dump(patient)
+    return jsonify(result.data)
 
 
 # Create a patient by id
 @bp.route('/patients/<int:id>', methods=['POST'])
 def create_patient(id):
-    pass
+    first_name = request.json['first_name']
+    second_name = request.json['second_name']
+    last_name = request.json['last_name']
+    dob = request.json['dob']
+    gender = request.json['gender']
+    address = request.json['address']
+    email = request.json['email']
+    phone = request.json['phone']
+    medicareNumber = request.json['medicareNumber']
+    previousDoctor = request.json['previousDoctor']
+    previousClinic = request.json['previousClinic']
+
+    new_patient = Patient(first_name, second_name, last_name, dob, gender,
+                          address, email, phone, medicareNumber, previousDoctor, previousClinic)
+    db.session.add(new_patient)
+    db.session.commit()
+    return jsonify(new_patient)
 
 
 # Update a patient  by id
 @bp.route('/patients/<int:id>', methods=['PUT'])
 def update_patient(id):
+    # TODO
     pass
+
+
+# endpoint to delete user
+@bp.route("/user/<id>", methods=["DELETE"])
+def user_patient(id):
+    patient = Patient.query.get(id)
+    db.session.delete(patient)
+    db.session.commit()
+
+    return patient_schema.jsonify(patient)
