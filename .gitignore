@@ -179,4 +179,15 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 .idea/
+
 credentials/
+.vscode/
+
+# Secrets
+lib/
+*.internal
+/secrets.tar.gz
+/secrets.tar
+/client-secret.json
+/service-account.json
+/config.py
