@@ -1,4 +1,32 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>Homepage - Assignment 2 PoIT</h1>
-{% endblock content%}
+<h3>Welcome to our Medical Clinic </h3>
+<br><p>Please choose your next Step</p>
+<div class="container">
+    <div class="column">
+        <div class="col-sm">
+            <img class="rounded img-thumbnail" width="304" height="236"
+                 src="{{ url_for('static', filename='patient.jpg') }}">
+            <div class="media-body">
+                <p><a class="article-title" href="{{ url_for('register')}}">Patients - Go to Register</a></p>
+            </div>
+        </div>
+        <div class="col-sm">
+            <span class="border-0"></span>
+            <img class="rounded img-thumbnail" width="304" height="236"
+                 src="{{ url_for('static', filename='appointment.jpg') }}">
+            <div class="media-body">
+                <p><a class="article-title" href="{{ url_for('booking')}}">Book a Consultation Appointment</a></p>
+            </div>
+        </div>
+        <div class="col-sm">
+            <img class="rounded img-thumbnail" width="304" height="236"
+                 src="{{ url_for('static', filename='consultation.jpg') }}">
+            <div class="media-body">
+                <p><a class="article-title" href="{{ url_for('consultation')}}">Doctors - Record Consultation Notes</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

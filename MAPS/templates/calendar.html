@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Calendar</h1>
+{% if doctor == "Dr Akbar Dakbar" %}
+<iframe src="https://calendar.google.com/calendar/b/1/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src=6qu20tinkidnvhcg7snr19aqvc%40group.calendar.google.com&amp;color=%235F6B02&amp;ctz=Australia%2FMelbourne"
+        style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+{% elif doctor == "Dr Gerry Skinner" %}
+<iframe src="https://calendar.google.com/calendar/b/1/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src=1vp7utbb9quuha30ho09lf5j0o%40group.calendar.google.com&amp;color=%238D6F47&amp;ctz=Australia%2FMelbourne"
+        style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+{% else %}
+<iframe src="https://calendar.google.com/calendar/b/1/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src=6qu20tinkidnvhcg7snr19aqvc%40group.calendar.google.com&amp;color=%235F6B02&amp;src=1vp7utbb9quuha30ho09lf5j0o%40group.calendar.google.com&amp;color=%238D6F47&amp;ctz=Australia%2FMelbourne"
+        style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+{% endif %}
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Want to go back to home page? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
+    </small>
+</div>
+{% endblock content%}
