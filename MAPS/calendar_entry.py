@@ -16,15 +16,13 @@
 * Copyright notice - All copyrights belong to  Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
 """
 from __future__ import print_function
-from datetime import datetime
-from wtforms import DateTimeField
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
-akbars_calendar = '6qu20tinkidnvhcg7snr19aqvc@group.calendar.google.com'
-gerrys_calendar = '1vp7utbb9quuha30ho09lf5j0o@group.calendar.google.com'
+AKBARS_CAL = '6qu20tinkidnvhcg7snr19aqvc@group.calendar.google.com'
+GERRYS_CAL = '1vp7utbb9quuha30ho09lf5j0o@group.calendar.google.com'
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -69,12 +67,12 @@ class Google_Calendar_API:
             }
         }
         if doctor == "Dr Akbar Dakbar":
-            event = service.events().insert(calendarId=akbars_calendar, body=event).execute()
+            event = service.events().insert(calendarId=AKBARS_CAL, body=event).execute()
             print('Event created: {}'.format(event.get('htmlLink')))
         else:
-            event = service.events().insert(calendarId=gerrys_calendar, body=event).execute()
+            event = service.events().insert(calendarId=GERRYS_CAL, body=event).execute()
             print('Event created: {}'.format(event.get('htmlLink')))
 
     def delete_calandar_entry(self, calendar_id='primary', event_id='eventId'):
-
+        """NOT READY YET """
         service.events().delete(calendarId=calendar_id, eventId=event_id).execute()

@@ -4,7 +4,6 @@ from MAPS.forms import RegistrationForm, ConsultationForm, BookingForm
 from MAPS import app
 from MAPS.calendar_entry import Google_Calendar_API as gc_api
 
-
 @app.route("/")
 @app.route("/home")
 def home():
@@ -46,8 +45,15 @@ def booking():
         index_doctor = int(form.doctor_name.data)
         doctor = form.doctor_name.choices[index_doctor][1]
 
-        w = open("MAPS/credentials/doctor.txt", "w")
-        w.write(doctor)
+        """
+        """
+        try:
+            w = open("MAPS/credentials/doctor.txt", "w")
+            w.write(doctor)
+        except FileNotFoundError:
+            print("File not found")
+        except IOError:
+            print("Write Error")
 
         title = f"Patient: {form.patient_name.data} Issue : {reason}"
         google_calendar.insert_calendar_entry(title=title, date=date, patient_email="fightme1984@gmail.com",
@@ -60,5 +66,11 @@ def booking():
 
 @app.route("/calendar")
 def calendar():
-    doctor = open("MAPS/credentials/doctor.txt", "r")
+    try:
+        doctor = open("MAPS/credentials/doctor.txt", "r")
+    except FileNotFoundError:
+        print("File not found")
+    except IOError:
+        print("Write Error")
+
     return render_template('calendar.html', title='calendar', doctor=doctor)
