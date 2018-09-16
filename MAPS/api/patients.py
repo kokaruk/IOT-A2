@@ -27,9 +27,9 @@ def get_patient(id):
     return jsonify(result.data)
 
 
-# Create a patient by id
-@bp.route('/patients/<int:id>', methods=['POST'])
-def create_patient(id):
+# Create a patient
+@bp.route('/patients', methods=['POST'])
+def create_patient():
     first_name = request.json['first_name']
     second_name = request.json['second_name']
     last_name = request.json['last_name']
