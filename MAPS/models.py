@@ -31,6 +31,12 @@ class Patient(Person):
     previousClinic = db.Column(db.String(120), nullable=True)
 
 
+class PatientSchema(ma.Schema):
+    class Meta:
+        fields = ('first_name', 'second_name', 'last_name', 'dob', 'gender', 'address',
+                  'email', 'phone', 'medicareNumber', 'previousDoctor', 'previousClinic')
+
+
 class Condition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patientId = db.Column(db.Integer, foreign_keys=Patient.patientId)
