@@ -1,4 +1,3 @@
-dotenv
 bluepy
 cryptography
 flask
@@ -6,13 +5,13 @@ flask-login
 flask-marshmallow
 flask-migrate
 flask-wtf
-gattlib
 google-api-python-client
 googleapis-common-protos
 grpcio
 marshmallow-sqlalchemy
 mysqlclient
 oauth2client
+psycopg2
 pybluez
 python-crontab
 python-dotenv
