@@ -21,7 +21,7 @@ class Doctor(db.Model):
 
 class DoctorSchema(ma.Schema):
     class Meta:
-        fields = ('first_name', 'second_name', 'last_name',
+        fields = ('id', 'first_name', 'second_name', 'last_name',
                   'specialization', 'calendar_id', 'consultations')
 
 
@@ -58,7 +58,7 @@ class Patient(db.Model):
 
 class PatientSchema(ma.Schema):
     class Meta:
-        fields = ('first_name', 'second_name', 'last_name', 'dob', 'gender', 'address',
+        fields = ('id', 'first_name', 'second_name', 'last_name', 'dob', 'gender', 'address',
                   'email', 'phone', 'medicareNumber', 'previousDoctor', 'previousClinic')
 
 
@@ -75,7 +75,7 @@ class Condition(db.Model):
 
 class ConditionSchema(ma.Schema):
     class Meta:
-        fields = ('patientId', 'condition')
+        fields = ('id', 'patientId', 'condition')
 
 
 class Medication(db.Model):
@@ -91,7 +91,7 @@ class Medication(db.Model):
 
 class MedicationSchema(ma.Schema):
     class Meta:
-        fields = ('patientId', 'medication')
+        fields = ('id', 'patientId', 'medication')
 
 
 class Consultation(db.Model):
@@ -118,7 +118,7 @@ class Consultation(db.Model):
 
 class ConsultationSchema(ma.Schema):
     class Meta:
-        fields = ('appointment', 'patientId', 'doctorId',
+        fields = ('id', 'appointment', 'patientId', 'doctorId',
                   'duration', 'cause', 'cancelled', 'consultationDetails')
 
 
@@ -145,5 +145,5 @@ class ConsultationDetails(db.Model):
 
 class ConsultationDetailsSchema(ma.Schema):
     class Meta:
-        fields = ('consultationId', 'description', 'additionalNotes',
+        fields = ('id', 'consultationId', 'description', 'additionalNotes',
                   'symptoms', 'diagnosis', 'actualStart', 'actualEnd')

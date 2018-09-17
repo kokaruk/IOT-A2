@@ -20,5 +20,6 @@ class Config(object):
 
     # When running on App Engine a unix socket is used to connect to the cloudsql
     # instance.
-    SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}/{}'.format(CLOUDSQL_USER, CLOUDSQL_PASSWORD, CLOUDSQL_CONNECTION_NAME, CLOUDSQL_DATABASE)
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(
+        CLOUDSQL_USER, CLOUDSQL_PASSWORD, CLOUDSQL_CONNECTION_NAME, CLOUDSQL_DATABASE)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
