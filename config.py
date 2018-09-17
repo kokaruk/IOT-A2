@@ -6,8 +6,6 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
-    PROJECT_ID = os.environ.get('PROJECT_ID')
-    DATA_BACKEND = os.environ.get('DATA_BACKEND')
     CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
     CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
     CLOUDSQL_DATABASE = os.environ.get('CLOUDSQL_DATABASE')
@@ -22,8 +20,5 @@ class Config(object):
 
     # When running on App Engine a unix socket is used to connect to the cloudsql
     # instance.
-    SQLALCHEMY_DATABASE_URI = ('mysql+pymysql://{user}:{password}@localhost/{database}?unix_socket=/cloudsql/{'
-                               'connection_name}').format(user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
-                                                          database=CLOUDSQL_DATABASE,
-                                                          connection_name=CLOUDSQL_CONNECTION_NAME)
+    SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}/{}'.format(CLOUDSQL_USER, CLOUDSQL_PASSWORD, CLOUDSQL_CONNECTION_NAME, CLOUDSQL_DATABASE)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
