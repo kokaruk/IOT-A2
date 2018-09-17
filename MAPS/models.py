@@ -15,21 +15,26 @@ class Person(db.Model):
         'polymorphic_identity': 'person',
         'polymorphic_on': type
     }
+    doctors = db.relationship("Doctor", lazy='dynamic')
+    patients = db.relationship("Patient", lazy='dynamic')
 
 
-class Doctor(Person):
-    id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-    doctorId = db.Column(db.Integer, primary_key=True)
+class Doctor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    personId = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     specialization = db.Column(db.String(120))
+    consultations = db.relationship("Consultation", lazy='dynamic')
 
 
-class Patient(Person):
-    id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-
-    patientId = db.Column(db.Integer, primary_key=True)
+class Patient(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    personId = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     medicareNumber = db.Column(db.Integer)
     previousDoctor = db.Column(db.String(120), nullable=True)
     previousClinic = db.Column(db.String(120), nullable=True)
+    conditions = db.relationship("Condition", lazy='dynamic')
+    medications = db.relationship("Medication", lazy='dynamic')
+    consultations = db.relationship("Consultation", lazy='dynamic')
 
     def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicareNumber, previousDoctor, previousClinic):
         self.first_name = first_name
@@ -53,29 +58,29 @@ class PatientSchema(ma.Schema):
 
 class Condition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patientId = db.Column(db.Integer, db.ForeignKey('patient.patientId'))
+    patientId = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     condition = db.Column(db.String(120), nullable=True)
 
 
 class Medication(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patientId = db.Column(db.Integer, db.ForeignKey('patient.patientId'))
+    patientId = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     medication = db.Column(db.String(120), nullable=True)
 
 
 class Consultation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     appointment = db.Column(db.DateTime)
-    patientId = db.Column(db.Integer, db.ForeignKey('patient.patientId'))
-    doctorId = db.Column(db.Integer, db.ForeignKey('doctor.doctorId'))
+    patientId = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    doctorId = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
     duration = db.Column(db.Integer)
     cause = db.Column(db.String(200), nullable=True)
     cancelled = db.Column(db.Boolean, default=False)
-
+    consultationDetails = db.relationship("ConsultationDetails")
 
 class ConsultationDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    consultationId = db.Column(db.Integer, db.ForeignKey('consultation.id'))
+    consultationId = db.Column(db.Integer, db.ForeignKey('consultation.id'), nullable=False)
     description = db.Column(db.String(300))
     additionalNotes = db.Column(db.String(300), nullable=True)
     symptoms = db.Column(db.String(120), nullable=True)
