@@ -1,4 +1,3 @@
-bluepy
 cryptography
 flask
 flask-login
@@ -7,15 +6,11 @@ flask-migrate
 flask-wtf
 google-api-python-client
 googleapis-common-protos
-grpcio
 marshmallow-sqlalchemy
-mysqlclient
 oauth2client
 psycopg2
-pybluez
 python-crontab
 python-dotenv
-sense-hat
 sphinx
 update
 virtualenv
