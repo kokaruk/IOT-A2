@@ -1,6 +1,7 @@
 dotenv
 bluepy
 cryptography
+flask
 flask-login
 flask-marshmallow
 flask-migrate
