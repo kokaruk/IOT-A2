@@ -1,20 +1,14 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
-migrate = Migrate()
-
+from config import Config
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
+app.config.from_object(Config)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-migrate.init_app(app, db)
+migrate = Migrate(app, db)
 
-
-from MAPS import routes
-
-from MAPS.api import bp as api_bp
-app.register_blueprint(api_bp, url_prefix='/api')
+from MAPS import routes, models
