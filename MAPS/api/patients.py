@@ -46,14 +46,7 @@ def create_patient():
                           address, email, phone, medicareNumber, previousDoctor, previousClinic)
     db.session.add(new_patient)
     db.session.commit()
-    return jsonify(patient_schema.dump(new_patient))
-
-
-# Update a patient  by id
-@bp.route('/patients/<int:id>', methods=['PUT'])
-def update_patient(id):
-    # TODO
-    pass
+    return patient_schema.jsonify(new_patient)
 
 
 # endpoint to delete patient by id
