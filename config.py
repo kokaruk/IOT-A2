@@ -6,6 +6,7 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
     CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
     CLOUDSQL_DATABASE = os.environ.get('CLOUDSQL_DATABASE')
