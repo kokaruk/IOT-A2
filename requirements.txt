@@ -1,3 +1,4 @@
+dotenv
 bluepy
 cryptography
 flask-login
