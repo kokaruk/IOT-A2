@@ -44,10 +44,9 @@ class ConsultationForm(FlaskForm):
                     validators=[DataRequired()])
     description = TextAreaField('Consultation description',
                                 validators=[DataRequired()])
-    additional_notes = TextAreaField('Additional Notes')
     symptoms = TextAreaField('Symptoms')
     diagnosis = TextAreaField('Diagnosis')
-
+    additional_notes = TextAreaField('Additional Notes')
     submit = SubmitField('Save Consultation Notes')
 
 
@@ -57,9 +56,9 @@ class BookingForm(FlaskForm):
                       validators=[DataRequired()])
     patient_name = StringField('Patient Name',
                                validators=[DataRequired(), Length(min=2, max=20)], default="John Smith")
-    doctor_name = SelectField('Please select reason for doctors Visit',
+    doctor_name = SelectField('Please select doctor',
                               choices=[('', 'Please select'), ('1', 'Dr Akbar Dakbar'),
-                                       ('2', 'Dr Gerry Skinner')], validators=[DataRequired()])
+                                       ('2', 'Dr Gerry Skinner'), ('3', 'Dr Phil')], validators=[DataRequired()])
     reason = SelectField('Please select reason for doctors Visit',
                          choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
                                   ('2', 'Serious illness - e.g. flu'),

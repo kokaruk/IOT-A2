@@ -29,7 +29,7 @@ def write_text_file(path, entry):
 
 
 def read_text_file(path):
-    """Reads text file and returns a variable"""
+    """Reads txt file and returns a variable"""
     try:
         content = open("path", "r")
         return content
@@ -39,12 +39,13 @@ def read_text_file(path):
         print("Write Error")
 
 
-def concat_date_time(date, time, set_string_format):
-    """Reads text file and returns a variable"""
-    if set_string_format:
-        date_time = datetime.combine(date, time)
-        date_time_mel_format = date_time.strftime("%Y-%m-%dT%H:%M:%S+10")
-        return date_time_mel_format
-    else:
-        date_time = datetime.combine(date, time)
-        return date_time
+def concat_date_time(date, time):
+    """concatenates a date and time to datetime object"""
+    date_time = datetime.combine(date, time)
+    return date_time
+
+
+def format_datetime_str(date_time):
+    """formates a datetime to string as YYYY-MM-DDTH:M:S"""
+    date_time_formatted = date_time.strftime("%Y-%m-%dT%H:%M:%S")
+    return date_time_formatted
