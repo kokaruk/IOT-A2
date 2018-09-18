@@ -67,7 +67,7 @@ def register():
 @app.route("/consultation", methods=['GET', 'POST'])
 def consultation():
     """Rendering patient consultation details page and post to database API """
-    #TODO get POST Method to POST to API
+    # TODO get POST Method to POST to API
     try:
         form = ConsultationForm()
         if form.validate_on_submit():
@@ -104,6 +104,7 @@ def booking():
                     cause=form.reason.data,
                     cancelled=form.cancelled.data,
                 )
+                # TODO Comment out once Forms to API work
                 # return redirect(url_for('api.create_consultation_details', new_consultation=consultation))
             google_calendar = gc_api()
 
