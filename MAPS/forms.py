@@ -25,17 +25,13 @@ class RegistrationForm(FlaskForm):
                                        DataRequired()], default=1234567890)
     pre_conditions = TextAreaField('Previous Conditions')
     current_medications = TextAreaField('Current Medication')
-
-    # Test with FieldList for 1 to N fields - issue is it doesn't dynamically grow - stay at min entries
-    # pre_conditions = FieldList(StringField('Previous Conditions'), min_entries=1, max_entries=10)
-    # current_medications = FieldList(TextAreaField('Current Medication'), min_entries=1, max_entries=10)
-
     pre_doctor = StringField('Previous Doctor')
     pre_clinic = StringField('Previous Clinic')
     submit = SubmitField('Register')
 
 
 class ConsultationForm(FlaskForm):
+    # TODO pre fill information from booking
     date = DateField('Consulation Date',
                      validators=[DataRequired()])
     start = TimeField('Start of Consultation', format='%H:%M',
@@ -54,8 +50,10 @@ class BookingForm(FlaskForm):
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
+    # TODO search field for User to find himself and do enter
     patient_name = StringField('Patient Name',
                                validators=[DataRequired(), Length(min=2, max=20)], default="John Smith")
+    # TODO read out Doctors ID and Names from DataBase
     doctor_name = SelectField('Please select doctor',
                               choices=[('', 'Please select'), ('1', 'Dr Akbar Dakbar'),
                                        ('2', 'Dr Gerry Skinner'), ('3', 'Dr Phil')], validators=[DataRequired()])

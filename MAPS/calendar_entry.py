@@ -22,6 +22,7 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from MAPS.utils import format_datetime_str
 
+# TODO Find a better way to store constants.
 DOC1 = 'cvrsdsk7jjae29p9fg9t6vcr94@group.calendar.google.com'
 DOC2 = 'co63bbo22htf8jqombkb2tguh8@group.calendar.google.com'
 DOC3 = '9kn05ti5cef5mt9kcpup4sjt4g@group.calendar.google.com'
@@ -49,9 +50,6 @@ class Google_Calendar_API:
         start = format_datetime_str(date)
         end = date + timedelta(minutes=duration)
         end = format_datetime_str(end)
-
-        print(start)
-        print(end)
 
         event = {
             'summary': title,

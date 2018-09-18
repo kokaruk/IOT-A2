@@ -24,6 +24,7 @@ def about():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     """Rendering patient registration page and post to database API """
+    # TODO get POST Method to POST to API
     try:
         form = RegistrationForm()
         if form.validate_on_submit():
@@ -59,13 +60,14 @@ def register():
             return redirect(url_for('home'))
         return render_template('patient_register.html', title='Register', form=form)
     except Exception as err:
-        # TODO better Exceptionhandleing
+        # TODO better Exception handling
         print(err)
 
 
 @app.route("/consultation", methods=['GET', 'POST'])
 def consultation():
     """Rendering patient consultation details page and post to database API """
+    #TODO get POST Method to POST to API
     try:
         form = ConsultationForm()
         if form.validate_on_submit():
@@ -82,11 +84,12 @@ def consultation():
             return redirect(url_for('home'))
         return render_template('consultation.html', title='Consultation', form=form)
     except Exception as err:
-        # TODO better Exceptionhandleing
+        # TODO better Exception handling
         print(err)
 
 
 @app.route("/booking", methods=['GET', 'POST'])
+# TODO get POST Method to POST to API
 def booking():
     """Rendering consultation booking page and post to database API and to google calender method """
     try:
@@ -110,11 +113,11 @@ def booking():
             index_doctor = int(form.doctor_name.data)
             doctor = form.doctor_name.choices[index_doctor][1]
 
+            # TODO Smarter way to transfer the chosen doctor to the calendar entry creation
             write_text_file(PATH_DOCTOR, doctor)
 
             title = f"Patient: {form.patient_name.data} Issue : {reason}"
             date = concat_date_time(form.date.data, form.start.data)
-            print(date)
             google_calendar.insert_calendar_entry(title=title, date=date, patient_email="fightme1984@gmail.com",
                                                   doctor_email="akbar.dakbar@shojiido.de",
                                                   doctor=doctor, duration=CONSULTATION_DURATION)
@@ -123,7 +126,7 @@ def booking():
             return redirect(url_for('calendar'))
         return render_template('booking.html', title='Consultation Booking', form=form)
     except Exception as err:
-        # TODO better Exceptionhandleing
+        # TODO better Exception handling
         print(err)
 
 
