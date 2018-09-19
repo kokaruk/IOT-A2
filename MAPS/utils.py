@@ -19,19 +19,22 @@ from datetime import datetime
 
 def write_text_file(path, entry):
     try:
-        w = open(path, "w")
-        w.write(entry)
+        with open(path,'w') as w:
+            w.write(entry)
     except FileNotFoundError:
         print("File not found")
     except IOError:
         print("Write Error")
-    return
 
 
+with open('pagehead.section.htm','r') as f:
+    output = f.read()
+    
 def read_text_file(path):
     """Reads txt file and returns a variable"""
     try:
-        content = open("path", "r")
+        with open(path,'r') as r:
+            content = r.read()
         return content
     except FileNotFoundError:
         print("File not found")
