@@ -26,6 +26,7 @@ def write_text_file(path, entry):
     except IOError:
         print("Write Error")
 
+    
 def read_text_file(path):
     """Reads txt file and returns a variable"""
     try:

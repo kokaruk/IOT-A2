@@ -38,12 +38,12 @@ def create_patient():
     address = request.json['address']
     email = request.json['email']
     phone = request.json['phone']
-    medicareNumber = request.json['medicareNumber']
-    previousDoctor = request.json['previousDoctor']
-    previousClinic = request.json['previousClinic']
+    medicare_number = request.json['medicare_number']
+    previous_doctor = request.json['previous_doctor']
+    previous_clinic = request.json['previous_clinic']
 
     new_patient = Patient(first_name, second_name, last_name, dob, gender,
-                          address, email, phone, medicareNumber, previousDoctor, previousClinic)
+                          address, email, phone, medicare_number, previous_doctor, previous_clinic)
     db.session.add(new_patient)
     db.session.commit()
     return patient_schema.jsonify(new_patient)

@@ -35,14 +35,14 @@ class Patient(db.Model):
     address = db.Column(db.String(120))
     email = db.Column(db.String(120), index=True, unique=True)
     phone = db.Column(db.String(12))
-    medicareNumber = db.Column(db.Integer)
-    previousDoctor = db.Column(db.String(120), nullable=True)
-    previousClinic = db.Column(db.String(120), nullable=True)
+    medicare_number = db.Column(db.Integer)
+    previous_doctor = db.Column(db.String(120), nullable=True)
+    previous_clinic = db.Column(db.String(120), nullable=True)
     conditions = db.relationship("Condition", lazy='dynamic')
     medications = db.relationship("Medication", lazy='dynamic')
     consultations = db.relationship("Consultation", lazy='dynamic')
 
-    def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicareNumber, previousDoctor, previousClinic):
+    def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicare_number, previous_doctor, previous_clinic):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
@@ -51,25 +51,25 @@ class Patient(db.Model):
         self.address = address
         self.email = email
         self.phone = phone
-        self.medicareNumber = medicareNumber
-        self.previousDoctor = previousDoctor
-        self.previousClinic = previousClinic
+        self.medicare_number = medicare_number
+        self.previous_doctor = previous_doctor
+        self.previous_clinic = previous_clinic
 
 
 class PatientSchema(ma.Schema):
     class Meta:
         fields = ('id', 'first_name', 'second_name', 'last_name', 'dob', 'gender', 'address',
-                  'email', 'phone', 'medicareNumber', 'previousDoctor', 'previousClinic')
+                  'email', 'phone', 'medicare_number', 'previous_doctor', 'previous_clinic')
 
 
 class Condition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patientId = db.Column(db.Integer, db.ForeignKey(
+    patient_id = db.Column(db.Integer, db.ForeignKey(
         'patient.id'), nullable=False)
     condition = db.Column(db.String(120), nullable=True)
 
-    def __init__(self, patientId, condition):
-        self.patientId = patientId
+    def __init__(self, patient_id, condition):
+        self.patient_id = patient_id
         self.condition = condition
 
 
@@ -84,8 +84,8 @@ class Medication(db.Model):
         'patient.id'), nullable=False)
     medication = db.Column(db.String(120), nullable=True)
 
-    def __init__(self, patientId, medication):
-        self.patientId = patientId
+    def __init__(self, patient_id, medication):
+        self.patient_id = patient_id
         self.medication = medication
 
 
@@ -106,20 +106,20 @@ class Consultation(db.Model):
     cancelled = db.Column(db.Boolean, default=False)
     consultationDetails = db.relationship("ConsultationDetails")
 
-    def __init__(self, appointment, patientId, doctorId, duration, cause, cancelled, consultationDetails):
+    def __init__(self, appointment, patient_id, doctor_id, duration, cause, cancelled, consultation_details):
         self.appointment = appointment
-        self.patientId = patientId
-        self.doctorId = doctorId
+        self.patientId = patient_id
+        self.doctor_id = doctor_id
         self.duration = duration
         self.cause = cause
         self.cancelled = cancelled
-        self.consultationDetails = consultationDetails
+        self.consultation_details = consultation_details
 
 
 class ConsultationSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'appointment', 'patientId', 'doctorId',
-                  'duration', 'cause', 'cancelled', 'consultationDetails')
+        fields = ('id', 'appointment', 'patient_id', 'doctor_id',
+                  'duration', 'cause', 'cancelled', 'consultation_details')
 
 
 class ConsultationDetails(db.Model):
@@ -133,17 +133,17 @@ class ConsultationDetails(db.Model):
     actualStart = db.Column(db.DateTime, nullable=True)
     actualEnd = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, consultationId, description, additionalNotes, symptoms, diagnosis, actualStart, actualEnd):
-        self.consultationId = consultationId
+    def __init__(self, consultation_id, description, additional_notes, symptoms, diagnosis, actual_start, actual_end):
+        self.consultation_id = consultation_id
         self.description = description
-        self.additionalNotes = additionalNotes
+        self.additional_notes = additional_notes
         self.symptoms = symptoms
         self.diagnosis = diagnosis
-        self.actualStart = actualStart
-        self.actualEnd = actualEnd
+        self.actual_start = actual_start
+        self.actual_end = actual_end
 
 
 class ConsultationDetailsSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'consultationId', 'description', 'additionalNotes',
-                  'symptoms', 'diagnosis', 'actualStart', 'actualEnd')
+        fields = ('id', 'consultation_id', 'description', 'additional_notes',
+                  'symptoms', 'diagnosis', 'actual_start', 'actual_end')
