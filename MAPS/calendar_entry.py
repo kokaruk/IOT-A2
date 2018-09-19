@@ -23,9 +23,9 @@ from oauth2client import file, client, tools
 from MAPS.utils import format_datetime_str
 
 # TODO Find a better way to store constants.
-DOC1 = 'cvrsdsk7jjae29p9fg9t6vcr94@group.calendar.google.com'
-DOC2 = 'co63bbo22htf8jqombkb2tguh8@group.calendar.google.com'
-DOC3 = '9kn05ti5cef5mt9kcpup4sjt4g@group.calendar.google.com'
+CALENDAR_ID_1 = 'cvrsdsk7jjae29p9fg9t6vcr94@group.calendar.google.com'
+CALENDAR_ID_2 = 'co63bbo22htf8jqombkb2tguh8@group.calendar.google.com'
+CALENDAR_ID_3 = '9kn05ti5cef5mt9kcpup4sjt4g@group.calendar.google.com'
 
 SCOPES_ADDRESS = 'https://www.googleapis.com/auth/calendar'
 STORAGE = 'MAPS/credentials/token.json'
@@ -79,13 +79,13 @@ class Google_Calendar_API:
         try:
             if doctor == "Dr Akbar Dakbar":
                 # TODO Exchange CalendarID with DB entry of CalendarID
-                event = service.events().insert(calendarId=DOC1, body=event).execute()
+                event = service.events().insert(calendarId=CALENDAR_ID_1, body=event).execute()
                 print('Event created: {}'.format(event.get('htmlLink')))
             elif doctor == "Dr Gerry Skinner":
-                event = service.events().insert(calendarId=DOC2, body=event).execute()
+                event = service.events().insert(calendarId=CALENDAR_ID_2, body=event).execute()
                 print('Event created: {}'.format(event.get('htmlLink')))
             else:
-                event = service.events().insert(calendarId=DOC3, body=event).execute()
+                event = service.events().insert(calendarId=CALENDAR_ID_3, body=event).execute()
                 print('Event created: {}'.format(event.get('htmlLink')))
         except Exception as err:
             # TODO better Exceptionhandleing
