@@ -26,9 +26,6 @@ def write_text_file(path, entry):
     except IOError:
         print("Write Error")
 
-
-with open('pagehead.section.htm','r') as f:
-    output = f.read()
     
 def read_text_file(path):
     """Reads txt file and returns a variable"""
