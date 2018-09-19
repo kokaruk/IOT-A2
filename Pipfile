@@ -15,6 +15,7 @@ flask-bcrypt = "*"
 flask-login = "*"
 pyjwt = "*"
 python-dotenv = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 
