@@ -39,9 +39,9 @@ def register():
                                 "address": form.address.data,
                                 "email": form.email.data,
                                 "phone": form.phone.data,
-                                "medicareNumber": form.medicare.data,
-                                "previousDoctor": form.pre_doctor.data,
-                                "previousClinic": form.pre_clinic.data
+                                "medicare_number": form.medicare.data,
+                                "previous_doctor": form.pre_doctor.data,
+                                "previous_clinic": form.pre_clinic.data
                                 }
 
                 URL = "http://127.0.0.1:5000/MAPS/API/patients"
