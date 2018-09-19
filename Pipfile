@@ -16,6 +16,8 @@ flask-login = "*"
 pyjwt = "*"
 python-dotenv = "*"
 marshmallow-sqlalchemy = "*"
+google-api-python-client = "*"
+"oauth2client" = "*"
 
 [dev-packages]
 
