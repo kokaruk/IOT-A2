@@ -20,26 +20,36 @@ from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+from MAPS.utils import format_datetime_str
 
-AKBARS_CAL = '6qu20tinkidnvhcg7snr19aqvc@group.calendar.google.com'
-GERRYS_CAL = '1vp7utbb9quuha30ho09lf5j0o@group.calendar.google.com'
+# TODO Find a better way to store constants.
+CALENDAR_ID_1 = 'cvrsdsk7jjae29p9fg9t6vcr94@group.calendar.google.com'
+CALENDAR_ID_2 = 'co63bbo22htf8jqombkb2tguh8@group.calendar.google.com'
+CALENDAR_ID_3 = '9kn05ti5cef5mt9kcpup4sjt4g@group.calendar.google.com'
+
+SCOPES_ADDRESS = 'https://www.googleapis.com/auth/calendar'
+STORAGE = 'MAPS/credentials/token.json'
+CLIENT_SECRETS = 'MAPS/credentials/google_calendar_api_credentials.json'
+BUILD_DEF = 'calendar'
+BUILD_NO = 'v3'
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = 'https://www.googleapis.com/auth/calendar'
-store = file.Storage('MAPS/credentials/token.json')
+SCOPES = SCOPES_ADDRESS
+store = file.Storage(STORAGE)
 creds = store.get()
 if not creds or creds.invalid:
-    flow = client.flow_from_clientsecrets('MAPS/credentials/google_calendar_api_credentials.json', SCOPES)
+    flow = client.flow_from_clientsecrets(CLIENT_SECRETS, SCOPES)
     creds = tools.run_flow(flow, store)
-service = build('calendar', 'v3', http=creds.authorize(Http()))
+service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
 
 
 class Google_Calendar_API:
 
-    def insert_calendar_entry(self, title, date, patient_email, patient, doctor_email, doctor, duration):
+    def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor, duration):
 
-        start_time = (date - timedelta(hours=10)).strftime("%Y-%m-%dT%H:%M:%S+10")
-        end_time = (date - timedelta(hours=10) + timedelta(minutes=duration)).strftime("%Y-%m-%dT%H:%M:%S+10")
+        start = format_datetime_str(date)
+        end = date + timedelta(minutes=duration)
+        end = format_datetime_str(end)
 
         event = {
             'summary': title,
@@ -47,11 +57,11 @@ class Google_Calendar_API:
             'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
             'description': 'Adding new IoT event',
             'start': {
-                'dateTime': str(start_time),
+                'dateTime': str(start),
                 'timeZone': 'Australia/Melbourne',
             },
             'end': {
-                'dateTime': str(end_time),
+                'dateTime': str(end),
                 'timeZone': 'Australia/Melbourne',
             },
             'attendees': [
@@ -66,13 +76,22 @@ class Google_Calendar_API:
                 ],
             }
         }
-        if doctor == "Dr Akbar Dakbar":
-            event = service.events().insert(calendarId=AKBARS_CAL, body=event).execute()
-            print('Event created: {}'.format(event.get('htmlLink')))
-        else:
-            event = service.events().insert(calendarId=GERRYS_CAL, body=event).execute()
-            print('Event created: {}'.format(event.get('htmlLink')))
+        try:
+            if doctor == "Dr Akbar Dakbar":
+                # TODO Exchange CalendarID with DB entry of CalendarID
+                event = service.events().insert(calendarId=CALENDAR_ID_1, body=event).execute()
+                print('Event created: {}'.format(event.get('htmlLink')))
+            elif doctor == "Dr Gerry Skinner":
+                event = service.events().insert(calendarId=CALENDAR_ID_2, body=event).execute()
+                print('Event created: {}'.format(event.get('htmlLink')))
+            else:
+                event = service.events().insert(calendarId=CALENDAR_ID_3, body=event).execute()
+                print('Event created: {}'.format(event.get('htmlLink')))
+        except Exception as err:
+            # TODO better Exceptionhandleing
+            print(err)
 
-    def delete_calandar_entry(self, calendar_id='primary', event_id='eventId'):
+    def delete_calendar_entry(self, calendar_id='primary', event_id='eventId'):
         """NOT READY YET """
+        # TODO Implement delete - issue how to get event ID
         service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
