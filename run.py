@@ -19,6 +19,4 @@ from MAPS import app
 
 
 if __name__ == '__main__':
-    from MAPS.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
     app.run(debug=True)
