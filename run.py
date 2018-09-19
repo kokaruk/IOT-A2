@@ -16,7 +16,15 @@
 """
 
 from MAPS import app
+from MAPS.models import *
+
+
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'Patient': Patient, 'Doctor': Doctor}
 
 
 if __name__ == '__main__':
+    from MAPS.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
     app.run(debug=True)
