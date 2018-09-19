@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "682effd30588bdc014f4ea061234984a3e6ba3358017a962232bbd238a456691"
+            "sha256": "61b894f463c505597fca71f774e47fd2bd37a9377821a241dd2b23435fa1186e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -134,6 +134,13 @@
             "index": "pypi",
             "version": "==2.3.1"
         },
+        "decorator": {
+            "hashes": [
+                "sha256:2c51dff8ef3c447388fe5e4453d24a2bf128d3a4c32af3fabef1f01c6851ab82",
+                "sha256:c39efa13fbdeb4506c476c9b3babf6a718da943dab7811c206005a4a956c080c"
+            ],
+            "version": "==4.3.0"
+        },
         "docutils": {
             "hashes": [
                 "sha256:02aec4bd92ab067f6ff27a38a38a41173bf01bed8f89157768c1573f53e474a6",
@@ -238,6 +245,18 @@
             ],
             "markers": "python_version != '3.3.*' and python_version != '3.0.*' and python_version != '3.1.*' and python_version >= '2.7' and python_version != '3.2.*'",
             "version": "==1.1.0"
+        },
+        "infinity": {
+            "hashes": [
+                "sha256:dc4aa138d7e366fc00d2e741e32c78a0fecd16b74f8daeb3f7408b459668005c"
+            ],
+            "version": "==1.4"
+        },
+        "intervals": {
+            "hashes": [
+                "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"
+            ],
+            "version": "==0.8.1"
         },
         "itsdangerous": {
             "hashes": [
@@ -502,6 +521,12 @@
             "markers": "python_version != '3.3.*' and python_version >= '2.6' and python_version != '3.0.*' and python_version != '3.1.*' and python_version < '4' and python_version != '3.2.*'",
             "version": "==1.23"
         },
+        "validators": {
+            "hashes": [
+                "sha256:172ac45f7d1944ce4beca3c5c53ca7c83e9759e39fd3fedc1cf28e2130268706"
+            ],
+            "version": "==0.12.2"
+        },
         "virtualenv": {
             "hashes": [
                 "sha256:2ce32cd126117ce2c539f0134eb89de91a8413a29baac49cbab3eb50e2026669",
@@ -523,6 +548,13 @@
                 "sha256:e3ee092c827582c50877cdbd49e9ce6d2c5c1f6561f849b3b068c1b8029626f1"
             ],
             "version": "==2.2.1"
+        },
+        "wtforms-components": {
+            "hashes": [
+                "sha256:e66cd8fa8269bfb75b40453ade387a55d55ba33aac534264043d6d283285d2e4"
+            ],
+            "index": "pypi",
+            "version": "==0.10.3"
         }
     },
     "develop": {}
