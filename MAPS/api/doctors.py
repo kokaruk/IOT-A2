@@ -1,15 +1,12 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+from flask import request, jsonify
 
-
-from MAPS.api import bp
-from MAPS.api.errors import bad_request
 from MAPS import db
+from MAPS.api import bp
 from MAPS.models import Doctor, DoctorSchema
 
 doctor_schema = DoctorSchema()
 doctors_schema = DoctorSchema(many=True)
+
 
 # Get all doctors
 @bp.route('/doctors', methods=['GET'])
@@ -45,7 +42,7 @@ def create_doctor():
     specialization = request.json['specialization']
     calendar_id = request.json['calendar_id']
 
-    new_doctor = Doctor(first_name, second_name, last_name, email, specialization, calendar_id)
+    new_doctor = Doctor(first_name, second_name, last_name, email, calendar_id, specialization)
     db.session.add(new_doctor)
     db.session.commit()
     return doctor_schema.jsonify(new_doctor)

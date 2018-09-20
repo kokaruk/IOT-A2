@@ -13,7 +13,7 @@ class Doctor(db.Model):
 
     # todo make optional params for init
 
-    def __init__(self, first_name, second_name, last_name, email, specialization, calendar_id):
+    def __init__(self, first_name, second_name, last_name, email, calendar_id, specialization="GP"):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
@@ -25,10 +25,11 @@ class Doctor(db.Model):
         """for cli output"""
         return f"<Doctor {self.first_name}>"
 
+
 class DoctorSchema(ma.Schema):
     class Meta:
         fields = ('id', 'first_name', 'second_name', 'last_name',
-                  'email', 'specialization', 'calendar_id')
+                  'email', 'calendar_id', 'specialization')
 
 
 class Patient(db.Model):
