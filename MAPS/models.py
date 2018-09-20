@@ -127,7 +127,7 @@ class Consultation(db.Model):
 
     def __init__(self, appointment, patient_id, doctor_id, duration, cause, cancelled, consultation_details):
         self.appointment = appointment
-        self.patientId = patient_id
+        self.patient_id = patient_id
         self.doctor_id = doctor_id
         self.duration = duration
         self.cause = cause
@@ -147,7 +147,7 @@ class ConsultationSchema(ma.Schema):
 
 class ConsultationDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    consultationId = db.Column(db.Integer, db.ForeignKey(
+    consultation_id = db.Column(db.Integer, db.ForeignKey(
         'consultation.id'), nullable=False)
     description = db.Column(db.String(300))
     additional_notes = db.Column(db.String(300), nullable=True)
