@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 from config import Config
-
+# todo add logging support
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
@@ -13,6 +13,6 @@ migrate = Migrate(app, db)
 
 # do not delete these two lines ever! optimiser complains but ignore it
 from MAPS.api import bp as api_bp
-from MAPS import routes, models
+from MAPS import routes, models, errors
 
 app.register_blueprint(api_bp, url_prefix='/api')
