@@ -11,6 +11,8 @@ class Doctor(db.Model):
     calendar_id = db.Column(db.String(120), nullable=True)
     consultations = db.relationship("Consultation", lazy='dynamic')
 
+    # todo make optional params for init
+
     def __init__(self, first_name, second_name, last_name, email, specialization, calendar_id):
         self.first_name = first_name
         self.second_name = second_name
@@ -19,6 +21,9 @@ class Doctor(db.Model):
         self.specialization = specialization
         self.calendar_id = calendar_id
 
+    def __repr__(self):
+        """for cli output"""
+        return f"<Doctor {self.first_name}>"
 
 class DoctorSchema(ma.Schema):
     class Meta:
@@ -43,7 +48,8 @@ class Patient(db.Model):
     medications = db.relationship("Medication", lazy='dynamic')
     consultations = db.relationship("Consultation", lazy='dynamic')
 
-    def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicare_number, previous_doctor, previous_clinic):
+    def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicare_number,
+                 previous_doctor, previous_clinic):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
@@ -55,6 +61,10 @@ class Patient(db.Model):
         self.medicare_number = medicare_number
         self.previous_doctor = previous_doctor
         self.previous_clinic = previous_clinic
+
+    def __repr__(self):
+        """ for cli output"""
+        return f"<Patient {self.first_name}>"
 
 
 class PatientSchema(ma.Schema):
