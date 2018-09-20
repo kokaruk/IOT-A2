@@ -2,7 +2,8 @@ from flask import render_template, url_for, flash, redirect, request, jsonify
 from MAPS.forms import RegistrationForm, ConsultationForm, BookingForm
 from MAPS import app
 from MAPS.utils import concat_date_time, write_text_file, read_text_file
-from MAPS.calendar_entry import Google_Calendar_API as gc_api
+from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
+import requests
 
 CONSULTATION_DURATION = 20
 PATH_DOCTOR = "MAPS/credentials/doctor.txt"
@@ -29,33 +30,23 @@ def register():
         form = RegistrationForm()
         if form.validate_on_submit():
             if request.method == 'POST':
-                # jsonified/serialized version
-                patient_jsonified = jsonify(first_name=form.firstname.data,
-                                            second_name=form.secondname.data,
-                                            last_name=form.lastname.data,
-                                            dob=form.dob.data,
-                                            gender=form.gender.data,
-                                            address=form.address.data,
-                                            email=form.email.data,
-                                            phone=form.phone.data,
-                                            medicareNumber=form.medicare.data,
-                                            previousDoctor=form.pre_doctor.data,
-                                            previousClinic=form.pre_clinic.data
-                                            )
                 # dictionary version
                 patient_dict = {"first_name": form.firstname.data,
                                 "second_name": form.secondname.data,
                                 "last_name": form.lastname.data,
-                                "dob": form.dob.data,
+                                "dob": str(form.dob.data),
                                 "gender": form.gender.data,
                                 "address": form.address.data,
                                 "email": form.email.data,
                                 "phone": form.phone.data,
-                                "medicareNumber": form.medicare.data,
-                                "previousDoctor": form.pre_doctor.data,
-                                "previousClinic": form.pre_clinic.data
+                                "medicare_number": form.medicare.data,
+                                "previous_doctor": form.pre_doctor.data,
+                                "previous_clinic": form.pre_clinic.data
                                 }
-                return redirect(url_for('api.create_patient', patient=patient_jsonified))
+
+                URL = "http://127.0.0.1:5000/MAPS/API/patients"
+                response = requests.post(url=URL, json=patient_dict)
+                return redirect(response)
             flash('Your registration was successful!', 'success')
             return redirect(url_for('home'))
         return render_template('patient_register.html', title='Register', form=form)

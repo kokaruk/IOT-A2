@@ -43,7 +43,7 @@ if not creds or creds.invalid:
 service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
 
 
-class Google_Calendar_API:
+class GoogleCalendarAPI:
 
     def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor, duration):
 
