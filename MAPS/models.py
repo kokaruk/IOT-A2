@@ -123,7 +123,7 @@ class Consultation(db.Model):
     duration = db.Column(db.Integer)
     cause = db.Column(db.String(200), nullable=True)
     cancelled = db.Column(db.Boolean, default=False)
-    consultation_details = db.relationship("consultation_details")
+    consultation_details = db.relationship("ConsultationDetails")
 
     def __init__(self, appointment, patient_id, doctor_id, duration, cause, cancelled, consultation_details):
         self.appointment = appointment
