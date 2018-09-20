@@ -68,8 +68,10 @@ def consultation():
                                         "additional_notes": form.additional_notes.data,
                                         "symptoms": form.symptoms.data,
                                         "diagnosis": form.diagnosis.data,
-                                        "actual_start": concat_date_time(form.date.data, form.start.data),
-                                        "actual_end": concat_date_time(form.date.data, form.end.data)
+                                        "actual_start": format_datetime_str(
+                                            concat_date_time(form.date.data, form.start.data)),
+                                        "actual_end": format_datetime_str(
+                                            concat_date_time(form.date.data, form.end.data))
                                         }
                 URL = "http://127.0.0.1:5000/api/consultations/details"
                 api_response = requests.post(url=URL, json=consultation_details)
@@ -77,7 +79,7 @@ def consultation():
                     flash('Consultation was successfully saved!', 'success')
                     return redirect(url_for('consultation'))
                 else:
-                    flash(f'An Error happend, reason: {api_response.reason} please try again!', 'danger')
+                    flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
                 return redirect(url_for('consultation'))
         return render_template('consultation.html', title='Consultation', form=form)
     except Exception as err:
@@ -93,7 +95,7 @@ def booking():
         form = BookingForm()
         if form.validate_on_submit():
             if request.method == 'POST':
-                consultation = {"appointment": concat_date_time(form.date.data, form.start.data),
+                consultation = {"appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
                                 "patientId": form.patient_name.data,
                                 "doctorId": form.doctor_name.data,
                                 "duration": str(CONSULTATION_DURATION),
