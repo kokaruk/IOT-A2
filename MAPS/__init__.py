@@ -11,6 +11,8 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
 
+# do not delete these two lines ever! optimiser complains but ignore it
 from MAPS.api import bp as api_bp
+from MAPS import routes, models
 
 app.register_blueprint(api_bp, url_prefix='/api')
