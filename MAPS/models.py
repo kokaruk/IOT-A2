@@ -6,23 +6,24 @@ class Doctor(db.Model):
     first_name = db.Column(db.String(64))
     second_name = db.Column(db.String(64), nullable=True)
     last_name = db.Column(db.String(64))
+    email = db.Column(db.String(120), index=True, unique=True)
     specialization = db.Column(db.String(120), nullable=True)
     calendar_id = db.Column(db.String(120), nullable=True)
     consultations = db.relationship("Consultation", lazy='dynamic')
 
-    def __init__(self, first_name, second_name, last_name, specialization, calendar_id, consultations):
+    def __init__(self, first_name, second_name, last_name, email, specialization, calendar_id):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
+        self.email = email
         self.specialization = specialization
         self.calendar_id = calendar_id
-        self.consultations = consultations
 
 
 class DoctorSchema(ma.Schema):
     class Meta:
         fields = ('id', 'first_name', 'second_name', 'last_name',
-                  'specialization', 'calendar_id', 'consultations')
+                  'email', 'specialization', 'calendar_id')
 
 
 class Patient(db.Model):
