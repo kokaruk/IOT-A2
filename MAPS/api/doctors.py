@@ -30,7 +30,6 @@ def get_doctor(id):
 # Get a doctor by email
 @bp.route('/doctors/email/<string:email>', methods=['GET'])
 def get_doctor_by_email(email):
-    # doctor = Doctor.query.filter(Doctor.email = email).first()
     doctor = Doctor.query.filter(Doctor.email == email).first()
     result = doctor_schema.dump(doctor)
     return jsonify(result.data)
@@ -68,4 +67,3 @@ def update_doctor(id):
     doctor.calendar_id = request.json['calendar_id']
     db.session.commit()
     return doctor_schema.jsonify(doctor)
-
