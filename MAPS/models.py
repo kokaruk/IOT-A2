@@ -6,23 +6,30 @@ class Doctor(db.Model):
     first_name = db.Column(db.String(64))
     second_name = db.Column(db.String(64), nullable=True)
     last_name = db.Column(db.String(64))
+    email = db.Column(db.String(120), index=True, unique=True)
     specialization = db.Column(db.String(120), nullable=True)
     calendar_id = db.Column(db.String(120), nullable=True)
     consultations = db.relationship("Consultation", lazy='dynamic')
 
-    def __init__(self, first_name, second_name, last_name, specialization, calendar_id, consultations):
+    # todo make optional params for init
+
+    def __init__(self, first_name, second_name, last_name, email, calendar_id, specialization="GP"):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
+        self.email = email
         self.specialization = specialization
         self.calendar_id = calendar_id
-        self.consultations = consultations
+
+    def __repr__(self):
+        """for cli output"""
+        return f"<Doctor {self.first_name}>"
 
 
 class DoctorSchema(ma.Schema):
     class Meta:
         fields = ('id', 'first_name', 'second_name', 'last_name',
-                  'specialization', 'calendar_id', 'consultations')
+                  'email', 'calendar_id', 'specialization')
 
 
 class Patient(db.Model):
@@ -42,7 +49,8 @@ class Patient(db.Model):
     medications = db.relationship("Medication", lazy='dynamic')
     consultations = db.relationship("Consultation", lazy='dynamic')
 
-    def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicare_number, previous_doctor, previous_clinic):
+    def __init__(self, first_name, second_name, last_name, dob, gender, address, email, phone, medicare_number,
+                 previous_doctor, previous_clinic):
         self.first_name = first_name
         self.second_name = second_name
         self.last_name = last_name
@@ -54,6 +62,10 @@ class Patient(db.Model):
         self.medicare_number = medicare_number
         self.previous_doctor = previous_doctor
         self.previous_clinic = previous_clinic
+
+    def __repr__(self):
+        """ for cli output"""
+        return f"<Patient {self.first_name}>"
 
 
 class PatientSchema(ma.Schema):

@@ -12,6 +12,5 @@ ma = Marshmallow(app)
 migrate = Migrate(app, db)
 
 from MAPS.api import bp as api_bp
-app.register_blueprint(api_bp, url_prefix='/api')
 
-from MAPS import routes, models
+app.register_blueprint(api_bp, url_prefix='/api')
