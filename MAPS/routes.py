@@ -96,8 +96,8 @@ def booking():
         if form.validate_on_submit():
             if request.method == 'POST':
                 consultation = {"appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
-                                "patientId": form.patient_name.data,
-                                "doctorId": form.doctor_name.data,
+                                "patient_id": form.patient_name.data,
+                                "doctor_id": form.doctor_name.data,
                                 "duration": str(CONSULTATION_DURATION),
                                 "cause": form.reason.data,
                                 "cancelled": form.cancelled.data

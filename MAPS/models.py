@@ -12,7 +12,6 @@ class Doctor(db.Model):
     consultations = db.relationship("Consultation", lazy='dynamic')
 
     # todo make optional params for init
-
     def __init__(self, first_name, second_name, last_name, email, calendar_id, specialization="GP"):
         self.first_name = first_name
         self.second_name = second_name
@@ -84,15 +83,19 @@ class Condition(db.Model):
         self.patient_id = patient_id
         self.condition = condition
 
+    def __repr__(self):
+        """ for cli output"""
+        return f"<Condition {self.condition}>"
+
 
 class ConditionSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'patientId', 'condition')
+        fields = ('id', 'patient_id', 'condition')
 
 
 class Medication(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patientId = db.Column(db.Integer, db.ForeignKey(
+    patient_id = db.Column(db.Integer, db.ForeignKey(
         'patient.id'), nullable=False)
     medication = db.Column(db.String(120), nullable=True)
 
@@ -100,32 +103,40 @@ class Medication(db.Model):
         self.patient_id = patient_id
         self.medication = medication
 
+    def __repr__(self):
+        """ for cli output"""
+        return f"<Condition {self.condition}>"
+
 
 class MedicationSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'patientId', 'medication')
+        fields = ('id', 'patient_id', 'medication')
 
 
 class Consultation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     appointment = db.Column(db.DateTime)
-    patientId = db.Column(db.Integer, db.ForeignKey(
+    patient_id = db.Column(db.Integer, db.ForeignKey(
         'patient.id'), nullable=False)
-    doctorId = db.Column(db.Integer, db.ForeignKey(
+    doctor_id = db.Column(db.Integer, db.ForeignKey(
         'doctor.id'), nullable=False)
     duration = db.Column(db.Integer)
     cause = db.Column(db.String(200), nullable=True)
     cancelled = db.Column(db.Boolean, default=False)
-    consultationDetails = db.relationship("ConsultationDetails")
+    consultation_details = db.relationship("ConsultationDetails")
 
     def __init__(self, appointment, patient_id, doctor_id, duration, cause, cancelled, consultation_details):
         self.appointment = appointment
-        self.patientId = patient_id
+        self.patient_id = patient_id
         self.doctor_id = doctor_id
         self.duration = duration
         self.cause = cause
         self.cancelled = cancelled
         self.consultation_details = consultation_details
+
+    def __repr__(self):
+        """ for cli output"""
+        return f"<Consultation {self.appointment}>"
 
 
 class ConsultationSchema(ma.Schema):
@@ -136,14 +147,14 @@ class ConsultationSchema(ma.Schema):
 
 class ConsultationDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    consultationId = db.Column(db.Integer, db.ForeignKey(
+    consultation_id = db.Column(db.Integer, db.ForeignKey(
         'consultation.id'), nullable=False)
     description = db.Column(db.String(300))
-    additionalNotes = db.Column(db.String(300), nullable=True)
+    additional_notes = db.Column(db.String(300), nullable=True)
     symptoms = db.Column(db.String(120), nullable=True)
     diagnosis = db.Column(db.String(120), nullable=True)
-    actualStart = db.Column(db.DateTime, nullable=True)
-    actualEnd = db.Column(db.DateTime, nullable=True)
+    actual_start = db.Column(db.DateTime, nullable=True)
+    actual_end = db.Column(db.DateTime, nullable=True)
 
     def __init__(self, consultation_id, description, additional_notes, symptoms, diagnosis, actual_start, actual_end):
         self.consultation_id = consultation_id
@@ -153,6 +164,10 @@ class ConsultationDetails(db.Model):
         self.diagnosis = diagnosis
         self.actual_start = actual_start
         self.actual_end = actual_end
+
+    def __repr__(self):
+        """ for cli output"""
+        return f"<ConsultationDetails {self.description}>"
 
 
 class ConsultationDetailsSchema(ma.Schema):
