@@ -6,22 +6,22 @@ from wtforms.validators import DataRequired, Length, Email
 
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name',
-                            validators=[DataRequired(), Length(min=2, max=20)], default="John")
+                            validators=[DataRequired(), Length(min=2, max=20)])
     secondname = StringField('Second Name', validators=[Length(max=20)])
     lastname = StringField('Last Name',
-                           validators=[DataRequired(), Length(min=2, max=20)], default="Smith")
+                           validators=[DataRequired(), Length(min=2, max=20)])
     dob = DateField('Date of Birth', validators=[DataRequired()])
     gender = SelectField('Please select Gender',
                          choices=[('', 'Please select'), ('m', 'Male'), ('f', 'Female'), ('o', 'other')],
                          validators=[DataRequired()])
     address = TextAreaField('Address',
-                            validators=[DataRequired()], default="2012 Main Street, 3423 Central City ")
-    email = EmailField(label="Email", validators=[DataRequired(), Email()], default="john.smith@hotmail.com")
+                            validators=[DataRequired()])
+    email = EmailField(label="Email", validators=[DataRequired(), Email()])
     phone = TelField('Telephone or Mobile',
                      validators=[DataRequired()])
     medicare = StringField('Medicare No',
                            validators=[Length(min=9, max=10, message="Medicare No. has to be 10 digits"),
-                                       DataRequired()], default=1234567890)
+                                       DataRequired()])
     pre_conditions = TextAreaField('Previous Conditions')
     current_medications = TextAreaField('Current Medication')
     pre_doctor = StringField('Previous Doctor')
