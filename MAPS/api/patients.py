@@ -56,8 +56,9 @@ def create_patient():
 
 
 # endpoint to delete patient by id
-@bp.route("/patients/<int:id>", methods=["DELETE"])
-def delete_patient(id):
+@bp.route("/patients", methods=["DELETE"])
+def delete_patient():
+    id = request.json['id']
     patient = Patient.query.get(id)
     db.session.delete(patient)
     db.session.commit()
@@ -67,9 +68,8 @@ def delete_patient(id):
 # MEDICATIONS
 
 # Add a medication for a patient
-@bp.route("/patients/<int:id>/medications", methods=["POST"])
-def add_medication_to_patient(id):
-    patient_id = id
+@bp.route("/patients/<int:patient_id>/medications", methods=["POST"])
+def add_medication_to_patient(patient_id):
     medication = request.json['medication']
     new_medication = Medication(patient_id, medication)
     db.session.add(new_medication)
@@ -78,21 +78,22 @@ def add_medication_to_patient(id):
 
 
 # Get all medications for patient by id
-@bp.route("/patients/<int:id>/medications", methods=["GET"])
-def get_all_medication_for_patient(id):
-    all_medications_for_patient = Medication.query.filter(Medication.patient_id == id).all()
+@bp.route("/patients/<int:patient_id>/medications", methods=["GET"])
+def get_all_medication_for_patient(patient_id):
+    all_medications_for_patient = Medication.query.filter(Medication.patient_id == patient_id).all()
     result = medications_schema.dump(all_medications_for_patient)
     return jsonify(result.data)
 
 
 # endpoint to delete patient by id
-@bp.route("/patients/<int:id>/medications/<int:medication_id>", methods=["DELETE"])
-def delete_medication(id, medication_id):
-    deleted_medication = Medication.query.filter(Medication.id == medication_id).filter(
-        Medication.patient_id == id).first()
+@bp.route("/patients/<int:patient_id>/medications", methods=["DELETE"])
+def delete_medication(patient_id):
+    id = request.json['id']
+    deleted_medication = Medication.query.filter(Medication.id == id).filter(
+        Medication.patient_id == patient_id).first()
     db.session.delete(deleted_medication)
     db.session.commit()
-    all_medications_for_patient = Medication.query.filter(Medication.patient_id == id).all()
+    all_medications_for_patient = Medication.query.filter(Medication.patient_id == patient_id).all()
     result = medications_schema.dump(all_medications_for_patient)
     return jsonify(result.data)
 
@@ -100,9 +101,8 @@ def delete_medication(id, medication_id):
 # CONDITIONS
 
 # Add a condition for a patient
-@bp.route("/patients/<int:id>/conditions", methods=["POST"])
-def add_condition_to_patient(id):
-    patient_id = id
+@bp.route("/patients/<int:patient_id>/conditions", methods=["POST"])
+def add_condition_to_patient(patient_id):
     condition = request.json['condition']
     new_condition = Condition(patient_id, condition)
     db.session.add(new_condition)
@@ -111,19 +111,20 @@ def add_condition_to_patient(id):
 
 
 # Get all conditions for patient by id
-@bp.route("/patients/<int:id>/conditions", methods=["GET"])
-def get_all_condition_for_patient(id):
-    all_conditions_for_patient = Condition.query.filter(Condition.patient_id == id).all()
+@bp.route("/patients/<int:patient_id>/conditions", methods=["GET"])
+def get_all_condition_for_patient(patient_id):
+    all_conditions_for_patient = Condition.query.filter(Condition.patient_id == patient_id).all()
     result = conditions_schema.dump(all_conditions_for_patient)
     return jsonify(result.data)
 
 
 # Delete a condition for a patient by patient id
-@bp.route("/patients/<int:id>/conditions/<int:condition_id>", methods=["DELETE"])
-def delete_condition(id, condition_id):
-    deleted_condition = Condition.query.filter(Condition.id == condition_id).filter(Condition.patient_id == id).first()
+@bp.route("/patients/<int:patient_id>/conditions", methods=["DELETE"])
+def delete_condition(patient_id):
+    id = request.json['id']
+    deleted_condition = Condition.query.filter(Condition.id == id).filter(Condition.patient_id == patient_id).first()
     db.session.delete(deleted_condition)
     db.session.commit()
-    all_conditions_for_patient = Condition.query.filter(Condition.patient_id == id).all()
+    all_conditions_for_patient = Condition.query.filter(Condition.patient_id == patient_id).all()
     result = conditions_schema.dump(all_conditions_for_patient)
     return jsonify(result.data)
