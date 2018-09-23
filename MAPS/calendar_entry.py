@@ -21,11 +21,11 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from MAPS.utils import format_datetime_str
+from flask import flash
+import requests
+import json
 
-# TODO Find a better way to store constants.
-CALENDAR_ID_1 = 'cvrsdsk7jjae29p9fg9t6vcr94@group.calendar.google.com'
-CALENDAR_ID_2 = 'co63bbo22htf8jqombkb2tguh8@group.calendar.google.com'
-CALENDAR_ID_3 = '9kn05ti5cef5mt9kcpup4sjt4g@group.calendar.google.com'
+API_URL = "http://127.0.0.1:5000/api/"
 
 SCOPES_ADDRESS = 'https://www.googleapis.com/auth/calendar'
 STORAGE = 'MAPS/credentials/token.json'
@@ -77,21 +77,31 @@ class GoogleCalendarAPI:
             }
         }
         try:
-            if doctor == "Dr Akbar Dakbar":
-                # TODO Exchange CalendarID with DB entry of CalendarID
-                event = service.events().insert(calendarId=CALENDAR_ID_1, body=event).execute()
-                print('Event created: {}'.format(event.get('htmlLink')))
-            elif doctor == "Dr Gerry Skinner":
-                event = service.events().insert(calendarId=CALENDAR_ID_2, body=event).execute()
-                print('Event created: {}'.format(event.get('htmlLink')))
-            else:
-                event = service.events().insert(calendarId=CALENDAR_ID_3, body=event).execute()
-                print('Event created: {}'.format(event.get('htmlLink')))
+            # TODO Test if drawing calendar from DB works once API is established.
+            doctor = requests.get(f"{API_URL}doctors")
+            json_data = json.loads(doctor.text)
+            for doctor in json_data:
+                if doctor['id_number'] == doctor:
+                    event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
+                    print('Event created: {}'.format(event.get('htmlLink')))
+
+                    URL = f"{API_URL}consulation_event_id"
+                    api_response = requests.post(url=URL, json=event)
+
+                    break
         except Exception as err:
-            # TODO better Exceptionhandleing
+            # TODO better Exception handling
             print(err)
 
-    def delete_calendar_entry(self, calendar_id='primary', event_id='eventId'):
+    def delete_calendar_entry(self, calendar_id, event_id):
         """NOT READY YET """
         # TODO Implement delete - issue how to get event ID
-        service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
+        try:
+            delete = service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
+            if delete.status_code == 200:
+                flash(f'Event {event_id} sucessfully deleted', 'success')
+            else:
+                flash(f'Event {event_id} not deleted, reason: {delete.reason} please try again!', 'danger')
+        except Exception as err:
+            # TODO better Exception handling
+            print(err)

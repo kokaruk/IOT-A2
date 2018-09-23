@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms.validators import DataRequired, Length, Email, InputRequired
 
 
 class RegistrationForm(FlaskForm):
@@ -46,16 +46,12 @@ class ConsultationForm(FlaskForm):
 
 
 class BookingForm(FlaskForm):
+
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
-    # TODO search field for User to find himself and do enter
-    patient_name = StringField('Patient Name',
-                               validators=[DataRequired(), Length(min=2, max=20)], default="John Smith")
-    # TODO read out Doctors ID and Names from DataBase
-    doctor_name = SelectField('Please select doctor',
-                              choices=[('', 'Please select'), ('1', 'Dr Akbar Dakbar'),
-                                       ('2', 'Dr Gerry Skinner'), ('3', 'Dr Phil')], validators=[DataRequired()])
+    patient_id = SelectField('Please select patient', choices=[], validators=[InputRequired()])
+    doctor_id = SelectField('Please select doctors', choices=[], validators=[InputRequired()])
     reason = SelectField('Please select reason for doctors Visit',
                          choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
                                   ('2', 'Serious illness - e.g. flu'),
