@@ -132,15 +132,17 @@ class Consultation(db.Model):
     duration = db.Column(db.Integer)
     cause = db.Column(db.String(200), nullable=True)
     cancelled = db.Column(db.Boolean, default=False)
+    google_event_id = db.Column(db.Integer, nullable=False)
     consultation_details = db.relationship("ConsultationDetails")
 
-    def __init__(self, appointment, patient_id, doctor_id, duration, cause, cancelled):
+    def __init__(self, appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id):
         self.appointment = appointment
         self.patient_id = patient_id
         self.doctor_id = doctor_id
         self.duration = duration
         self.cause = cause
         self.cancelled = cancelled
+        this.google_event_id = google_event_id
 
     def __repr__(self):
         """ for cli output"""
@@ -155,6 +157,7 @@ class ConsultationSchema(ma.Schema):
     duration = fields.Int(dump_only=True)
     cause = fields.Str(dump_only=True)
     cancelled = fields.Bool(dump_only=True)
+    google_event_id = fields.Int(dump_only=True)
 
 
 class FullConsultationSchema(ma.Schema):
@@ -165,6 +168,7 @@ class FullConsultationSchema(ma.Schema):
     duration = fields.Int(dump_only=True)
     cause = fields.Str(dump_only=True)
     cancelled = fields.Bool(dump_only=True)
+    google_event_id = fields.Int(dump_only=True)
     consultation_details = fields.Nested(ConsultationDetailsSchema, many=True)
 
 

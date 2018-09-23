@@ -46,10 +46,9 @@ def create_consultation():
     duration = request.json['duration']
     cause = request.json['cause']
     cancelled = request.json['cancelled']
-    consultation_details = request.json['consultation_details']
+    google_event_id = request.json['google_event_id']
 
-    new_consultation = Consultation(appointment, patient_id, doctor_id, duration, cause, cancelled,
-                                    consultation_details)
+    new_consultation = Consultation(appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
     db.session.add(new_consultation)
     db.session.commit()
     return consultation_detail_schema.jsonify(new_consultation)
