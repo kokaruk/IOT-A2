@@ -178,7 +178,6 @@ class Doctor(db.Model):
     calendar_id = db.Column(db.String(120), nullable=True)
     consultations = db.relationship("Consultation", lazy='dynamic')
 
-    # todo make optional params for init
     def __init__(self, first_name, second_name, last_name, email, calendar_id, specialization="GP"):
         self.first_name = first_name
         self.second_name = second_name
