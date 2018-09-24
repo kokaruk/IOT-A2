@@ -128,3 +128,9 @@ def calendar():
     doctor = read_text_file(PATH_DOCTOR)
 
     return render_template('calendar.html', title='calendar', doctor=doctor)
+
+
+@app.route("/statistics")
+def statistics():
+    """Rendering statistics for clerk"""
+    return render_template('statistics.html')
