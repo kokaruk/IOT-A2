@@ -142,7 +142,7 @@ class Consultation(db.Model):
         self.duration = duration
         self.cause = cause
         self.cancelled = cancelled
-        this.google_event_id = google_event_id
+        self.google_event_id = google_event_id
 
     def __repr__(self):
         """ for cli output"""
