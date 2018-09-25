@@ -50,8 +50,8 @@ class BookingForm(FlaskForm):
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
-    patient_id = SelectField('Please select patient', choices=[], validators=[InputRequired()])
-    doctor_id = SelectField('Please select doctors', choices=[], validators=[InputRequired()])
+    patient_id = SelectField('Please select patient', choices=[], coerce=int, validators=[InputRequired()])
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
     reason = SelectField('Please select reason for doctors Visit',
                          choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
                                   ('2', 'Serious illness - e.g. flu'),

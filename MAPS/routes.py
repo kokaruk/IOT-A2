@@ -11,34 +11,31 @@ PATH_DOCTOR = "MAPS/credentials/doctor.txt"
 API_URL = "http://127.0.0.1:5000/api/"
 
 
-def get_patients():
-    patients = requests.get(f"{API_URL}patients")
-    json_data = json.loads(patients.text)
+def get_user(user_type):
+    if user_type == "patient":
+
+        user = requests.get(f"{API_URL}patients")
+    else:
+        user = requests.get(f"{API_URL}doctors")
+
+    json_data = json.loads(user.text)
 
     list_id = []
     list_name = []
+    list_email = []
 
     for value in json_data:
         list_id.append(value['id'])
-        list_name.append(f"{value['first_name']} {value['second_name']} {value['last_name']}")
+        list_email.append(f"{value['email']}")
+        if user_type == "patient":
+            list_name.append(f"{value['first_name']} {value['second_name']} {value['last_name']}")
+        else:
+            list_name.append(f"Dr. {value['last_name']}")
 
     tuple_id_name = list(zip(list_id, list_name))
-    return tuple_id_name
+    tuple_emails = list(zip(list_id, list_email))
 
-
-def get_doctors():
-    doctors = requests.get(f"{API_URL}doctors")
-    json_data = json.loads(doctors.text)
-
-    list_id = []
-    list_name = []
-
-    for value in json_data:
-        list_id.append(value['id'])
-        list_name.append(f"Dr. {value['last_name']}")
-
-    tuple_id_name = list(zip(list_id, list_name))
-    return tuple_id_name
+    return tuple_id_name, tuple_emails
 
 @app.route("/")
 @app.route("/home")
@@ -119,56 +116,66 @@ def consultation():
         print(err)
 
 
-
 @app.route("/booking", methods=['GET', 'POST'])
 # TODO get POST Method to POST to API
 def booking():
     """Rendering consultation booking page and post to database API and to google calender method """
     try:
         form = BookingForm()
-        patients = get_patients()
-        form.patient_id.choices = patients
+        patients = get_user("patient")
+        patients_id_name = patients[0]  # contains tuples of patient id and names
+        patients_id_email = patients[1]  # contains tuples of patient id and emails
 
-        doctors = get_doctors()
-        form.doctor_id.choices = doctors
+        form.patient_id.choices = patients_id_name
+
+        doctors = get_user("doctor")
+        doctors_id_name = doctors[0]  # contains tuples of patient id and names
+        doctors_id_email = doctors[1]  # contains tuples of patient id and emails
+
+        form.doctor_id.choices = doctors_id_name
 
         if form.validate_on_submit():
             if request.method == 'POST':
+
+                google_calendar = gc_api()
+
+                chosen_doctor_id = form.doctor_id.data
+                chosen_patient_id = form.patient_id.data
+
+                index_reason = int(form.reason.data)
+                reason = form.reason.choices[index_reason][1]
+
+                patient_name = dict(patients_id_name)[chosen_patient_id]
+                doctor_email = dict(doctors_id_email)[chosen_doctor_id]
+                patient_email = dict(patients_id_email)[chosen_patient_id]
+
+                title = f"Patient: { patient_name }Issue : {reason}"
+                date = concat_date_time(form.date.data, form.start.data)
+                google_event_id = google_calendar.insert_calendar_entry(title=title, date=date,
+                                                                        patient_email=patient_email,
+                                                                        doctor_email=doctor_email,
+                                                                        doctor_id=chosen_doctor_id,
+                                                                        duration=CONSULTATION_DURATION)
+
                 consultation = {"appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
-                                "patient_id": form.patient_id.data,
-                                "doctor_id": form.doctor_id.data,
+                                "patient_id": chosen_patient_id,
+                                "doctor_id": chosen_doctor_id,
                                 "duration": str(CONSULTATION_DURATION),
                                 "cause": form.reason.data,
-                                "cancelled": form.cancelled.data
+                                "cancelled": form.cancelled.data,
+                                'google_event_id': google_event_id
                                 }
                 print(consultation)
+
                 URL = f"{API_URL}consultations"
 
                 api_response = requests.post(url=URL, json=consultation)
                 if api_response.status_code != 200:
-                    google_calendar = gc_api()
-
-                    index_reason = int(form.reason.data)
-                    reason = form.reason.choices[index_reason][1]
-
-                    index_doctor = int(form.doctor_id.data)
-                    doctor = form.doctor_name.choices[index_doctor][1]
-
-                    #  TODO Smarter way to transfer the chosen doctor to the calendar entry creation
-                    write_text_file(PATH_DOCTOR, doctor)
-
-                    title = f"Patient: {form.patient_name.data} Issue : {reason}"
-                    date = concat_date_time(form.date.data, form.start.data)
-                    google_event_id = google_calendar.insert_calendar_entry(title=title, date=date,
-                                                                            patient_email="fightme1984@gmail.com",
-                                                                            doctor_email="akbar.dakbar@shojiido.de",
-                                                                            doctor=doctor, duration=CONSULTATION_DURATION)
-
-                    flash(f'Appointment No. {google_event_id} with was successfully created!', 'success')
-
+                    flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
                     return redirect(url_for('calendar'))
                 else:
-                    flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
+                    flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
+                          'success')
             return redirect(url_for('consultation'))
         return render_template('booking.html', title='Consultation Booking', form=form)
     except Exception as err:

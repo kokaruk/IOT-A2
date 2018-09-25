@@ -45,7 +45,7 @@ service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
 
 class GoogleCalendarAPI:
 
-    def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor, duration):
+    def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor_id, duration):
 
         start = format_datetime_str(date)
         end = date + timedelta(minutes=duration)
@@ -81,14 +81,10 @@ class GoogleCalendarAPI:
             doctor = requests.get(f"{API_URL}doctors")
             json_data = json.loads(doctor.text)
             for doctor in json_data:
-                if doctor['id_number'] == doctor:
+                if doctor['id'] == doctor_id:
                     event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
                     print('Event created: {}'.format(event.get('htmlLink')))
-
-                    URL = f"{API_URL}consulation_event_id"
-                    api_response = requests.post(url=URL, json=event)
-
-                    break
+                    return event.get('id')
         except Exception as err:
             # TODO better Exception handling
             print(err)
