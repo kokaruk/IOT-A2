@@ -23,7 +23,8 @@ def get_consultation(id):
 # Get all consultations for a particular doctor
 @bp.route('/consultations/doctors/<int:id>', methods=['GET'])
 def get_consultations_doctor(id):
-    all_consultations_for_a_doctor = Consultation.query.filter(Consultation.doctor_id == id).all()
+    all_consultations_for_a_doctor = Consultation.query.filter(
+        Consultation.doctor_id == id).all()
     result = consultations_schema.dump(all_consultations_for_a_doctor)
     return jsonify(result.data)
 
@@ -31,7 +32,8 @@ def get_consultations_doctor(id):
 # Get all consultations for a particular patient
 @bp.route('/consultations/patients/<int:id>', methods=['GET'])
 def get_consultations_patient(id):
-    all_consultations_for_a_patient = Consultation.query.filter(Consultation.patient_id == id).all()
+    all_consultations_for_a_patient = Consultation.query.filter(
+        Consultation.patient_id == id).all()
     result = consultations_schema.dump(all_consultations_for_a_patient)
     return jsonify(result.data)
 
@@ -48,10 +50,11 @@ def create_consultation():
     cancelled = request.json['cancelled']
     google_event_id = request.json['google_event_id']
 
-    new_consultation = Consultation(appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
+    new_consultation = Consultation(
+        appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
     db.session.add(new_consultation)
     db.session.commit()
-    return consultation_detail_schema.jsonify(new_consultation)
+    return consultation_schema.jsonify(new_consultation)
 
 
 # Delete a consultation by id
@@ -74,6 +77,40 @@ def create_consultation_detail(id):
     consultation_detail = ConsultationDetails(consultation_id, description, additional_notes,
                                               symptoms, diagnosis, actual_start, actual_end)
     db.session.add(consultation_detail)
+    db.session.commit()
+    return consultation_detail_schema.jsonify(consultation_detail)
+
+
+@bp.route('/consultations/details/<int:id>', methods=['POST'])
+def edit_consultation_detail(id):
+    # get updated information from body
+
+    consultation_detail = ConsultationDetails.query.get(id)
+
+    description = request.json['description']
+    if description is not None:
+        consultation_detail.description = description
+
+    additional_notes = request.json['additional_notes']
+    if additional_notes is not None:
+        consultation_detail.additional_notes = additional_notes
+
+    symptoms = request.json['symptoms']
+    if symptoms is not None:
+        consultation_detail.symptoms = symptoms
+
+    diagnosis = request.json['diagnosis']
+    if diagnosis is not None:
+        consultation_detail.diagnosis = diagnosis
+
+    actual_start = request.json['actual_start']
+    if actual_start is not None:
+        consultation_detail.actual_start = actual_start
+
+    actual_end = request.json['actual_end']
+    if actual_end is not None:
+        consultation_detail.actual_end = actual_end
+
     db.session.commit()
     return consultation_detail_schema.jsonify(consultation_detail)
 
