@@ -63,11 +63,25 @@ def delete_consultation(id):
     pass
 
 
+# Get all consultations for a particular doctor
+@bp.route('/consultations/details/<int:id>', methods=['GET'])
+def get_consultation_detail(id):
+    consultation_detail = ConsultationDetails.query.get(id)
+    result = consultation_detail_schema.dump(consultation_detail)
+    return jsonify(result.data)
+
+
 # Create a consultationDetail for a particular consultation
-@bp.route('/consultations/details/<int:id>', methods=['POST'])
-def create_consultation_detail(id):
+@bp.route('/consultations/details', methods=['POST'])
+def create_consultation_detail():
     # get updated information from body
     consultation_id = request.json['consultation_id']
+    # limit notes to one per consultation
+    all_details = ConsultationDetails.query.filter(
+        ConsultationDetails.consultation_id == consultation_id).all()
+    if len(all_details) > 0:
+        return get_consultation_detail(all_details[0].id)
+
     description = request.json['description']
     additional_notes = request.json['additional_notes']
     symptoms = request.json['symptoms']
@@ -81,41 +95,37 @@ def create_consultation_detail(id):
     return consultation_detail_schema.jsonify(consultation_detail)
 
 
-@bp.route('/consultations/details/<int:id>', methods=['POST'])
+@bp.route('/consultations/details/<int:id>', methods=['PUT'])
 def edit_consultation_detail(id):
     # get updated information from body
-
     consultation_detail = ConsultationDetails.query.get(id)
-
     description = request.json['description']
-    if description is not None:
-        consultation_detail.description = description
+    consultation_detail.description = description
 
     additional_notes = request.json['additional_notes']
-    if additional_notes is not None:
-        consultation_detail.additional_notes = additional_notes
+    consultation_detail.additional_notes = additional_notes
 
     symptoms = request.json['symptoms']
-    if symptoms is not None:
-        consultation_detail.symptoms = symptoms
+    consultation_detail.symptoms = symptoms
 
     diagnosis = request.json['diagnosis']
-    if diagnosis is not None:
-        consultation_detail.diagnosis = diagnosis
+    consultation_detail.diagnosis = diagnosis
 
     actual_start = request.json['actual_start']
-    if actual_start is not None:
-        consultation_detail.actual_start = actual_start
+    consultation_detail.actual_start = actual_start
 
     actual_end = request.json['actual_end']
-    if actual_end is not None:
-        consultation_detail.actual_end = actual_end
+    consultation_detail.actual_end = actual_end
 
     db.session.commit()
     return consultation_detail_schema.jsonify(consultation_detail)
 
 
-# Delete a consultationDetail
+# Delete a consultationDetail and return the whole consultation
 @bp.route('/consultations/details/<int:id>', methods=['DELETE'])
 def delete_consultation_detail(id):
-    pass
+    consultation_detail = ConsultationDetails.query.get(id)
+    consultation = Consultation.query.get(consultation_detail.consultation_id)
+    db.session.delete(consultation_detail)
+    db.session.commit()
+    return consultation_schema.jsonify(consultation)
