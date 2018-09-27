@@ -149,33 +149,37 @@ def booking():
                 doctor_email = dict(doctors_id_email)[chosen_doctor_id]
                 patient_email = dict(patients_id_email)[chosen_patient_id]
 
-                title = f"Patient: { patient_name }Issue : {reason}"
-                date = concat_date_time(form.date.data, form.start.data)
-                google_event_id = google_calendar.insert_calendar_entry(title=title, date=date,
-                                                                        patient_email=patient_email,
-                                                                        doctor_email=doctor_email,
-                                                                        doctor_id=chosen_doctor_id,
-                                                                        duration=CONSULTATION_DURATION)
+                if form.create.data is True:
+                    title = f"Patient: { patient_name }Issue : {reason}"
+                    date = concat_date_time(form.date.data, form.start.data)
+                    google_event_id = google_calendar.insert_calendar_entry(title=title, date=date,
+                                                                            patient_email=patient_email,
+                                                                            doctor_email=doctor_email,
+                                                                            doctor_id=chosen_doctor_id,
+                                                                            duration=CONSULTATION_DURATION)
 
-                consultation = {"appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
-                                "patient_id": chosen_patient_id,
-                                "doctor_id": chosen_doctor_id,
-                                "duration": str(CONSULTATION_DURATION),
-                                "cause": form.reason.data,
-                                "cancelled": form.cancelled.data,
-                                'google_event_id': google_event_id
-                                }
-                print(consultation)
+                    consultation = {
+                        "appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
+                        "patient_id": chosen_patient_id,
+                        "doctor_id": chosen_doctor_id,
+                        "duration": str(CONSULTATION_DURATION),
+                        "cause": form.reason.data,
+                        "cancelled": form.cancelled.data,
+                        'google_event_id': google_event_id
+                        }
+                    print(consultation)
 
-                URL = f"{API_URL}consultations"
+                    URL = f"{API_URL}consultations"
 
-                api_response = requests.post(url=URL, json=consultation)
-                if api_response.status_code != 200:
-                    flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
-                    return redirect(url_for('calendar'))
-                else:
-                    flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
-                          'success')
+                    api_response = requests.post(url=URL, json=consultation)
+                    if api_response.status_code != 200:
+                        flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
+                        return redirect(url_for('calendar'))
+                    else:
+                        flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
+                              'success')
+                elif form.delete.data is True:
+                    flash(f'Appointment', 'success')
             return redirect(url_for('consultation'))
         return render_template('booking.html', title='Consultation Booking', form=form)
     except Exception as err:

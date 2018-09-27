@@ -59,4 +59,5 @@ class BookingForm(FlaskForm):
                                   ('0', 'unknown')], validators=[DataRequired()])
     cancelled = BooleanField('Cancelled Appointment')
 
-    submit = SubmitField('Book Consultation')
+    create = SubmitField('Book Consultation')
+    delete = SubmitField('Delete Consulation')
