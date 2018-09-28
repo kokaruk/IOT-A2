@@ -12,7 +12,7 @@ consultation_detail_schema = ConsultationDetailsSchema()
 consultation_details_schema = ConsultationDetailsSchema(many=True)
 
 
-# Get all consultations for a particular doctor
+# Get all consultations for a particular id
 @bp.route('/consultations/<int:id>', methods=['GET'])
 def get_consultation(id):
     consultation = Consultation.query.get(id)
@@ -51,7 +51,16 @@ def create_consultation():
     new_consultation = Consultation(appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
     db.session.add(new_consultation)
     db.session.commit()
-    return consultation_detail_schema.jsonify(new_consultation)
+    return consultations_schema.jsonify(new_consultation)
+
+
+# Update a calendar_cancelled status by id
+@bp.route('/consultations/<int:id>', methods=['PUT'])
+def update_consultation(id):
+    consultation = Consultation.query.get(id)
+    consultation.cancelled = request.json['cancelled']
+    db.session.commit()
+    return consultations_schema.jsonify(consultation)
 
 
 # Delete a consultation by id

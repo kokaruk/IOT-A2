@@ -157,7 +157,7 @@ class ConsultationSchema(ma.Schema):
     duration = fields.Int(dump_only=True)
     cause = fields.Str(dump_only=True)
     cancelled = fields.Bool(dump_only=True)
-    google_event_id = fields.Int(dump_only=True)
+    google_event_id = fields.Str(dump_only=True)
 
 
 class FullConsultationSchema(ma.Schema):
@@ -168,7 +168,7 @@ class FullConsultationSchema(ma.Schema):
     duration = fields.Int(dump_only=True)
     cause = fields.Str(dump_only=True)
     cancelled = fields.Bool(dump_only=True)
-    google_event_id = fields.Int(dump_only=True)
+    google_event_id = fields.Str(dump_only=True)
     consultation_details = fields.Nested(ConsultationDetailsSchema, many=True)
 
 

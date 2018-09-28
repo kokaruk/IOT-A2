@@ -44,18 +44,18 @@ service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
 
 
 class GoogleCalendarAPI:
-
+    """ Purpose of this class is to manage the access calls to the google calendar API"""
     def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor_id, duration):
-
+        """ This method calls google API for creating Events based on the entries from the Users"""
+        # Formatting times for appointment
         start = format_datetime_str(date)
         end = date + timedelta(minutes=duration)
         end = format_datetime_str(end)
 
+        #building message body
         event = {
             'summary': title,
-
             'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
-            'description': 'Adding new IoT event',
             'start': {
                 'dateTime': str(start),
                 'timeZone': 'Australia/Melbourne',
@@ -77,24 +77,25 @@ class GoogleCalendarAPI:
             }
         }
         try:
-            # TODO Test if drawing calendar from DB works once API is established.
             doctor = requests.get(f"{API_URL}doctors")
             json_data = json.loads(doctor.text)
             for doctor in json_data:
                 if doctor['id'] == doctor_id:
+                    #sending the post recuest to google calendars
                     event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
                     print('Event created: {}'.format(event.get('htmlLink')))
+                    #returning googles event id
                     return event.get('id')
         except Exception as err:
             # TODO better Exception handling
             print(err)
 
-    def delete_calendar_entry(self, calendar_id, event_id):
+    def delete_calendar_entry(self, google_calendar_id, google_event_id):
         """NOT READY YET """
         # TODO Implement delete - issue how to get event ID
         try:
-            delete = service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
-            if delete.status_code == 200:
+            delete = service.events().delete(calendarId=google_calendar_id, eventId=google_event_id).execute()
+            if delete is None:
                 flash(f'Event {event_id} sucessfully deleted', 'success')
             else:
                 flash(f'Event {event_id} not deleted, reason: {delete.reason} please try again!', 'danger')
