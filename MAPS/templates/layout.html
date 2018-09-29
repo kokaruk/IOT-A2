@@ -11,7 +11,6 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-
     {% if title %}
     <title>MAPS - {{ title }}</title>
     {% else %}
@@ -31,53 +30,29 @@
                 <div class="navbar-nav mr-auto">
                     <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
                     <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
+                    {% if request.url_rule.rule == "/home" or request.url_rule.rule == "/about" or request.url_rule.rule
+                    == "/" %}
+                    <a class="nav-item nav-link" href="{{ url_for('patient') }}">Patient</a>
+                    <a class="nav-item nav-link" href="{{ url_for('clerk') }}">Clerk</a>
+                    <a class="nav-item nav-link" href="{{ url_for('doctor') }}">Doctor</a>
+                    {% elif request.url_rule.rule == "/patient" or request.url_rule.rule == "/register" or
+                    request.url_rule.rule == "/booking" %}
+                    <a class="nav-item nav-link" href="{{ url_for('patient') }}">Patient</a>
                     <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
-                    <a class="nav-item nav-link" href="{{ url_for('consultation') }}">Consultation</a>
-                    <div class="dropdown">
-                        <button class="btn btn-default bg-steel nav-item nav-link dropdown-toggle" type="button"
-                                id="dropdownMenu"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Medical Clerk Area
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu bg-steel" aria-label="Toggle navigation">
-                            <li><a class="nav-item nav-link" href="{{ url_for('calendar') }}">Weekly Overview</a></li>
-                            <li><a class="nav-item nav-link" href="{{ url_for('consultation_bookings') }}">Bookings per
-                                Doctor</a></li>
-                            <li><a class="nav-item nav-link" href="#">Statistics</a></li>
-                            <li><a class="nav-item nav-link" href="{{ url_for('booking') }}">Book/Delete
-                                Consultation</a></li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-default bg-steel nav-item nav-link dropdown-toggle" type="button"
-                                id="dropdownMenu1"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Doctors Area
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu bg-steel" aria-label="Toggle navigation">
-                            <li><a class="nav-item nav-link" href="#">Appointment Overview</a></li>
-                            <li><a class="nav-item nav-link" href="{{ url_for('consultation') }}">Consultation Notes</a>
-                            </li>
-                            <li><a class="nav-item nav-link" href="{{ url_for('booking') }}">Book/Delete
-                                Consultation</a></li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-default bg-steel nav-item nav-link dropdown-toggle" type="button"
-                                id="dropdownMenu2"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Patient Area
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu bg-steel" aria-label="Toggle navigation">
-                            <li><a class="nav-item nav-link" href="#">Receiption</a></li>
-                            <li><a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a></li>
-                            <li><a class="nav-item nav-link" href="{{ url_for('booking') }}">Book/Delete
-                                Consultation</a></li>
-                        </ul>
-                    </div>
+                    <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
+                    {% elif request.url_rule.rule == "/calendar" or request.url_rule.rule == "/calendar" or
+                    request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" %}
+                    <a class="nav-item nav-link" href="{{ url_for('clerk') }}">Clerk</a>
+                    <a class="nav-item nav-link" href="{{ url_for('calendar') }}">Calendar</a>
+                    <a class="nav-item nav-link" href="{{ url_for('consultation_bookings') }}">BookingList</a>
+                    <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
+                    <a class="nav-item nav-link" href="#">Statistics</a>
+                    {% elif request.url_rule.rule == "/doctor" or request.url_rule.rule == "/consultation"
+                    or request.url_rule.rule == "/schedule" %}
+                    <a class="nav-item nav-link" href="{{ url_for('doctor') }}">Doctor</a>
+                    <a class="nav-item nav-link" href="{{ url_for('consultation') }}">Consultation Notes</a>
+                    <a class="nav-item nav-link" href="{{ url_for('schedule') }}">Weekly Schedule</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

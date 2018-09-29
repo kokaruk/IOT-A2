@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect, request
-from MAPS.forms import RegistrationForm, ConsultationForm, BookingForm, ConsultationBookings
+from MAPS.forms import RegistrationForm, ConsultationForm, BookingForm, ConsultationBookings, ScheduleBookingForm
 from MAPS import app
 from MAPS.utils import concat_date_time, read_text_file, format_datetime_str
 from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
@@ -52,7 +52,7 @@ def get_user(user_type):
 @app.route("/home")
 def home():
     """Rendering homepage"""
-    return render_template('home.html')
+    return render_template('home.html', title='Home')
 
 
 @app.route("/about")
@@ -60,6 +60,40 @@ def about():
     """Rendering about page"""
     return render_template('about.html', title='About')
 
+
+@app.route("/patient")
+def patient():
+    """Rendering welcome page for patients"""
+    return render_template('patient.html', title='Patient')
+
+
+@app.route("/clerk")
+def clerk():
+    """Rendering welcome page for clerks"""
+    return render_template('clerk.html', title='Clerk')
+
+
+@app.route("/doctor")
+def doctor():
+    """Rendering welcome page for doctor"""
+    return render_template('doctor.html', title='Doctor')
+
+
+@app.route("/schedule", methods=['GET', 'POST'])
+def schedule():
+    """Rendering Schedule Page for weekly schedule of doctors"""
+    form = ScheduleBookingForm()
+    doctors = get_user("doctor")
+
+    # TODO Find a way to store globally
+    doctors_id_name = doctors[0]  # contains tuples of doctor id and names
+
+    # passing the tuples for doctor over to forms for access on View
+    form.doctor_id.choices = doctors_id_name
+
+    schedule_dict = {"doctor_id": form.doctor_id.data}
+
+    return render_template('schedule.html', title='Schedule', form=form)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -103,7 +137,7 @@ def register():
 
 @app.route("/consultation", methods=['GET', 'POST'])
 def consultation():
-    #TODO Test if this works
+    # TODO Test if this works
     """Rendering patient consultation details page and post to database API """
     try:
         form = ConsultationForm()
@@ -144,7 +178,7 @@ def booking():
         form = BookingForm()
 
         # TODO Find a way to store globally
-        # gettig a list of patient_id and name tuples for the dynamic selectfield
+        # getting a list of patient_id and name tuples for the dynamic selectfield
         patients = get_user("patient")
         patients_id_name = patients[0]  # contains tuples of patient id and names
         patients_id_email = patients[1]  # contains tuples of patient id and emails
@@ -152,33 +186,31 @@ def booking():
         # passing the tuples for patient over to forms for access on View
         form.patient_id.choices = patients_id_name
 
-        #gettig a list of doctorid and name tuples for the dynamic selectfield
+        # gettig a list of doctorid and name tuples for the dynamic selectfield
         doctors = get_user("doctor")
         # TODO Find a way to store globally
         doctors_id_name = doctors[0]  # contains tuples of patient id and names
         doctors_id_email = doctors[1]  # contains tuples of patient id and emails
 
-        #passing the tuples for doctor over to forms for access on View
+        # passing the tuples for doctor over to forms for access on View
         form.doctor_id.choices = doctors_id_name
 
         # getting a list of doctorid and name tuples for the dynamic selectfield
         form.reason.choices = choices_reason
 
-
         if form.validate_on_submit():
             if request.method == 'POST':
 
-                #instatiating google API class
+                # instatiating google API class
                 google_calendar = gc_api()
 
-                #retrieve the selected doctor and patient id from forms
+                # retrieve the selected doctor and patient id from forms
                 chosen_doctor_id = form.doctor_id.data
                 chosen_patient_id = form.patient_id.data
 
-                #retrieve the selected reason for visit
+                # retrieve the selected reason for visit
                 index_reason = int(form.reason.data)
                 reason = form.reason.choices[index_reason][1]
-
 
                 patient_name = dict(patients_id_name)[chosen_patient_id]
                 doctor_email = dict(doctors_id_email)[chosen_doctor_id]
@@ -228,7 +260,7 @@ def booking():
 @app.route("/calendar")
 def calendar():
     """Posting and rendering embedded google calender API  """
-    #TODO needs overwork to post the correct calendar API
+    # TODO needs overwork to post the correct calendar API
     doctor = read_text_file(PATH_DOCTOR)
 
     return render_template('calendar.html', title='calendar', doctor=doctor)
@@ -248,7 +280,7 @@ def consultation_booking(booking_id):
     # TODO Find a way to store globally
     patients = get_user("patient")
     patients_id_name = patients[0]
-    
+
     # TODO Better way to show date time
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
                            cause=dict(choices_reason),
