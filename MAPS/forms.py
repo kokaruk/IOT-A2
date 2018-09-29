@@ -50,13 +50,15 @@ class BookingForm(FlaskForm):
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
-    patient_id = SelectField('Please select patient', choices=[], validators=[InputRequired()])
-    doctor_id = SelectField('Please select doctors', choices=[], validators=[InputRequired()])
-    reason = SelectField('Please select reason for doctors Visit',
-                         choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
-                                  ('2', 'Serious illness - e.g. flu'),
-                                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'),
-                                  ('0', 'unknown')], validators=[DataRequired()])
+    patient_id = SelectField('Please select patient', choices=[], coerce=int, validators=[InputRequired()])
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
+    reason = SelectField('Please select reason for doctors Visit', choices=[], coerce=int, validators=[DataRequired()])
     cancelled = BooleanField('Cancelled Appointment')
 
-    submit = SubmitField('Book Consultation')
+    create = SubmitField('Book Consultation')
+    delete = SubmitField('Delete Consulation')
+
+
+class ConsultationBookings(FlaskForm):
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    search = SubmitField('Search Appointments')
