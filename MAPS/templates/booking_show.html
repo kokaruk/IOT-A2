@@ -3,7 +3,9 @@
 <div class="content-section">
     <fieldset class="form-group">
         <legend class="border-bottom mb-4">Consultation Booking No {{ booking.id }}
-            <small class="text-muted">{{ booking.appointment }}</small>
+            <small class="text-muted">{{ booking.appointment.strftime("%d-%m-%Y") }} from {{
+                booking.appointment.strftime("%H:%M") }} until {{ end.strftime("%H:%M") }}
+            </small>
         </legend>
         <div>
             <h2 class="article-title">Doctor: {{ doctor_name[booking.doctor_id] }} </a></h2>

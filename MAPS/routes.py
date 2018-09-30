@@ -5,10 +5,13 @@ from MAPS.utils import concat_date_time, read_text_file, format_datetime_str
 from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
 import requests
 import json
+from datetime import timedelta, datetime
 
 CONSULTATION_DURATION = 20
 PATH_DOCTOR = "MAPS/credentials/doctor.txt"
+# base_url = request.host_url
 API_URL = "http://127.0.0.1:5000/api/"
+FORMAT_JSON_DATE_STRING = '%Y-%m-%dT%H:%M:%S%z'
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
 choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
@@ -273,6 +276,12 @@ def consultation_booking(booking_id):
     booking = requests.get(f"{API_URL}consultations/{booking_id}")
     consultation_booking = json.loads(booking.text)
 
+    # Bringing json string of date to datetime
+    consultation_booking['appointment'] = datetime.strptime(consultation_booking['appointment'],
+                                                            FORMAT_JSON_DATE_STRING)
+    # Adding an end time for it
+    consultation_end = consultation_booking['appointment'] + timedelta(minutes=CONSULTATION_DURATION)
+
     # TODO Find a way to store globally
     doctors = get_user("doctor")
     doctors_id_name = doctors[0]
@@ -281,15 +290,17 @@ def consultation_booking(booking_id):
     patients = get_user("patient")
     patients_id_name = patients[0]
 
+
     # TODO Better way to show date time
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
                            cause=dict(choices_reason),
-                           doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name))
+                           doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end)
 
 
 @app.route("/consultation_bookings", methods=['POST', 'GET'])
 def consultation_bookings():
     """ Showing the list of all consulation bookings - filter by doctor"""
+
 
     form = ConsultationBookings()
 
@@ -308,6 +319,13 @@ def consultation_bookings():
         consultation_bookings = requests.get(f"{API_URL}consultations/doctors/{chosen_doctor_id}")
 
     bookings = json.loads(consultation_bookings.text)
+
+    # Bringing json string of date to datetime
+    for booking in bookings:
+        booking_date = booking['appointment']
+        booking['appointment'] = datetime.strptime(booking_date, FORMAT_JSON_DATE_STRING)
+        # Adding an end time for it
+        booking['appointment_end'] = booking['appointment'] + timedelta(minutes=CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     patients = get_user("patient")
