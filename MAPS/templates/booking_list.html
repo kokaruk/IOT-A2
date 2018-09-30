@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    <div class="form-group">
+        {{ form.doctor_id.label(class="form-control-label") }}
+        {% if form.doctor_id.errors %}
+        {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
+        <div class="invalid-feedback">
+            {% for error in form.doctor_id.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        {{ form.doctor_id(class="form-control form-control-lg") }}
+        {% endif %}
+        <div class="form-group">
+            {{ form.search(class="btn btn-outline-info") }}
+        </div>
+    </div>
+</form>
+{% for bookings in bookings %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-4" href="{{ url_for('consultation_booking', booking_id=bookings.id) }}">Consultation Booking
+                No. {{ bookings.id }}</a>
+            <small class="text-muted">{{ bookings.appointment }}</small>
+        </div>
+        <h2><a class="article-title" href="#"> Patient {{ patients_name[bookings.patient_id] }}</a></h2>
+        <p class="article-content">Reason for visit: {{ cause[bookings.cause] }}</p>
+    </div>
+</article>
+{% endfor %}
+{% endblock content %}
