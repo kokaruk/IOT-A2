@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField
 from wtforms.validators import DataRequired, Length, Email, InputRequired
-
+import datetime
 
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name',
@@ -62,3 +62,22 @@ class BookingForm(FlaskForm):
 class ConsultationBookings(FlaskForm):
     doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
     search = SubmitField('Search Appointments')
+
+
+class ScheduleBookingForm(FlaskForm):
+    now = datetime.datetime.now()
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
+    year = StringField('Please choose year', default=f"{now.year}")
+    calendar_week = StringField('Please choose year',
+                                default=datetime.date(now.year, now.month, now.day).strftime("%V"))
+    monday_morning = BooleanField('Monday Morning')
+    monday_afternoon = BooleanField('Monday Afternoon')
+    tuesday_morning = BooleanField('Tuesday Morning')
+    tuesday_afternoon = BooleanField('Tuesday Afternoon')
+    wednesday_morning = BooleanField('Wednesday Morning')
+    wednesday_afternoon = BooleanField('Wednesday Afternoon')
+    thursday_morning = BooleanField('Thursday Morning')
+    thursday_afternoon = BooleanField('Thursday Afternoon')
+    friday_morning = BooleanField('Friday Morning')
+    friday_afternoon = BooleanField('Friday Afternoon')
+    create_week = SubmitField('Book Availabilites')
