@@ -269,9 +269,10 @@ def add_referral_to_patient(patient_id):
     :param patient_id:
     :return: Referral JSON object for patient.
     """
-    referral = request.json['referral']
     consultation_details_id = request.json['consultation_details_id']
-    new_referral = Referral(patient_id, referral, consultation_details_id)
+    procedure_name = request.json['procedure_name']
+    referred_practitioner = request.json['referred_practitioner']
+    new_referral = Referral(patient_id, consultation_details_id, procedure_name, referred_practitioner)
     db.session.add(new_referral)
     db.session.commit()
     return referral_schema.jsonify(new_referral)

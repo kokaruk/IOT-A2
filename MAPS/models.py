@@ -10,9 +10,8 @@ class Referral(db.Model):
     procedure_name = db.Column(db.String(120))
     referred_practitioner = db.Column(db.String(120))
 
-    def __init__(self, patient_id, medication, consultation_details_id, procedure_name, referred_practitioner):
+    def __init__(self, patient_id, consultation_details_id, procedure_name, referred_practitioner):
         self.patient_id = patient_id
-        self.medication = medication
         self.consultation_details_id = consultation_details_id
         self.procedure_name = procedure_name
         self.referred_practitioner = referred_practitioner
