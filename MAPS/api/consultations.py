@@ -2,11 +2,10 @@ from flask import jsonify, request
 from MAPS.api import bp
 from MAPS.api.errors import bad_request
 from MAPS import db
-from MAPS.models import Consultation, ConsultationDetails, ConsultationSchema, FullConsultationSchema, \
-    ConsultationDetailsSchema
+from MAPS.models import Consultation, ConsultationDetails, FullConsultationSchema, ConsultationDetailsSchema
 
 consultation_schema = FullConsultationSchema()
-consultations_schema = ConsultationSchema(many=True)
+consultations_schema = FullConsultationSchema(many=True)
 
 consultation_detail_schema = ConsultationDetailsSchema()
 consultation_details_schema = ConsultationDetailsSchema(many=True)
@@ -54,13 +53,15 @@ def create_consultation():
         appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
     db.session.add(new_consultation)
     db.session.commit()
+
+
 # Update a calendar_cancelled status by id
 @bp.route('/consultations/<int:id>', methods=['PUT'])
 def update_consultation(id):
     consultation = Consultation.query.get(id)
     consultation.cancelled = request.json['cancelled']
     db.session.commit()
-    return consultations_schema.jsonify(consultation)
+    return consultation_schema.jsonify(consultation)
 
 
 # Delete a consultation by id
@@ -93,6 +94,7 @@ def create_consultation_detail():
     diagnosis = request.json['diagnosis']
     actual_start = request.json['actual_start']
     actual_end = request.json['actual_end']
+
     consultation_detail = ConsultationDetails(consultation_id, description, additional_notes,
                                               symptoms, diagnosis, actual_start, actual_end)
     db.session.add(consultation_detail)

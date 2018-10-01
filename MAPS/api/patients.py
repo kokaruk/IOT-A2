@@ -205,3 +205,104 @@ def delete_condition(patient_id):
     all_conditions_for_patient = Condition.query.filter(Condition.patient_id == patient_id).all()
     result = conditions_schema.dump(all_conditions_for_patient)
     return jsonify(result.data)
+
+
+# Medical Certificate
+
+# Add a medical certificate for a patient
+@bp.route("/patients/<int:patient_id>/certificates", methods=["POST"])
+def add_medical_certificate_to_patient(patient_id):
+    """
+        This route takes a patient id, and medical certificate JSON object from the request to add a condition for a
+        patient.
+    :param patient_id:
+    :return: Medical certificate JSON object for patient.
+    """
+    certificate = request.json['certificate']
+    consultation_details_id = request.json['consultation_details_id']
+    new_medical_certificate = MedicalCertificate(patient_id, consultation_details_id, certificate)
+    db.session.add(new_medical_certificate)
+    db.session.commit()
+    return medical_certificate_schema.jsonify(new_medical_certificate)
+
+
+# Get all medical certificates for patient by id
+@bp.route("/patients/<int:patient_id>/certificates", methods=["GET"])
+def get_all_medical_certificate_for_patient(patient_id):
+    """
+        This route takes a patient id to return all the medical certificates for a patient.
+    :param patient_id:
+    :return: JSON array of medical certificate for a patient.
+    """
+    all_medical_certificates_for_patient = MedicalCertificate.query.filter(Condition.patient_id == patient_id).all()
+    result = medical_certificates_schema.dump(all_medical_certificates_for_patient)
+    return jsonify(result.data)
+
+
+# Delete a medical certificate for a patient by patient id
+@bp.route("/patients/<int:patient_id>/certificates", methods=["DELETE"])
+def delete_medical_certificate(patient_id):
+    """
+    This route takes a patient id and medical certificate id from JSON object in request to delete a medical
+    certificate for a patient.
+    :param patient_id:
+    :return: JSON array of all medical certificates for a patient.
+    """
+    id = request.json['id']
+    deleted_medical_certificate = MedicalCertificate.query.filter(MedicalCertificate.id == id)\
+        .filter(MedicalCertificate.patient_id == patient_id).first()
+    db.session.delete(deleted_medical_certificate)
+    db.session.commit()
+    all_medical_certificates_for_patient = MedicalCertificate.query.filter(Condition.patient_id == patient_id).all()
+    result = medical_certificates_schema.dump(all_medical_certificates_for_patient)
+    return jsonify(result.data)
+
+
+# Referral
+
+# Add a referral for a patient
+@bp.route("/patients/<int:patient_id>/referrals", methods=["POST"])
+def add_referral_to_patient(patient_id):
+    """
+        This route takes a patient id, and referral JSON object from the request to add a referral for a
+        patient.
+    :param patient_id:
+    :return: Referral JSON object for patient.
+    """
+    referral = request.json['referral']
+    consultation_details_id = request.json['consultation_details_id']
+    new_referral = Referral(patient_id, referral, consultation_details_id)
+    db.session.add(new_referral)
+    db.session.commit()
+    return referral_schema.jsonify(new_referral)
+
+
+# Get all referrals for patient by id
+@bp.route("/patients/<int:patient_id>/referrals", methods=["GET"])
+def get_all_referrals_for_patient(patient_id):
+    """
+        This route takes a patient id to return all the referrals for a patient.
+    :param patient_id:
+    :return: JSON array of referrals for a patient.
+    """
+    all_referrals_for_patient = Referral.query.filter(Referral.patient_id == patient_id).all()
+    result = referrals_schema.dump(all_referrals_for_patient)
+    return jsonify(result.data)
+
+
+# Delete a condition for a patient by patient id
+@bp.route("/patients/<int:patient_id>/referrals", methods=["DELETE"])
+def delete_referral(patient_id):
+    """
+        This route takes a patient id and condition id from JSON object in request to delete a condition for a
+        patient.
+    :param patient_id:
+    :return: JSON array of all conditions for a patient.
+    """
+    id = request.json['id']
+    deleted_referral = Referral.query.filter(Referral.id == id).filter(Referral.patient_id == patient_id).first()
+    db.session.delete(deleted_referral)
+    db.session.commit()
+    all_referrals_for_patient = Referral.query.filter(Referral.patient_id == patient_id).all()
+    result = conditions_schema.dump(all_referrals_for_patient)
+    return jsonify(result.data)
