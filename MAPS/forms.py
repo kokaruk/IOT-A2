@@ -4,6 +4,7 @@ from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField
 from wtforms.validators import DataRequired, Length, Email, InputRequired
 import datetime
 
+
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name',
                             validators=[DataRequired(), Length(min=2, max=20)])
@@ -28,6 +29,7 @@ class RegistrationForm(FlaskForm):
     pre_clinic = StringField('Previous Clinic')
     submit = SubmitField('Register')
 
+
 class ConsultationForm(FlaskForm):
     doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
     date = DateField('Consultation Date', default=datetime.datetime.today())
@@ -51,7 +53,6 @@ class ConsultationDetailsForm(FlaskForm):
 
 
 class BookingForm(FlaskForm):
-
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])

@@ -220,7 +220,7 @@ def consultation_list():
                            bookings=bookings, doctors_name=dict(doctors_id_name))
 
 
-@app.route("/consultation/<consultation_id>", methods=['GET', 'POST'])
+@app.route("/consultation/<consultation_id>", methods=['GET', 'POST', 'PUT'])
 def consultation(consultation_id):
     # TODO Test if this works
     """Rendering patient consultation details page and post to database API """
@@ -239,7 +239,7 @@ def consultation(consultation_id):
                                         "actual_end": format_datetime_str(
                                             concat_date_time(form.date.data, form.end.data))
                                         }
-                URL = f"{API_URL}consultations/details/{consultation_id}"
+                URL = f"{API_URL}consultations/details"
 
                 # post the consultation to DateBase API
                 api_response = requests.post(url=URL, json=consultation_details)
