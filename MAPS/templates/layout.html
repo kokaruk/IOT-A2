@@ -48,9 +48,9 @@
                     <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
                     <a class="nav-item nav-link" href="#">Statistics</a>
                     {% elif request.url_rule.rule == "/doctor" or request.url_rule.rule == "/consultation"
-                    or request.url_rule.rule == "/schedule" %}
+                    or request.url_rule.rule == "/schedule" or request.url_rule.rule == "/consultation_list" %}
                     <a class="nav-item nav-link" href="{{ url_for('doctor') }}">Doctor</a>
-                    <a class="nav-item nav-link" href="{{ url_for('consultation') }}">Consultation Notes</a>
+                    <a class="nav-item nav-link" href="{{ url_for('consultation_list') }}">Consultation Notes</a>
                     <a class="nav-item nav-link" href="{{ url_for('schedule') }}">Weekly Schedule</a>
                     {% endif %}
                 </div>

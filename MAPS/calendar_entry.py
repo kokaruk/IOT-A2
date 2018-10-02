@@ -102,3 +102,30 @@ class GoogleCalendarAPI:
         except Exception as err:
             # TODO better Exception handling
             print(err)
+
+    def book_doctor_times(self, title, date, patient_email, doctor_email, doctor_id, duration):
+
+        # building message body
+        event = {
+            'summary': title,
+            'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
+            'start': {
+                'dateTime': str(start),
+                'timeZone': 'Australia/Melbourne',
+            },
+            'end': {
+                'dateTime': str(end),
+                'timeZone': 'Australia/Melbourne',
+            },
+            'attendees': [
+                {'email': str(patient_email)},
+                {'email': str(doctor_email)}
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 5},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            }
+        }
