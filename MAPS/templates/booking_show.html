@@ -24,6 +24,9 @@
     <form action="{{ url_for('consultation_bookings') }}">
         <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
     </form>
+    <form action="{{ url_for('consultation', consultation_id = booking.id) }}" method=["POST","GET"]>
+        <input class="btn btn-secondary" type="submit" value="Create Consultation Details">
+    </form>
     {% if booking.cancelled == False %}
     <form action="{{ url_for('cancel_booking', booking_id = booking.id)}}" method="PUT">
         <input class="btn btn-danger" type="submit" value="Cancel Appointment">

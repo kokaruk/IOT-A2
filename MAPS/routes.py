@@ -1,5 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
-from MAPS.forms import RegistrationForm, ConsultationForm, BookingForm, ConsultationBookings, ScheduleBookingForm
+from MAPS.forms import RegistrationForm, ConsultationDetailsForm, BookingForm, ConsultationBookings, \
+    ScheduleBookingForm, ConsultationForm
 from MAPS import app
 from MAPS.utils import concat_date_time, read_text_file, format_datetime_str
 from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
@@ -18,7 +19,8 @@ choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2',
                   ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'), ('0', 'unknown')]
 
 
-# TODO Refactor !!!
+# TODO REFACTOR EVERYTHING!!!
+
 def get_user(user_type):
     """This methods purpose is to provide tubles of either doctor or patient id and name or id and name"""
     if user_type == "patient":
@@ -82,11 +84,58 @@ def doctor():
     return render_template('doctor.html', title='Doctor')
 
 
+def get_work_time(daytime, year, week, day):
+    morning_start = "08:00"
+    morning_end = "12:30"
+
+    afternoon_start = "13:00"
+    afternoon_end = "18:30"
+
+    weekday = dict({"monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5})
+
+    if daytime == "morning":
+        start = datetime.strptime(f"{year}-{week}-{weekday[day]} {morning_start}", "%Y-%W-%w %H:%M")
+        end = datetime.strptime(f"{year}-{week}-{weekday[day]}  {morning_end}", "%Y-%W-%w %H:%M")
+    else:
+        start = datetime.strptime(f"{year}-{week}-{weekday[day]} {afternoon_start}", "%Y-%W-%w %H:%M")
+        end = datetime.strptime(f"{year}-{week}-{weekday[day]}  {afternoon_end}", "%Y-%W-%w %H:%M")
+
+    from_to = dict({"start": start, "end": end})
+
+    return from_to
+
+
 @app.route("/schedule", methods=['GET', 'POST'])
 def schedule():
     """Rendering Schedule Page for weekly schedule of doctors"""
     form = ScheduleBookingForm()
     doctors = get_user("doctor")
+
+    year = form.year.data
+
+    week = form.calendar_week.data
+
+    if form.monday_morning.data:
+        monday_morning_times = get_work_time("morning", year, week, 'monday')
+    if form.monday_afternoon.data:
+        monday_afternoon_times = get_work_time("afternoon", year, week, 'monday')
+    if form.tuesday_morning.data:
+        tuesday_morning_times = get_work_time("morning", year, week, 'tuesday')
+    if form.tuesday_afternoon.data:
+        tuesday_afternoon_times = get_work_time("afternoon", year, week, 'tuesday')
+    if form.wednesday_morning.data:
+        wednesday_morning_times = get_work_time("morning", year, week, 'wednesday')
+    if form.wednesday_afternoon.data:
+        wednesday_afternoon_times = get_work_time("afternoon", year, week, 'wednesday')
+    if form.thursday_morning.data:
+        thursday_morning_times = get_work_time("morning", year, week, 'thursday')
+    if form.thursday_afternoon.data:
+        thursday_afternoon_times = get_work_time("afternoon", year, week, 'thursday')
+    if form.friday_morning.data:
+        friday_morning_times = get_work_time("morning", year, week, 'friday')
+    if form.friday_afternoon.data:
+        friday_afternoon_times = get_work_time("afternoon", year, week, 'friday')
+
 
     # TODO Find a way to store globally
     doctors_id_name = doctors[0]  # contains tuples of doctor id and names
@@ -97,6 +146,7 @@ def schedule():
     schedule_dict = {"doctor_id": form.doctor_id.data}
 
     return render_template('schedule.html', title='Schedule', form=form)
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -138,16 +188,49 @@ def register():
         print(err)
 
 
-@app.route("/consultation", methods=['GET', 'POST'])
-def consultation():
+@app.route("/consultation_list", methods=['GET', 'POST'])
+def consultation_list():
+    """Shall open a possibility to """
+    form = ConsultationForm()
+
+    # TODO Find a way to store globally
+    doctors = get_user("doctor")
+    doctors_id_name = doctors[0]  # contains tuples of doctor id and names
+    form.doctor_id.choices = doctors_id_name
+
+    chosen_doctor_id = form.doctor_id.data
+
+    if chosen_doctor_id == None:
+        # initially the first doctor select field is shown
+        consultations = requests.get(f"{API_URL}consultations/doctors/3")
+    else:
+        # with every choice of doctor and hit search the booking with the choosen doctor is shown
+        consultations = requests.get(f"{API_URL}consultations/doctors/{chosen_doctor_id}")
+
+    bookings = json.loads(consultations.text)
+
+    # Bringing json string of date to datetime
+    for booking in bookings:
+        booking_date = booking['appointment']
+        booking['appointment'] = datetime.strptime(booking_date, FORMAT_JSON_DATE_STRING)
+        # Adding an end time for it
+        booking['appointment_end'] = booking['appointment'] + timedelta(minutes=CONSULTATION_DURATION)
+
+    return render_template('consultation_list.html', title='Consultation Bookings List', form=form,
+                           bookings=bookings, doctors_name=dict(doctors_id_name))
+
+
+@app.route("/consultation/<consultation_id>", methods=['GET', 'POST'])
+def consultation(consultation_id):
     # TODO Test if this works
     """Rendering patient consultation details page and post to database API """
     try:
-        form = ConsultationForm()
+        form = ConsultationDetailsForm()
         if form.validate_on_submit():
             if request.method == 'POST':
                 # building the message body as dictionary based on the forms entry
-                consultation_details = {"description": form.description.data,
+                consultation_details = {"consultation_id": consultation_id,
+                                        "description": form.description.data,
                                         "additional_notes": form.additional_notes.data,
                                         "symptoms": form.symptoms.data,
                                         "diagnosis": form.diagnosis.data,
@@ -156,18 +239,18 @@ def consultation():
                                         "actual_end": format_datetime_str(
                                             concat_date_time(form.date.data, form.end.data))
                                         }
-                URL = f"{API_URL}consultations/details"
+                URL = f"{API_URL}consultations/details/{consultation_id}"
 
                 # post the consultation to DateBase API
                 api_response = requests.post(url=URL, json=consultation_details)
 
                 if api_response.status_code == 200:
                     flash('Consultation was successfully saved!', 'success')
-                    return redirect(url_for('consultation'))
+                    return redirect(url_for('consultation_list'))
                 else:
                     flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
-                return redirect(url_for('consultation'))
-        return render_template('consultation.html', title='Consultation', form=form)
+                return redirect(url_for('consultation_list'))
+        return render_template('consultation_details.html', title='Consultation', form=form)
     except Exception as err:
         # TODO better Exception handling
         print(err)
@@ -253,7 +336,7 @@ def booking():
                               'success')
                 elif form.delete.data is True:
                     flash(f'Appointment', 'success')
-            return redirect(url_for('consultation'))
+            return redirect(url_for('consultation_list'))
         return render_template('booking_create.html', title='Consultation Booking', form=form)
     except Exception as err:
         # TODO better Exception handling
@@ -290,17 +373,14 @@ def consultation_booking(booking_id):
     patients = get_user("patient")
     patients_id_name = patients[0]
 
-
     # TODO Better way to show date time
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
                            cause=dict(choices_reason),
                            doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end)
 
-
 @app.route("/consultation_bookings", methods=['POST', 'GET'])
 def consultation_bookings():
-    """ Showing the list of all consulation bookings - filter by doctor"""
-
+    """ Showing the list of all consultation bookings - filter by doctor"""
 
     form = ConsultationBookings()
 

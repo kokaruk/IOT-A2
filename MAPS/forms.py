@@ -28,10 +28,15 @@ class RegistrationForm(FlaskForm):
     pre_clinic = StringField('Previous Clinic')
     submit = SubmitField('Register')
 
-
 class ConsultationForm(FlaskForm):
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    date = DateField('Consultation Date', default=datetime.datetime.today())
+    search = SubmitField('Search Appointments')
+
+
+class ConsultationDetailsForm(FlaskForm):
     # TODO pre fill information from booking
-    date = DateField('Consulation Date',
+    date = DateField('Consultation Date',
                      validators=[DataRequired()])
     start = TimeField('Start of Consultation', format='%H:%M',
                       validators=[DataRequired()])
