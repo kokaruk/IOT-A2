@@ -15,7 +15,6 @@
 *
 * Copyright notice - All copyrights belong to  Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
 """
-from __future__ import print_function
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
