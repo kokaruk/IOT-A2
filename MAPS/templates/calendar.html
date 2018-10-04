@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block content %}
+{% block app_content %}
 <h1>Calendar</h1>
 {% if doctor == 3 %}
 <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
@@ -22,4 +22,4 @@
         Want to go back to home page? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
     </small>
 </div>
-{% endblock content%}
+{% endblock app_content %}

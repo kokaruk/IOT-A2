@@ -1,92 +1,85 @@
 {# adding flask_bootstrap support #}
 {% extends 'bootstrap/base.html' %}
 
+{% block head %}
+    {{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+{% endblock %}
+
 {% block title %}
     {% if title %}MAPS - {{ title }}{% else %}Medical Appointment System{% endif %}
 {% endblock %}
 
+{% block styles -%}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+{% endblock %}
+{% block metas %}
+    {{ super() }}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
 
 
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<!-- Required meta tags -->
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-
-
-<body>
-<header class="site-header">
-    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+{% block navbar %}
+    <nav class="navbar navbar-default">
         <div class="container">
-            <a class="navbar-brand mr-4" href="/">MAPS - Medical Appointment System </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
-                    aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggle">
-                <div class="navbar-nav mr-auto">
-                    <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
-                    <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
-                    {% if request.url_rule.rule == "/home" or request.url_rule.rule == "/about" or request.url_rule.rule
-                    == "/" %}
-                        <a class="nav-item nav-link" href="{{ url_for('patient') }}">Patient</a>
-                        <a class="nav-item nav-link" href="{{ url_for('clerk') }}">Clerk</a>
-                        <a class="nav-item nav-link" href="{{ url_for('doctor') }}">Doctor</a>
-                    {% elif request.url_rule.rule == "/patient" or request.url_rule.rule == "/register" or
-                    request.url_rule.rule == "/booking" %}
-                        <a class="nav-item nav-link" href="{{ url_for('patient') }}">Patient</a>
-                        <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
-                        <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
-                    {% elif request.url_rule.rule == "/calendar" or request.url_rule.rule == "/calendar" or
-                    request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" %}
-                        <a class="nav-item nav-link" href="{{ url_for('clerk') }}">Clerk</a>
-                        <a class="nav-item nav-link" href="{{ url_for('calendar') }}">Calendar</a>
-                        <a class="nav-item nav-link" href="{{ url_for('consultation_bookings') }}">BookingList</a>
-                        <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
-                        <a class="nav-item nav-link" href="#">Statistics</a>
-                    {% elif request.url_rule.rule == "/doctor" or request.url_rule.rule == "/consultation"
-                    or request.url_rule.rule == "/schedule" or request.url_rule.rule == "/consultation_list" %}
-                        <a class="nav-item nav-link" href="{{ url_for('doctor') }}">Doctor</a>
-                        <a class="nav-item nav-link" href="{{ url_for('consultation_list') }}">Consultation Notes</a>
-                        <a class="nav-item nav-link" href="{{ url_for('schedule') }}">Weekly Schedule</a>
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('home') }}">MAPS</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                    {% if request.url_rule.rule == "/home" or request.url_rule.rule == "/about" or request.url_rule.rule == "/" %}
+                        <li><a href="{{ url_for('patient') }}">Patient</a></li>
+                        <li><a href="{{ url_for('clerk') }}">Clerk</a></li>
+                        <li><a href="{{ url_for('doctor') }}">Doctor</a></li>
+                    {% elif request.url_rule.rule == "/patient" or request.url_rule.rule == "/register" or request.url_rule.rule == "/booking" %}
+                        <li><a href="{{ url_for('patient') }}">Patient</a></li>
+                        <li><a href="{{ url_for('register') }}">Register</a></li>
+                        <li><a href="{{ url_for('booking') }}">Booking</a></li>
+                    {% elif request.url_rule.rule == "/calendar" or request.url_rule.rule == "/calendar" or request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" %}
+                        <li><a href="{{ url_for('clerk') }}">Clerk</a></li>
+                        <li><a href="{{ url_for('calendar') }}">Calendar</a></li>
+                        <li><a href="{{ url_for('consultation_bookings') }}">BookingList</a></li>
+                        <li><a href="{{ url_for('booking') }}">Booking</a></li>
+                        <li><a href="#">Statistics</a></li>
+                    {% elif request.url_rule.rule == "/doctor" or request.url_rule.rule == "/consultation" or request.url_rule.rule == "/schedule" or request.url_rule.rule == "/consultation_list" %}
+                        <li><a href="{{ url_for('doctor') }}">Doctor</a></li>
+                        <li><a href="{{ url_for('consultation_list') }}">Consultation Notes</a></li>
+                        <li><a href="{{ url_for('schedule') }}">Weekly Schedule</a></li>
                     {% endif %}
-                </div>
+                </ul>
             </div>
         </div>
     </nav>
-</header>
-<main role="main" class="container">
-    <div class="row">
-        <div class="col-md-8">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            {% block content %}{% endblock %}
-        </div>
-    </div>
-</main>
+{% endblock %}
 
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-</body>
-</html>
+
+{% block content %}
+    <main role="main" class="container">
+        <div class="row">
+            <div class="col-md-8">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% block app_content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+{% endblock %}
