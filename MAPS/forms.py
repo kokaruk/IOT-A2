@@ -1,27 +1,28 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms.validators import DataRequired, Length, Email, InputRequired
+import datetime
 
 
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name',
-                            validators=[DataRequired(), Length(min=2, max=20)], default="John")
+                            validators=[DataRequired(), Length(min=2, max=20)])
     secondname = StringField('Second Name', validators=[Length(max=20)])
     lastname = StringField('Last Name',
-                           validators=[DataRequired(), Length(min=2, max=20)], default="Smith")
+                           validators=[DataRequired(), Length(min=2, max=20)])
     dob = DateField('Date of Birth', validators=[DataRequired()])
     gender = SelectField('Please select Gender',
                          choices=[('', 'Please select'), ('m', 'Male'), ('f', 'Female'), ('o', 'other')],
                          validators=[DataRequired()])
     address = TextAreaField('Address',
-                            validators=[DataRequired()], default="2012 Main Street, 3423 Central City ")
-    email = EmailField(label="Email", validators=[DataRequired(), Email()], default="john.smith@hotmail.com")
+                            validators=[DataRequired()])
+    email = EmailField(label="Email", validators=[DataRequired(), Email()])
     phone = TelField('Telephone or Mobile',
                      validators=[DataRequired()])
     medicare = StringField('Medicare No',
                            validators=[Length(min=9, max=10, message="Medicare No. has to be 10 digits"),
-                                       DataRequired()], default=1234567890)
+                                       DataRequired()])
     pre_conditions = TextAreaField('Previous Conditions')
     current_medications = TextAreaField('Current Medication')
     pre_doctor = StringField('Previous Doctor')
@@ -30,8 +31,14 @@ class RegistrationForm(FlaskForm):
 
 
 class ConsultationForm(FlaskForm):
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    date = DateField('Consultation Date', default=datetime.datetime.today())
+    search = SubmitField('Search Appointments')
+
+
+class ConsultationDetailsForm(FlaskForm):
     # TODO pre fill information from booking
-    date = DateField('Consulation Date',
+    date = DateField('Consultation Date',
                      validators=[DataRequired()])
     start = TimeField('Start of Consultation', format='%H:%M',
                       validators=[DataRequired()])
@@ -49,18 +56,34 @@ class BookingForm(FlaskForm):
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
-    # TODO search field for User to find himself and do enter
-    patient_name = StringField('Patient Name',
-                               validators=[DataRequired(), Length(min=2, max=20)], default="John Smith")
-    # TODO read out Doctors ID and Names from DataBase
-    doctor_name = SelectField('Please select doctor',
-                              choices=[('', 'Please select'), ('1', 'Dr Akbar Dakbar'),
-                                       ('2', 'Dr Gerry Skinner'), ('3', 'Dr Phil')], validators=[DataRequired()])
-    reason = SelectField('Please select reason for doctors Visit',
-                         choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
-                                  ('2', 'Serious illness - e.g. flu'),
-                                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'),
-                                  ('0', 'unknown')], validators=[DataRequired()])
+    patient_id = SelectField('Please select patient', choices=[], coerce=int, validators=[InputRequired()])
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
+    reason = SelectField('Please select reason for doctors Visit', choices=[], coerce=int, validators=[DataRequired()])
     cancelled = BooleanField('Cancelled Appointment')
 
-    submit = SubmitField('Book Consultation')
+    create = SubmitField('Book Consultation')
+    delete = SubmitField('Delete Consulation')
+
+
+class ConsultationBookings(FlaskForm):
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    search = SubmitField('Search Appointments')
+
+
+class ScheduleBookingForm(FlaskForm):
+    now = datetime.datetime.now()
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
+    year = StringField('Please choose year', default=f"{now.year}")
+    calendar_week = StringField('Please choose year',
+                                default=datetime.date(now.year, now.month, now.day).strftime("%V"))
+    monday_morning = BooleanField('Monday Morning')
+    monday_afternoon = BooleanField('Monday Afternoon')
+    tuesday_morning = BooleanField('Tuesday Morning')
+    tuesday_afternoon = BooleanField('Tuesday Afternoon')
+    wednesday_morning = BooleanField('Wednesday Morning')
+    wednesday_afternoon = BooleanField('Wednesday Afternoon')
+    thursday_morning = BooleanField('Thursday Morning')
+    thursday_afternoon = BooleanField('Thursday Afternoon')
+    friday_morning = BooleanField('Friday Morning')
+    friday_afternoon = BooleanField('Friday Afternoon')
+    create_week = SubmitField('Book Availabilites')

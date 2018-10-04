@@ -21,11 +21,11 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from MAPS.utils import format_datetime_str
+from flask import flash
+import requests
+import json
 
-# TODO Find a better way to store constants.
-CALENDAR_ID_1 = 'cvrsdsk7jjae29p9fg9t6vcr94@group.calendar.google.com'
-CALENDAR_ID_2 = 'co63bbo22htf8jqombkb2tguh8@group.calendar.google.com'
-CALENDAR_ID_3 = '9kn05ti5cef5mt9kcpup4sjt4g@group.calendar.google.com'
+API_URL = "http://127.0.0.1:5000/api/"
 
 SCOPES_ADDRESS = 'https://www.googleapis.com/auth/calendar'
 STORAGE = 'MAPS/credentials/token.json'
@@ -44,18 +44,18 @@ service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
 
 
 class GoogleCalendarAPI:
-
-    def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor, duration):
-
+    """ Purpose of this class is to manage the access calls to the google calendar API"""
+    def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor_id, duration):
+        """ This method calls google API for creating Events based on the entries from the Users"""
+        # Formatting times for appointment
         start = format_datetime_str(date)
         end = date + timedelta(minutes=duration)
         end = format_datetime_str(end)
 
+        #building message body
         event = {
             'summary': title,
-
             'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
-            'description': 'Adding new IoT event',
             'start': {
                 'dateTime': str(start),
                 'timeZone': 'Australia/Melbourne',
@@ -77,21 +77,55 @@ class GoogleCalendarAPI:
             }
         }
         try:
-            if doctor == "Dr Akbar Dakbar":
-                # TODO Exchange CalendarID with DB entry of CalendarID
-                event = service.events().insert(calendarId=CALENDAR_ID_1, body=event).execute()
-                print('Event created: {}'.format(event.get('htmlLink')))
-            elif doctor == "Dr Gerry Skinner":
-                event = service.events().insert(calendarId=CALENDAR_ID_2, body=event).execute()
-                print('Event created: {}'.format(event.get('htmlLink')))
-            else:
-                event = service.events().insert(calendarId=CALENDAR_ID_3, body=event).execute()
-                print('Event created: {}'.format(event.get('htmlLink')))
+            doctor = requests.get(f"{API_URL}doctors")
+            json_data = json.loads(doctor.text)
+            for doctor in json_data:
+                if doctor['id'] == doctor_id:
+                    #sending the post recuest to google calendars
+                    event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
+                    print('Event created: {}'.format(event.get('htmlLink')))
+                    #returning googles event id
+                    return event.get('id')
         except Exception as err:
-            # TODO better Exceptionhandleing
+            # TODO better Exception handling
             print(err)
 
-    def delete_calendar_entry(self, calendar_id='primary', event_id='eventId'):
+    def delete_calendar_entry(self, google_calendar_id, google_event_id):
         """NOT READY YET """
         # TODO Implement delete - issue how to get event ID
-        service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
+        try:
+            delete = service.events().delete(calendarId=google_calendar_id, eventId=google_event_id).execute()
+            if delete is None:
+                flash(f'Event {event_id} sucessfully deleted', 'success')
+            else:
+                flash(f'Event {event_id} not deleted, reason: {delete.reason} please try again!', 'danger')
+        except Exception as err:
+            # TODO better Exception handling
+            print(err)
+
+    def book_doctor_times(self, title, date, patient_email, doctor_email, doctor_id, duration):
+
+        # building message body
+        event = {
+            'summary': title,
+            'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
+            'start': {
+                'dateTime': str(start),
+                'timeZone': 'Australia/Melbourne',
+            },
+            'end': {
+                'dateTime': str(end),
+                'timeZone': 'Australia/Melbourne',
+            },
+            'attendees': [
+                {'email': str(patient_email)},
+                {'email': str(doctor_email)}
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 5},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            }
+        }

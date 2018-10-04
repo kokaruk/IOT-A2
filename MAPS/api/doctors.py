@@ -2,10 +2,13 @@ from flask import request, jsonify
 
 from MAPS import db
 from MAPS.api import bp
-from MAPS.models import Doctor, DoctorSchema
+from MAPS.models import Doctor, DoctorSchema, FullDoctorSchema
 
 doctor_schema = DoctorSchema()
 doctors_schema = DoctorSchema(many=True)
+
+full_doctor_schema = FullDoctorSchema()
+full_doctors_schema = FullDoctorSchema(many=True)
 
 
 # Get all doctors
@@ -21,6 +24,14 @@ def get_doctors():
 def get_doctor(id):
     doctor = Doctor.query.get(id)
     result = doctor_schema.dump(doctor)
+    return jsonify(result.data)
+
+
+# Get a doctor by id - include all related data
+@bp.route('/doctors/<int:id>/all', methods=['GET'])
+def get_doctor_include_related(id):
+    doctor = Doctor.query.get(id)
+    result = full_doctor_schema.dump(doctor)
     return jsonify(result.data)
 
 

@@ -32,29 +32,29 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.patient_name.label(class="form-control-label") }}
-                {% if form.patient_name.errors %}
-                {{ form.patient_name(class="form-control form-control-lg is-invalid") }}
+                {{ form.patient_id.label(class="form-control-label") }}
+                {% if form.patient_id.errors %}
+                {{ form.patient_id(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.patient_name.errors %}
+                    {% for error in form.patient_id.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.patient_name(class="form-control form-control-lg") }}
+                {{ form.patient_id(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.doctor_name.label(class="form-control-label") }}
-                {% if form.doctor_name.errors %}
-                {{ form.doctor_name(class="form-control form-control-lg is-invalid") }}
+                {{ form.doctor_id.label(class="form-control-label") }}
+                {% if form.doctor_id.errors %}
+                {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.doctor_name.errors %}
+                    {% for error in form.doctor_id.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.doctor_name(class="form-control form-control-lg") }}
+                {{ form.doctor_id(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <div class="form-group">
@@ -70,22 +70,9 @@
                 {{ form.reason(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.cancelled.label(class="form-control-label") }}
-                {% if form.cancelled.errors %}
-                {{ form.cancelled(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.cancelled.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.cancelled(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
         </fieldset>
         <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
+            {{ form.create(class="btn btn-outline-info") }}
         </div>
     </form>
 </div>

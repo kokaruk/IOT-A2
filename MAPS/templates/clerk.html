@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>Welcome to your Medical Clinic </h3>
+<br><p>Which next task you want to take care of clerk </p>
+<div class="container">
+    <div class="column">
+        <div class="col-sm">
+            <span class="border-0"></span>
+            <img class="rounded img-thumbnail" width="304" height="236"
+                 src="{{ url_for('static', filename='appointment.jpg') }}">
+            <div class="media-body">
+                <p><a class="article-title" href="{{ url_for('booking')}}">Book a Consultation Appointment</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
