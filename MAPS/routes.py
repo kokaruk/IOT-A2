@@ -136,7 +136,6 @@ def schedule():
     if form.friday_afternoon.data:
         friday_afternoon_times = get_work_time("afternoon", year, week, 'friday')
 
-
     # TODO Find a way to store globally
     doctors_id_name = doctors[0]  # contains tuples of doctor id and names
 
@@ -352,6 +351,13 @@ def calendar():
     return render_template('calendar.html', title='calendar', doctor=doctor)
 
 
+@app.route("/statistics")
+def statistics():
+    """Posting and rendering embedded google statistics from datastudio """
+    # TODO needs overwork on time series
+    return render_template('statistics.html', title='statistics')
+
+
 @app.route("/consultation_booking/<int:booking_id>")
 def consultation_booking(booking_id):
     """show to singular booking content for clerk to overview or to cancel if necessary"""
@@ -377,6 +383,7 @@ def consultation_booking(booking_id):
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
                            cause=dict(choices_reason),
                            doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end)
+
 
 @app.route("/consultation_bookings", methods=['POST', 'GET'])
 def consultation_bookings():
