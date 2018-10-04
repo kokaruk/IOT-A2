@@ -1,17 +1,9 @@
+{# adding flask_bootstrap support #}
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
     {% if title %}MAPS - {{ title }}{% else %}Medical Appointment System{% endif %}
 {% endblock %}
-
-{% import "bootstrap/fixes.html" as fixes %}
-{% block head %}
-{{super()}}
-
-{#- Docs: http://pythonhosted.org/Flask-Bootstrap/macros.html#fixes
-   The sample application already contains the required static files. #}
-{{fixes.ie8()}}
-{%- endblock %}
 
 
 
