@@ -5,8 +5,8 @@
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Consultation Booking</legend>
-            <div class="form-group">
-                {{ form.date.label(class="form-control-label") }}
+            <div class="form-group required">
+                {{ form.date.label(class="control-label") }}
                 {% if form.date.errors %}
                 {{ form.date(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -18,8 +18,8 @@
                 {{ form.date(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.start.label(class="form-control-label") }}
+            <div class="form-group required">
+                {{ form.start.label(class="control-label") }}
                 {% if form.start.errors %}
                 {{ form.start(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -31,8 +31,8 @@
                 {{ form.start(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.patient_id.label(class="form-control-label") }}
+            <div class="form-group required">
+                {{ form.patient_id.label(class="control-label") }}
                 {% if form.patient_id.errors %}
                 {{ form.patient_id(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -44,8 +44,8 @@
                 {{ form.patient_id(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.doctor_id.label(class="form-control-label") }}
+            <div class="form-group required">
+                {{ form.doctor_id.label(class="control-label") }}
                 {% if form.doctor_id.errors %}
                 {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -57,8 +57,8 @@
                 {{ form.doctor_id(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.reason.label(class="form-control-label") }}
+            <div class="form-group required">
+                {{ form.reason.label(class="control-label") }}
                 {% if form.reason.errors %}
                 {{ form.reason(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -71,7 +71,7 @@
                 {% endif %}
             </div>
         </fieldset>
-        <div class="form-group">
+        <div class="form-group required">
             {{ form.create(class="btn btn-outline-info") }}
         </div>
     </form>
