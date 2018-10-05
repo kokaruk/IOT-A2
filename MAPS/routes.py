@@ -7,11 +7,17 @@ from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
 import requests
 import json
 from datetime import timedelta, datetime
+import socket
+# reference: https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
+local_ip_address = s.getsockname()[0]
+API_URL = f"http://{local_ip_address}:5000/api/"
 
+CONSULTATION_DURATION = 20
 CONSULTATION_DURATION = 20
 PATH_DOCTOR = "MAPS/credentials/doctor.txt"
 # base_url = request.host_url
-API_URL = "http://127.0.0.1:5000/api/"
 FORMAT_JSON_DATE_STRING = '%Y-%m-%dT%H:%M:%S%z'
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
@@ -41,7 +47,8 @@ def get_user(user_type):
         list_id.append(value['id'])
         list_email.append(f"{value['email']}")
         if user_type == "patient":
-            list_name.append(f"{value['first_name']} {value['second_name']} {value['last_name']}")
+            list_name.append(
+                f"{value['first_name']} {value['second_name']} {value['last_name']}")
 
         else:
             list_name.append(f"Dr. {value['last_name']}")
@@ -91,14 +98,19 @@ def get_work_time(daytime, year, week, day):
     afternoon_start = "13:00"
     afternoon_end = "18:30"
 
-    weekday = dict({"monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5})
+    weekday = dict({"monday": 1, "tuesday": 2, "wednesday": 3,
+                    "thursday": 4, "friday": 5})
 
     if daytime == "morning":
-        start = datetime.strptime(f"{year}-{week}-{weekday[day]} {morning_start}", "%Y-%W-%w %H:%M")
-        end = datetime.strptime(f"{year}-{week}-{weekday[day]}  {morning_end}", "%Y-%W-%w %H:%M")
+        start = datetime.strptime(
+            f"{year}-{week}-{weekday[day]} {morning_start}", "%Y-%W-%w %H:%M")
+        end = datetime.strptime(
+            f"{year}-{week}-{weekday[day]}  {morning_end}", "%Y-%W-%w %H:%M")
     else:
-        start = datetime.strptime(f"{year}-{week}-{weekday[day]} {afternoon_start}", "%Y-%W-%w %H:%M")
-        end = datetime.strptime(f"{year}-{week}-{weekday[day]}  {afternoon_end}", "%Y-%W-%w %H:%M")
+        start = datetime.strptime(
+            f"{year}-{week}-{weekday[day]} {afternoon_start}", "%Y-%W-%w %H:%M")
+        end = datetime.strptime(
+            f"{year}-{week}-{weekday[day]}  {afternoon_end}", "%Y-%W-%w %H:%M")
 
     from_to = dict({"start": start, "end": end})
 
@@ -118,24 +130,30 @@ def schedule():
     if form.monday_morning.data:
         monday_morning_times = get_work_time("morning", year, week, 'monday')
     if form.monday_afternoon.data:
-        monday_afternoon_times = get_work_time("afternoon", year, week, 'monday')
+        monday_afternoon_times = get_work_time(
+            "afternoon", year, week, 'monday')
     if form.tuesday_morning.data:
         tuesday_morning_times = get_work_time("morning", year, week, 'tuesday')
     if form.tuesday_afternoon.data:
-        tuesday_afternoon_times = get_work_time("afternoon", year, week, 'tuesday')
+        tuesday_afternoon_times = get_work_time(
+            "afternoon", year, week, 'tuesday')
     if form.wednesday_morning.data:
-        wednesday_morning_times = get_work_time("morning", year, week, 'wednesday')
+        wednesday_morning_times = get_work_time(
+            "morning", year, week, 'wednesday')
     if form.wednesday_afternoon.data:
-        wednesday_afternoon_times = get_work_time("afternoon", year, week, 'wednesday')
+        wednesday_afternoon_times = get_work_time(
+            "afternoon", year, week, 'wednesday')
     if form.thursday_morning.data:
-        thursday_morning_times = get_work_time("morning", year, week, 'thursday')
+        thursday_morning_times = get_work_time(
+            "morning", year, week, 'thursday')
     if form.thursday_afternoon.data:
-        thursday_afternoon_times = get_work_time("afternoon", year, week, 'thursday')
+        thursday_afternoon_times = get_work_time(
+            "afternoon", year, week, 'thursday')
     if form.friday_morning.data:
         friday_morning_times = get_work_time("morning", year, week, 'friday')
     if form.friday_afternoon.data:
-        friday_afternoon_times = get_work_time("afternoon", year, week, 'friday')
-
+        friday_afternoon_times = get_work_time(
+            "afternoon", year, week, 'friday')
 
     # TODO Find a way to store globally
     doctors_id_name = doctors[0]  # contains tuples of doctor id and names
@@ -180,7 +198,8 @@ def register():
                     flash('Your registration was sucessful', 'success')
                     return redirect(url_for('booking'))
                 else:
-                    flash(f'Your registration failed, reason: {api_response.reason} please try again!', 'danger')
+                    flash(
+                        f'Your registration failed, reason: {api_response.reason} please try again!', 'danger')
                 return redirect(url_for('register'))
         return render_template('patient_register.html', title='Register', form=form)
     except Exception as err:
@@ -205,16 +224,19 @@ def consultation_list():
         consultations = requests.get(f"{API_URL}consultations/doctors/3")
     else:
         # with every choice of doctor and hit search the booking with the choosen doctor is shown
-        consultations = requests.get(f"{API_URL}consultations/doctors/{chosen_doctor_id}")
+        consultations = requests.get(
+            f"{API_URL}consultations/doctors/{chosen_doctor_id}")
 
     bookings = json.loads(consultations.text)
 
     # Bringing json string of date to datetime
     for booking in bookings:
         booking_date = booking['appointment']
-        booking['appointment'] = datetime.strptime(booking_date, FORMAT_JSON_DATE_STRING)
+        booking['appointment'] = datetime.strptime(
+            booking_date, FORMAT_JSON_DATE_STRING)
         # Adding an end time for it
-        booking['appointment_end'] = booking['appointment'] + timedelta(minutes=CONSULTATION_DURATION)
+        booking['appointment_end'] = booking['appointment'] + \
+            timedelta(minutes=CONSULTATION_DURATION)
 
     return render_template('consultation_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name))
@@ -242,13 +264,15 @@ def consultation(consultation_id):
                 URL = f"{API_URL}consultations/details"
 
                 # post the consultation to DateBase API
-                api_response = requests.post(url=URL, json=consultation_details)
+                api_response = requests.post(
+                    url=URL, json=consultation_details)
 
                 if api_response.status_code == 200:
                     flash('Consultation was successfully saved!', 'success')
                     return redirect(url_for('consultation_list'))
                 else:
-                    flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
+                    flash(
+                        f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
                 return redirect(url_for('consultation_list'))
         return render_template('consultation_details.html', title='Consultation', form=form)
     except Exception as err:
@@ -266,8 +290,10 @@ def booking():
         # TODO Find a way to store globally
         # getting a list of patient_id and name tuples for the dynamic selectfield
         patients = get_user("patient")
-        patients_id_name = patients[0]  # contains tuples of patient id and names
-        patients_id_email = patients[1]  # contains tuples of patient id and emails
+        # contains tuples of patient id and names
+        patients_id_name = patients[0]
+        # contains tuples of patient id and emails
+        patients_id_email = patients[1]
 
         # passing the tuples for patient over to forms for access on View
         form.patient_id.choices = patients_id_name
@@ -276,7 +302,8 @@ def booking():
         doctors = get_user("doctor")
         # TODO Find a way to store globally
         doctors_id_name = doctors[0]  # contains tuples of patient id and names
-        doctors_id_email = doctors[1]  # contains tuples of patient id and emails
+        # contains tuples of patient id and emails
+        doctors_id_email = doctors[1]
 
         # passing the tuples for doctor over to forms for access on View
         form.doctor_id.choices = doctors_id_name
@@ -329,7 +356,8 @@ def booking():
                     # post the calendar entry to DateBase API
                     api_response = requests.post(url=URL, json=consultation)
                     if api_response.status_code != 200:
-                        flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
+                        flash(
+                            f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
                         return redirect(url_for('calendar'))
                     else:
                         flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
@@ -363,7 +391,8 @@ def consultation_booking(booking_id):
     consultation_booking['appointment'] = datetime.strptime(consultation_booking['appointment'],
                                                             FORMAT_JSON_DATE_STRING)
     # Adding an end time for it
-    consultation_end = consultation_booking['appointment'] + timedelta(minutes=CONSULTATION_DURATION)
+    consultation_end = consultation_booking['appointment'] + \
+        timedelta(minutes=CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     doctors = get_user("doctor")
@@ -377,6 +406,7 @@ def consultation_booking(booking_id):
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
                            cause=dict(choices_reason),
                            doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end)
+
 
 @app.route("/consultation_bookings", methods=['POST', 'GET'])
 def consultation_bookings():
@@ -393,19 +423,23 @@ def consultation_bookings():
 
     if chosen_doctor_id == None:
         # initially the first doctor select field is shown
-        consultation_bookings = requests.get(f"{API_URL}consultations/doctors/3")
+        consultation_bookings = requests.get(
+            f"{API_URL}consultations/doctors/3")
     else:
         # with every choice of doctor and hit search the booking with the choosen doctor is shown
-        consultation_bookings = requests.get(f"{API_URL}consultations/doctors/{chosen_doctor_id}")
+        consultation_bookings = requests.get(
+            f"{API_URL}consultations/doctors/{chosen_doctor_id}")
 
     bookings = json.loads(consultation_bookings.text)
 
     # Bringing json string of date to datetime
     for booking in bookings:
         booking_date = booking['appointment']
-        booking['appointment'] = datetime.strptime(booking_date, FORMAT_JSON_DATE_STRING)
+        booking['appointment'] = datetime.strptime(
+            booking_date, FORMAT_JSON_DATE_STRING)
         # Adding an end time for it
-        booking['appointment_end'] = booking['appointment'] + timedelta(minutes=CONSULTATION_DURATION)
+        booking['appointment_end'] = booking['appointment'] + \
+            timedelta(minutes=CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     patients = get_user("patient")
@@ -428,7 +462,8 @@ def cancel_booking(booking_id):
     # Send PUT request to database API for booking (its not delete - only a marking it cancelled
     api_response = requests.put(url=URL, json=mark_booking_cancelled)
     if api_response.status_code != 200:
-        flash(f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
+        flash(
+            f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
         # return redirect(url_for('consultation_booking', booking_id = booking_id))
     else:
         flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
