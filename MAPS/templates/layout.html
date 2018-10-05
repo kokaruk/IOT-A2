@@ -44,7 +44,7 @@
                     request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" or request.url_rule.rule ==
                     "/statistics" %}
                     <a class="nav-item nav-link" href="{{ url_for('clerk') }}">Clerk</a>
-                    <a class="nav-item nav-link" href="{{ url_for('calendar') }}">Calendar</a>
+                    <a class="nav-item nav-link" href="{{ url_for('calendar_all') }}">Calendar</a>
                     <a class="nav-item nav-link" href="{{ url_for('consultation_bookings') }}">BookingList</a>
                     <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
                     <a class="nav-item nav-link" href="{{ url_for('statistics') }}">Statistics</a>
