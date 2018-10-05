@@ -8,16 +8,16 @@ import requests
 import json
 from datetime import timedelta, datetime
 import socket
-# reference: https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
+import MAPS.constants as config
+
+# reference:
+# https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
 local_ip_address = s.getsockname()[0]
 API_URL = f"http://{local_ip_address}:5000/api/"
 
-CONSULTATION_DURATION = 20
-PATH_DOCTOR = "MAPS/credentials/doctor.txt"
 # base_url = request.host_url
-FORMAT_JSON_DATE_STRING = '%Y-%m-%dT%H:%M:%S%z'
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
 choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
@@ -232,10 +232,10 @@ def consultation_list():
     for booking in bookings:
         booking_date = booking['appointment']
         booking['appointment'] = datetime.strptime(
-            booking_date, FORMAT_JSON_DATE_STRING)
+            booking_date, config.FORMAT_JSON_DATE_STRING)
         # Adding an end time for it
         booking['appointment_end'] = booking['appointment'] + \
-            timedelta(minutes=CONSULTATION_DURATION)
+                                     timedelta(minutes=config.CONSULTATION_DURATION)
 
     return render_template('consultation_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name))
@@ -336,14 +336,14 @@ def booking():
                                                                             patient_email=patient_email,
                                                                             doctor_email=doctor_email,
                                                                             doctor_id=chosen_doctor_id,
-                                                                            duration=CONSULTATION_DURATION)
+                                                                            duration=config.CONSULTATION_DURATION)
 
                     # Building Message Body for database post request
                     consultation = {
                         "appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
                         "patient_id": chosen_patient_id,
                         "doctor_id": chosen_doctor_id,
-                        "duration": str(CONSULTATION_DURATION),
+                        "duration": str(config.CONSULTATION_DURATION),
                         "cause": form.reason.data,
                         "cancelled": form.cancelled.data,
                         'google_event_id': google_event_id
@@ -374,7 +374,7 @@ def booking():
 def calendar():
     """Posting and rendering embedded google calender API  """
     # TODO needs overwork to post the correct calendar API
-    doctor = read_text_file(PATH_DOCTOR)
+    doctor = read_text_file(config.PATH_DOCTOR)
 
     return render_template('calendar.html', title='calendar', doctor=doctor)
 
@@ -395,10 +395,10 @@ def consultation_booking(booking_id):
 
     # Bringing json string of date to datetime
     consultation_booking['appointment'] = datetime.strptime(consultation_booking['appointment'],
-                                                            FORMAT_JSON_DATE_STRING)
+                                                            config.FORMAT_JSON_DATE_STRING)
     # Adding an end time for it
     consultation_end = consultation_booking['appointment'] + \
-        timedelta(minutes=CONSULTATION_DURATION)
+                       timedelta(minutes=config.CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     doctors = get_user("doctor")
@@ -442,10 +442,10 @@ def consultation_bookings():
     for booking in bookings:
         booking_date = booking['appointment']
         booking['appointment'] = datetime.strptime(
-            booking_date, FORMAT_JSON_DATE_STRING)
+            booking_date, config.FORMAT_JSON_DATE_STRING)
         # Adding an end time for it
         booking['appointment_end'] = booking['appointment'] + \
-            timedelta(minutes=CONSULTATION_DURATION)
+                                     timedelta(minutes=config.CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     patients = get_user("patient")
