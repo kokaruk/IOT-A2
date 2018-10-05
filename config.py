@@ -15,7 +15,3 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = f'postgresql://{CLOUDSQL_USER}:{CLOUDSQL_PASSWORD}' \
                               f'@{CLOUDSQL_CONNECTION_NAME}/{CLOUDSQL_DATABASE}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # APP CONSTANTS
-
-    # SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'

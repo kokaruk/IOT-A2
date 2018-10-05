@@ -7,15 +7,10 @@ from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
 import requests
 import json
 from datetime import timedelta, datetime
-import socket
 import MAPS.constants as config
 
-# reference:
-# https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
-local_ip_address = s.getsockname()[0]
-API_URL = f"http://{local_ip_address}:5000/api/"
+API_URL = "http://127.0.0.1:5000/api/"
+
 
 # base_url = request.host_url
 
@@ -202,8 +197,9 @@ def register():
                 return redirect(url_for('register'))
         return render_template('patient_register.html', title='Register', form=form)
     except Exception as err:
-        # TODO better Exception handling
-        print(err)
+
+        return render_template('500.html'), 500
+
 
 
 @app.route("/consultation_list", methods=['GET', 'POST'])
