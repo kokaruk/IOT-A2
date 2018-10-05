@@ -21,19 +21,27 @@ from MAPS.api import bp as api_bp
 from MAPS import routes, models, errors
 
 
+# setup logger
+logs_dir = 'logs'
+if not os.path.exists(logs_dir):
+    os.mkdir(logs_dir)
+file_handler = RotatingFileHandler(f'{logs_dir}/maps.log', maxBytes=10240,
+                                   backupCount=10)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+
 if not app.debug:
-    logs_dir = 'logs'
-    if not os.path.exists(logs_dir):
-        os.mkdir(logs_dir)
-    file_handler = RotatingFileHandler(f'{logs_dir}/maps.log', maxBytes=10240,
-                                       backupCount=10)
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
-
     app.logger.setLevel(logging.INFO)
-    app.logger.info('Microblog startup')
+    app.logger.info('MAPS startup')
+else:
+    file_handler.setLevel(logging.DEBUG)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('MAPS startup in debug mode')
+
+
 
 
 

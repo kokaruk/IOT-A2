@@ -46,7 +46,7 @@
                         <li><a href="{{ url_for('booking') }}">Booking</a></li>
                     {% elif request.url_rule.rule == "/calendar" or request.url_rule.rule == "/calendar" or request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" %}
                         <li><a href="{{ url_for('clerk') }}">Clerk</a></li>
-                        <li><a href="{{ url_for('calendar') }}">Calendar</a></li>
+                        <li><a href="{{ url_for('calendar_all') }}">Calendar</a></li>
                         <li><a href="{{ url_for('consultation_bookings') }}">BookingList</a></li>
                         <li><a href="{{ url_for('booking') }}">Booking</a></li>
                         <li><a href="#">Statistics</a></li>

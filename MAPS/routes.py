@@ -11,7 +11,6 @@ import MAPS.constants as config
 
 API_URL = "http://127.0.0.1:5000/api/"
 
-
 # base_url = request.host_url
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
@@ -183,23 +182,25 @@ def register():
                                 "previous_clinic": form.pre_clinic.data
                                 }
 
-                URL = f"{API_URL}patients"
+                url = f"{API_URL}patients"
 
                 # post the patient registration to DateBase API
-                api_response = requests.post(url=URL, json=patient_dict)
+                api_response = requests.post(url=url, json=patient_dict)
 
                 if api_response.status_code == 200:
                     flash('Your registration was sucessful', 'success')
                     return redirect(url_for('booking'))
                 else:
+                    response = json.loads(api_response.text)
+                    reason = response["message"]
                     flash(
-                        f'Your registration failed, reason: {api_response.reason} please try again!', 'danger')
+                        f'Your registration failed. {reason}. Please try again!', 'danger')
+                    app.logger.error(f"failed registration{reason}")
                 return redirect(url_for('register'))
         return render_template('patient_register.html', title='Register', form=form)
     except Exception as err:
-
+        app.logger.error(err)
         return render_template('500.html'), 500
-
 
 
 @app.route("/consultation_list", methods=['GET', 'POST'])
@@ -214,7 +215,7 @@ def consultation_list():
 
     chosen_doctor_id = form.doctor_id.data
 
-    if chosen_doctor_id == None:
+    if chosen_doctor_id is None:
         # initially the first doctor select field is shown
         consultations = requests.get(f"{API_URL}consultations/doctors/3")
     else:
@@ -370,7 +371,7 @@ def booking():
 def calendar_all():
     """Posting and rendering embedded google calender API for clerk user - containing all appointments """
     # TODO needs overwork to post the correct calendar API
-    doctor = read_text_file(config.PATH_DOCTOR)
+    doctor_id = 0
 
     # Getting the google Calendar ID which is attached to doctor
     # doctor = requests.get(f"{API_URL}doctors/{doctor_id}")
