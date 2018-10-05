@@ -41,12 +41,13 @@
                     <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                     <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
                     {% elif request.url_rule.rule == "/calendar" or request.url_rule.rule == "/calendar" or
-                    request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" %}
+                    request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" or request.url_rule.rule ==
+                    "/statistics" %}
                     <a class="nav-item nav-link" href="{{ url_for('clerk') }}">Clerk</a>
                     <a class="nav-item nav-link" href="{{ url_for('calendar') }}">Calendar</a>
                     <a class="nav-item nav-link" href="{{ url_for('consultation_bookings') }}">BookingList</a>
                     <a class="nav-item nav-link" href="{{ url_for('booking') }}">Booking</a>
-                    <a class="nav-item nav-link" href="#">Statistics</a>
+                    <a class="nav-item nav-link" href="{{ url_for('statistics') }}">Statistics</a>
                     {% elif request.url_rule.rule == "/doctor" or request.url_rule.rule == "/consultation"
                     or request.url_rule.rule == "/schedule" or request.url_rule.rule == "/consultation_list" %}
                     <a class="nav-item nav-link" href="{{ url_for('doctor') }}">Doctor</a>
