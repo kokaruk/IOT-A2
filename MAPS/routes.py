@@ -380,6 +380,13 @@ def calendar():
     return render_template('calendar.html', title='calendar', doctor=doctor)
 
 
+@app.route("/statistics")
+def statistics():
+    """Posting and rendering embedded google statistics from datastudio """
+    # TODO needs overwork on time series
+    return render_template('statistics.html', title='statistics')
+
+
 @app.route("/consultation_booking/<int:booking_id>")
 def consultation_booking(booking_id):
     """show to singular booking content for clerk to overview or to cancel if necessary"""
