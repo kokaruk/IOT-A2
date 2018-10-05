@@ -9,10 +9,7 @@ import json
 from datetime import timedelta, datetime
 import socket
 # reference: https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
-local_ip_address = s.getsockname()[0]
-API_URL = f"http://{local_ip_address}:5000/api/"
+API_URL = f"http://localhost:5000/api/"
 
 CONSULTATION_DURATION = 20
 PATH_DOCTOR = "MAPS/credentials/doctor.txt"
