@@ -1,21 +1,23 @@
 {% extends "layout.html" %}
 {% block app_content %}
 <h1>Calendar</h1>
-{% if doctor == 3 %}
+{% if doctor_id == 0 %}
+<iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+        style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+{% elif doctor_id == 3 %}
 <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
         style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-{% elif doctor == 4 %}
+{% elif doctor_id == 4 %}
 <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;ctz=Australia%2FMelbourne"
         style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-{% elif doctor == 5 %}
+{% elif doctor_id == 5 %}
 <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
         style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-{% elif doctor == 1 %}
+{% elif doctor_id == 1 %}
 <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
         style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 {% else %}
-<iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
-        style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+<p>Missing Calendar - contact administrator</p>
 {% endif %}
 <div class="border-top pt-3">
     <small class="text-muted">

@@ -353,7 +353,7 @@ def booking():
                     if api_response.status_code != 200:
                         flash(
                             f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
-                        return redirect(url_for('calendar'))
+                        return redirect(url_for('calendar', doctor_id=chosen_doctor_id))
                     else:
                         flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
                               'success')
@@ -366,13 +366,32 @@ def booking():
         print(err)
 
 
-@app.route("/calendar")
-def calendar():
-    """Posting and rendering embedded google calender API  """
+@app.route("/calendar_all/")
+def calendar_all():
+    """Posting and rendering embedded google calender API for clerk user - containing all appointments """
     # TODO needs overwork to post the correct calendar API
     doctor = read_text_file(config.PATH_DOCTOR)
 
-    return render_template('calendar.html', title='calendar', doctor=doctor)
+    # Getting the google Calendar ID which is attached to doctor
+    # doctor = requests.get(f"{API_URL}doctors/{doctor_id}")
+    # doctor = json.loads(doctor.text)
+    # google_calendar_id = dict(doctor)["calendar_id"]
+    # google_calendar_id = 'cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com'
+
+    # src=f"https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src={google_calendar_id}&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+    # iframe = f'<iframe src="{src}" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>'
+
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
+
+
+@app.route("/calendar/<int:doctor_id>")
+def calendar(doctor_id):
+    """Rendering embedded google calender API for doctor users only showing the calendar of the doctors calendar"""
+    # TODO needs overwork to post the correct calendar API
+
+    # doctor = read_text_file(PATH_DOCTOR)
+
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
 
 
 @app.route("/statistics")
