@@ -9,8 +9,11 @@ import json
 from datetime import timedelta, datetime
 import socket
 # reference: https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
-API_URL = "http://127.0.0.1:5000/api/"
-
+# s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
+# local_ip_address = s.getsockname()[0]
+# API_URL = f"http://{local_ip_address}:5000/api/"
+API_URL = f"http://127.0.0.1:5000/api/"
 CONSULTATION_DURATION = 20
 PATH_DOCTOR = "MAPS/credentials/doctor.txt"
 # base_url = request.host_url
@@ -354,7 +357,7 @@ def booking():
                     if api_response.status_code != 200:
                         flash(
                             f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
-                        return redirect(url_for('calendar'))
+                        return redirect(url_for('calendar', doctor_id=chosen_doctor_id))
                     else:
                         flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
                               'success')
@@ -367,13 +370,32 @@ def booking():
         print(err)
 
 
-@app.route("/calendar")
-def calendar():
-    """Posting and rendering embedded google calender API  """
+@app.route("/calendar_all/")
+def calendar_all():
+    """Posting and rendering embedded google calender API for clerk user - containing all appointments """
     # TODO needs overwork to post the correct calendar API
-    doctor = read_text_file(PATH_DOCTOR)
+    doctor_id = 0
 
-    return render_template('calendar.html', title='calendar', doctor=doctor)
+    # Getting the google Calendar ID which is attached to doctor
+    # doctor = requests.get(f"{API_URL}doctors/{doctor_id}")
+    # doctor = json.loads(doctor.text)
+    # google_calendar_id = dict(doctor)["calendar_id"]
+    # google_calendar_id = 'cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com'
+
+    # src=f"https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src={google_calendar_id}&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+    # iframe = f'<iframe src="{src}" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>'
+
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
+
+
+@app.route("/calendar/<int:doctor_id>")
+def calendar(doctor_id):
+    """Rendering embedded google calender API for doctor users only showing the calendar of the doctors calendar"""
+    # TODO needs overwork to post the correct calendar API
+
+    # doctor = read_text_file(PATH_DOCTOR)
+
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
 
 
 @app.route("/statistics")
