@@ -17,8 +17,14 @@ class RegistrationForm(FlaskForm):
                          validators=[DataRequired()])
     address = TextAreaField('Address',
                             validators=[DataRequired()])
-    email = EmailField(label="Email", validators=[DataRequired(), Email()])
+    email = EmailField(label="Email",
+                       render_kw={"placeholder": "name@email.com",
+                                  "pattern": "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"},
+                       validators=[DataRequired(), Email()])
     phone = TelField('Telephone or Mobile',
+                     render_kw={
+                         "placeholder": "04 XXXX XXXX",
+                     "pattern": "^(\(04\)|04|\+614)([ ]?\d){8}$"},
                      validators=[DataRequired()])
     medicare = StringField('Medicare No',
                            validators=[Length(min=9, max=10, message="Medicare No. has to be 10 digits"),
