@@ -15,7 +15,6 @@ local_ip_address = s.getsockname()[0]
 API_URL = f"http://{local_ip_address}:5000/api/"
 
 CONSULTATION_DURATION = 20
-CONSULTATION_DURATION = 20
 PATH_DOCTOR = "MAPS/credentials/doctor.txt"
 # base_url = request.host_url
 FORMAT_JSON_DATE_STRING = '%Y-%m-%dT%H:%M:%S%z'
