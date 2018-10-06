@@ -15,8 +15,8 @@ full_doctors_schema = FullDoctorSchema(many=True)
 @bp.route('/doctors', methods=['GET'])
 def get_doctors():
     """
-
-    :return:
+        This route returns all the doctors.
+    :return: JSON array of doctors.
     """
     all_doctors = Doctor.query.all()
     result = doctors_schema.dump(all_doctors)
@@ -27,9 +27,9 @@ def get_doctors():
 @bp.route('/doctors/<int:id>', methods=['GET'])
 def get_doctor(id):
     """
-
-    :param id:
-    :return:
+        This route gets a doctor by id.
+    :param Doctor id:
+    :return: Doctor JSON object.
     """
     doctor = Doctor.query.get(id)
     result = doctor_schema.dump(doctor)
@@ -40,9 +40,9 @@ def get_doctor(id):
 @bp.route('/doctors/<int:id>/all', methods=['GET'])
 def get_doctor_include_related(id):
     """
-
-    :param id:
-    :return:
+        This route gets a doctor by id. It includes related data.
+    :param Doctor id:
+    :return: Doctor JSON object.
     """
     doctor = Doctor.query.get(id)
     result = full_doctor_schema.dump(doctor)
@@ -53,9 +53,9 @@ def get_doctor_include_related(id):
 @bp.route('/doctors/email/<string:email>', methods=['GET'])
 def get_doctor_by_email(email):
     """
-
-    :param email:
-    :return:
+        This route gets a doctor by email.
+    :param Doctor email:
+    :return: Doctor JSON object.
     """
     doctor = Doctor.query.filter(Doctor.email == email).first()
     result = doctor_schema.dump(doctor)
@@ -66,8 +66,8 @@ def get_doctor_by_email(email):
 @bp.route('/doctors', methods=['POST'])
 def create_doctor():
     """
-
-    :return:
+        This route creates a Doctor and adds it to the database.
+    :return: Doctor JSON object.
     """
     first_name = request.json['first_name']
     second_name = request.json['second_name']
@@ -86,9 +86,9 @@ def create_doctor():
 @bp.route('/doctors/<int:id>', methods=['DELETE'])
 def delete_doctor(id):
     """
-
-    :param id:
-    :return:
+        This route deletes the Doctor with the provided id.
+    :param Doctor id:
+    :return: Doctor JSON object.
     """
     doctor = Doctor.query.get(id)
     db.session.delete(doctor)
@@ -100,9 +100,9 @@ def delete_doctor(id):
 @bp.route('/doctors/<int:id>', methods=['PUT'])
 def update_doctor(id):
     """
-
-    :param id:
-    :return:
+        This route updates the Doctor with the provided id.
+    :param Doctor id:
+    :return: Doctor JSON object.
     """
     doctor = Doctor.query.get(id)
     doctor.calendar_id = request.json['calendar_id']
