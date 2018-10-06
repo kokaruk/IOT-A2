@@ -17,9 +17,6 @@ API_URL = "http://127.0.0.1:5000/api/"
 choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
                   ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'), ('0', 'unknown')]
 
-
-# TODO REFACTOR EVERYTHING!!!
-
 def get_user(user_type):
     """This methods purpose is to provide tubles of either doctor or patient id and name or id and name"""
     if user_type == "patient":
