@@ -364,7 +364,6 @@ def booking():
         # TODO better Exception handling
         print(err)
 
-
 @app.route("/calendar_all/")
 def calendar_all():
     """Posting and rendering embedded google calender API for clerk user - containing all appointments """
