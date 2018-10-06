@@ -21,7 +21,7 @@ The purpose of the Program is to simulate an automated Medical Office..
 Booking of Consultations, Registration and Recording of Consultations Notes shall be managed via the MAPS Program
 For more information please see:
 
-https://github.com/kokaruk/IOT-A1.
+https://gitlab.com/calvinls/iot-assignment-2
 
 This file has a set of useful methods that are used throughout the program.
 
