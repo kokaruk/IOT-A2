@@ -1,6 +1,5 @@
 from flask import jsonify, request
 from MAPS.api import bp
-from MAPS.api.errors import bad_request
 from MAPS import db
 from MAPS.models import Consultation, ConsultationDetails, FullConsultationSchema, ConsultationDetailsSchema
 

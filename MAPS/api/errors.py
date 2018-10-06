@@ -1,10 +1,5 @@
 from flask import jsonify
-
 from MAPS.api import bp
-
-
-def bad_request():
-    pass
 
 
 @bp.errorhandler(400)
