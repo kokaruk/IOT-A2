@@ -13,6 +13,11 @@ consultation_details_schema = ConsultationDetailsSchema(many=True)
 # Get all consultations for a particular id
 @bp.route('/consultations/<int:id>', methods=['GET'])
 def get_consultation(id):
+    """
+
+    :param id:
+    :return:
+    """
     consultation = Consultation.query.get(id)
     result = consultation_schema.dump(consultation)
     return jsonify(result.data)
@@ -21,6 +26,11 @@ def get_consultation(id):
 # Get all consultations for a particular doctor
 @bp.route('/consultations/doctors/<int:id>', methods=['GET'])
 def get_consultations_doctor(id):
+    """
+
+    :param id:
+    :return:
+    """
     all_consultations_for_a_doctor = Consultation.query.filter(
         Consultation.doctor_id == id).all()
     result = consultations_schema.dump(all_consultations_for_a_doctor)
@@ -30,6 +40,11 @@ def get_consultations_doctor(id):
 # Get all consultations for a particular patient
 @bp.route('/consultations/patients/<int:id>', methods=['GET'])
 def get_consultations_patient(id):
+    """
+
+    :param id:
+    :return:
+    """
     all_consultations_for_a_patient = Consultation.query.filter(
         Consultation.patient_id == id).all()
     result = consultations_schema.dump(all_consultations_for_a_patient)
@@ -39,6 +54,10 @@ def get_consultations_patient(id):
 # Create a consultation
 @bp.route('/consultations', methods=['POST'])
 def create_consultation():
+    """
+
+    :return:
+    """
     # get all information from body
     appointment = request.json['appointment']
     patient_id = request.json['patient_id']
@@ -52,25 +71,31 @@ def create_consultation():
         appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
     db.session.add(new_consultation)
     db.session.commit()
+    return consultation_schema.jsonify(new_consultation)
 
 
 # Update a calendar_cancelled status by id
 @bp.route('/consultations/<int:id>', methods=['PUT'])
 def update_consultation(id):
+    """
+
+    :param id:
+    :return:
+    """
     consultation = Consultation.query.get(id)
     consultation.cancelled = request.json['cancelled']
     db.session.commit()
     return consultation_schema.jsonify(consultation)
 
 
-# Delete a consultation by id
-def delete_consultation(id):
-    pass
-
-
 # Get all consultations for a particular doctor
 @bp.route('/consultations/details/<int:id>', methods=['GET'])
 def get_consultation_detail(id):
+    """
+
+    :param id:
+    :return:
+    """
     consultation_detail = ConsultationDetails.query.get(id)
     result = consultation_detail_schema.dump(consultation_detail)
     return jsonify(result.data)
@@ -79,6 +104,10 @@ def get_consultation_detail(id):
 # Create a consultationDetail for a particular consultation
 @bp.route('/consultations/details', methods=['POST'])
 def create_consultation_detail():
+    """
+
+    :return:
+    """
     # get updated information from body
     consultation_id = request.json['consultation_id']
     # limit notes to one per consultation
@@ -103,6 +132,11 @@ def create_consultation_detail():
 
 @bp.route('/consultations/details/<int:id>', methods=['PUT'])
 def edit_consultation_detail(id):
+    """
+
+    :param id:
+    :return:
+    """
     # get updated information from body
     consultation_detail = ConsultationDetails.query.get(id)
     description = request.json['description']
@@ -130,6 +164,11 @@ def edit_consultation_detail(id):
 # Delete a consultationDetail and return the whole consultation
 @bp.route('/consultations/details/<int:id>', methods=['DELETE'])
 def delete_consultation_detail(id):
+    """
+
+    :param id:
+    :return:
+    """
     consultation_detail = ConsultationDetails.query.get(id)
     consultation = Consultation.query.get(consultation_detail.consultation_id)
     db.session.delete(consultation_detail)
