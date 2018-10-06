@@ -187,3 +187,4 @@ credentials/
 /client-secret.json
 /service-account.json
 .env
+/Assistant/*.json
