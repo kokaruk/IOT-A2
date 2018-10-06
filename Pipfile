@@ -19,6 +19,8 @@ marshmallow-sqlalchemy = "*"
 google-api-python-client = "*"
 "oauth2client" = "*"
 requests = "*"
+flask-bootstrap = "*"
+flask-nav = "*"
 
 [dev-packages]
 

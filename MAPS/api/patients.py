@@ -1,7 +1,6 @@
-from flask import request, jsonify
+from flask import request, jsonify, abort
 
 from MAPS.api import bp
-from MAPS.api.errors import bad_request
 from MAPS import db
 from MAPS.models import Patient, Medication, Condition, MedicalCertificate, Referral
 from MAPS.models import PartPatientSchema, FullPatientSchema, MedicationSchema, ConditionSchema, \
@@ -79,7 +78,11 @@ def create_patient():
     dob = request.json['dob']
     gender = request.json['gender']
     address = request.json['address']
+    if first_name is None or last_name is None or dob is None:
+        abort(400)  # missing crucial params
     email = request.json['email']
+    if Patient.query.filter_by(email=email).first() is not None:
+        abort(400, 'Email already exists')
     phone = request.json['phone']
     medicare_number = request.json['medicare_number']
     previous_doctor = request.json['previous_doctor']
@@ -249,7 +252,7 @@ def delete_medical_certificate(patient_id):
     :return: JSON array of all medical certificates for a patient.
     """
     id = request.json['id']
-    deleted_medical_certificate = MedicalCertificate.query.filter(MedicalCertificate.id == id)\
+    deleted_medical_certificate = MedicalCertificate.query.filter(MedicalCertificate.id == id) \
         .filter(MedicalCertificate.patient_id == patient_id).first()
     db.session.delete(deleted_medical_certificate)
     db.session.commit()

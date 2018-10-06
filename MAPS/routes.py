@@ -7,24 +7,16 @@ from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
 import requests
 import json
 from datetime import timedelta, datetime
-import socket
-# reference: https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib/25850698#25850698
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
-local_ip_address = s.getsockname()[0]
-API_URL = f"http://{local_ip_address}:5000/api/"
+import MAPS.constants as config
 
-CONSULTATION_DURATION = 20
-PATH_DOCTOR = "MAPS/credentials/doctor.txt"
+API_URL = "http://127.0.0.1:5000/api/"
+
 # base_url = request.host_url
-FORMAT_JSON_DATE_STRING = '%Y-%m-%dT%H:%M:%S%z'
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
 choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
                   ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'), ('0', 'unknown')]
 
-
-# TODO REFACTOR EVERYTHING!!!
 
 def get_user(user_type):
     """This methods purpose is to provide tubles of either doctor or patient id and name or id and name"""
@@ -188,22 +180,25 @@ def register():
                                 "previous_clinic": form.pre_clinic.data
                                 }
 
-                URL = f"{API_URL}patients"
+                url = f"{API_URL}patients"
 
                 # post the patient registration to DateBase API
-                api_response = requests.post(url=URL, json=patient_dict)
+                api_response = requests.post(url=url, json=patient_dict)
 
                 if api_response.status_code == 200:
                     flash('Your registration was sucessful', 'success')
                     return redirect(url_for('booking'))
                 else:
+                    response = json.loads(api_response.text)
+                    reason = response["message"]
                     flash(
-                        f'Your registration failed, reason: {api_response.reason} please try again!', 'danger')
+                        f'Your registration failed. {reason}. Please try again!', 'danger')
+                    app.logger.error(f"failed registration{reason}")
                 return redirect(url_for('register'))
         return render_template('patient_register.html', title='Register', form=form)
     except Exception as err:
-        # TODO better Exception handling
-        print(err)
+        app.logger.error(err)
+        return render_template('500.html'), 500
 
 
 @app.route("/consultation_list", methods=['GET', 'POST'])
@@ -218,7 +213,7 @@ def consultation_list():
 
     chosen_doctor_id = form.doctor_id.data
 
-    if chosen_doctor_id == None:
+    if chosen_doctor_id is None:
         # initially the first doctor select field is shown
         consultations = requests.get(f"{API_URL}consultations/doctors/3")
     else:
@@ -232,10 +227,10 @@ def consultation_list():
     for booking in bookings:
         booking_date = booking['appointment']
         booking['appointment'] = datetime.strptime(
-            booking_date, FORMAT_JSON_DATE_STRING)
+            booking_date, config.FORMAT_JSON_DATE_STRING)
         # Adding an end time for it
         booking['appointment_end'] = booking['appointment'] + \
-            timedelta(minutes=CONSULTATION_DURATION)
+                                     timedelta(minutes=config.CONSULTATION_DURATION)
 
     return render_template('consultation_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name))
@@ -336,14 +331,14 @@ def booking():
                                                                             patient_email=patient_email,
                                                                             doctor_email=doctor_email,
                                                                             doctor_id=chosen_doctor_id,
-                                                                            duration=CONSULTATION_DURATION)
+                                                                            duration=config.CONSULTATION_DURATION)
 
                     # Building Message Body for database post request
                     consultation = {
                         "appointment": format_datetime_str(concat_date_time(form.date.data, form.start.data)),
                         "patient_id": chosen_patient_id,
                         "doctor_id": chosen_doctor_id,
-                        "duration": str(CONSULTATION_DURATION),
+                        "duration": str(config.CONSULTATION_DURATION),
                         "cause": form.reason.data,
                         "cancelled": form.cancelled.data,
                         'google_event_id': google_event_id
@@ -357,7 +352,7 @@ def booking():
                     if api_response.status_code != 200:
                         flash(
                             f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
-                        return redirect(url_for('calendar'))
+                        return redirect(url_for('calendar', doctor_id=chosen_doctor_id))
                     else:
                         flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
                               'success')
@@ -370,13 +365,32 @@ def booking():
         print(err)
 
 
-@app.route("/calendar")
-def calendar():
-    """Posting and rendering embedded google calender API  """
+@app.route("/calendar_all/")
+def calendar_all():
+    """Posting and rendering embedded google calender API for clerk user - containing all appointments """
     # TODO needs overwork to post the correct calendar API
-    doctor = read_text_file(PATH_DOCTOR)
+    doctor_id = 0
 
-    return render_template('calendar.html', title='calendar', doctor=doctor)
+    # Getting the google Calendar ID which is attached to doctor
+    # doctor = requests.get(f"{API_URL}doctors/{doctor_id}")
+    # doctor = json.loads(doctor.text)
+    # google_calendar_id = dict(doctor)["calendar_id"]
+    # google_calendar_id = 'cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com'
+
+    # src=f"https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src={google_calendar_id}&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+    # iframe = f'<iframe src="{src}" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>'
+
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
+
+
+@app.route("/calendar/<int:doctor_id>")
+def calendar(doctor_id):
+    """Rendering embedded google calender API for doctor users only showing the calendar of the doctors calendar"""
+    # TODO needs overwork to post the correct calendar API
+
+    # doctor = read_text_file(PATH_DOCTOR)
+
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
 
 
 @app.route("/statistics")
@@ -395,10 +409,10 @@ def consultation_booking(booking_id):
 
     # Bringing json string of date to datetime
     consultation_booking['appointment'] = datetime.strptime(consultation_booking['appointment'],
-                                                            FORMAT_JSON_DATE_STRING)
+                                                            config.FORMAT_JSON_DATE_STRING)
     # Adding an end time for it
     consultation_end = consultation_booking['appointment'] + \
-        timedelta(minutes=CONSULTATION_DURATION)
+                       timedelta(minutes=config.CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     doctors = get_user("doctor")
@@ -442,10 +456,10 @@ def consultation_bookings():
     for booking in bookings:
         booking_date = booking['appointment']
         booking['appointment'] = datetime.strptime(
-            booking_date, FORMAT_JSON_DATE_STRING)
+            booking_date, config.FORMAT_JSON_DATE_STRING)
         # Adding an end time for it
         booking['appointment_end'] = booking['appointment'] + \
-            timedelta(minutes=CONSULTATION_DURATION)
+                                     timedelta(minutes=config.CONSULTATION_DURATION)
 
     # TODO Find a way to store globally
     patients = get_user("patient")
