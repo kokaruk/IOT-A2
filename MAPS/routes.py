@@ -10,16 +10,20 @@ from datetime import timedelta, datetime
 import MAPS.constants as config
 
 API_URL = "http://127.0.0.1:5000/api/"
-
 # base_url = request.host_url
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
 choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
-                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'), ('0', 'unknown')]
+                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate')]
 
 
 def get_user(user_type):
-    """This methods purpose is to provide tubles of either doctor or patient id and name or id and name"""
+    """
+    This methods purpose is to provide tuples of either doctor or patient id and name or id and name
+    :param: user_type either 'patient' or 'doctor' expected
+    :return: two tuples (<patient or doctor> id : <patient or doctor> name and <patient or doctor> id : <patient or doctor> email
+    """
+
     if user_type == "patient":
 
         user = requests.get(f"{API_URL}patients")
@@ -54,35 +58,58 @@ def get_user(user_type):
 @app.route("/")
 @app.route("/home")
 def home():
-    """Rendering homepage"""
+    """
+    Route to home page for rending view
+    :return: render_template with home.html
+    """
     return render_template('home.html', title='Home')
 
 
 @app.route("/about")
 def about():
-    """Rendering about page"""
+    """
+    Route to about page for rending view
+    :return: render_template with about.html
+    """
     return render_template('about.html', title='About')
 
 
 @app.route("/patient")
 def patient():
-    """Rendering welcome page for patients"""
+    """
+    Route to patient start page for rending view
+    :return: render_template with patient.html
+    """
     return render_template('patient.html', title='Patient')
 
 
 @app.route("/clerk")
 def clerk():
-    """Rendering welcome page for clerks"""
+    """
+    Route to patient start page for rending view
+    :return: render_template with clerk.html
+    """
     return render_template('clerk.html', title='Clerk')
 
 
 @app.route("/doctor")
 def doctor():
-    """Rendering welcome page for doctor"""
+    """
+    Route to doctors start page for rending view
+    :return: render_template with clerk.html
+    """
     return render_template('doctor.html', title='Doctor')
 
 
 def get_work_time(daytime, year, week, day):
+    """
+    This is a helper method for taking the week and weekday and cast to a datetime format for further processing
+    :param daytime: Either "morning" or "afternoon"
+    :param year: %Y format of year (2018)
+    :param week: format %W (1-52)
+    :param day: String (one of "monday" - "friday")
+    :return: dict with two datetime 8start to end )
+    """
     morning_start = "08:00"
     morning_end = "12:30"
 
@@ -110,7 +137,10 @@ def get_work_time(daytime, year, week, day):
 
 @app.route("/schedule", methods=['GET', 'POST'])
 def schedule():
-    """Rendering Schedule Page for weekly schedule of doctors"""
+    """
+    Rendering scheduling page for creating the weekly availabilities for doctors
+    :return: render_template with schedule.html
+    """
     form = ScheduleBookingForm()
     doctors = get_user("doctor")
 
@@ -159,7 +189,10 @@ def schedule():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    """Rendering patient registration page and post to database API """
+    """
+    Rendering patient registration page and post data to database API
+    :return: render_template containing schedule.html and form data
+    """
     try:
         form = RegistrationForm()
         if form.validate_on_submit():
@@ -203,7 +236,10 @@ def register():
 
 @app.route("/consultation_list", methods=['GET', 'POST'])
 def consultation_list():
-    """Shall open a possibility to """
+    """ Route to a list of consultations which display the patients previous medical history and shall allow
+    for creating new consultations notes on basis of bookings
+    :return: render_template containing consultation_list.html booking and doctors_id chosen by user
+    """
     form = ConsultationForm()
 
     # TODO Find a way to store globally
@@ -239,7 +275,10 @@ def consultation_list():
 @app.route("/consultation/<consultation_id>", methods=['GET', 'POST', 'PUT'])
 def consultation(consultation_id):
     # TODO Test if this works
-    """Rendering patient consultation details page and post to database API """
+    """
+    Rendering patient consultation note form for the doctor to fill and post to database API
+    :return: render_template containing consultation_details.html and form data
+    """
     try:
         form = ConsultationDetailsForm()
         if form.validate_on_submit():
@@ -275,9 +314,14 @@ def consultation(consultation_id):
 
 
 @app.route("/booking", methods=['GET', 'POST'])
-# TODO get POST Method to POST to API
+
 def booking():
-    """Rendering consultation booking page and post to database API and to google calender method """
+    """
+    Rendering booking form and post to database API and to google calender method
+    for both creation in google calendar and in database
+    :return: render_template containing booking_create.html and form data
+    """
+
     try:
         form = BookingForm()
 
@@ -364,10 +408,12 @@ def booking():
         # TODO better Exception handling
         print(err)
 
-
 @app.route("/calendar_all/")
 def calendar_all():
-    """Posting and rendering embedded google calender API for clerk user - containing all appointments """
+    """
+    Route for rendering embedded google calender iframe for clerk user - containing all appointments
+    :return: render_template containing calendar.html and doctor_id set to 0
+    """
     # TODO needs overwork to post the correct calendar API
     doctor_id = 0
 
@@ -385,7 +431,11 @@ def calendar_all():
 
 @app.route("/calendar/<int:doctor_id>")
 def calendar(doctor_id):
-    """Rendering embedded google calender API for doctor users only showing the calendar of the doctors calendar"""
+    """
+    Route for rendering embedded google calender iframe for doctor users only showing the calendar of the doctors calendars
+    :param doctor_id: should be declared in http route
+    :return: render_template containing calendar.html and doctor_id
+    """
     # TODO needs overwork to post the correct calendar API
 
     # doctor = read_text_file(PATH_DOCTOR)
@@ -395,8 +445,11 @@ def calendar(doctor_id):
 
 @app.route("/statistics")
 def statistics():
-    """Posting and rendering embedded google statistics from datastudio """
-    # TODO needs overwork on time series
+    """
+    Posting and rendering embedded google data studio statistics from datastudio
+    :return: render_template with statistics.html
+    """
+
     return render_template('statistics.html', title='statistics')
 
 
@@ -448,7 +501,7 @@ def consultation_bookings():
     else:
         # with every choice of doctor and hit search the booking with the choosen doctor is shown
         consultation_bookings = requests.get(
-            f"{API_URL}consultations/doctors/{chosen_doctor_id}")
+            f"{API_URL}consultations/doctors/{chosen_doctor_id }")
 
     bookings = json.loads(consultation_bookings.text)
 
@@ -468,7 +521,7 @@ def consultation_bookings():
     # TODO Better way to show date time
     return render_template('booking_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name), patients_name=dict(patients_id_name),
-                           cause=dict(choices_reason))
+                           cause=dict(choices_reason), doctor_id=chosen_doctor_id)
 
 
 @app.route("/delete_booking/<int:booking_id>", methods=['GET', 'PUT'])
