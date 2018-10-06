@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block content %}
+{% block app_content %}
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
@@ -107,4 +107,4 @@
         Want to go back ? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
     </small>
 </div>
-{% endblock content %}
+{% endblock app_content %}
