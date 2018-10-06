@@ -15,7 +15,7 @@ API_URL = "http://127.0.0.1:5000/api/"
 
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
 choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
-                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'), ('0', 'unknown')]
+                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate')]
 
 
 def get_user(user_type):
@@ -448,7 +448,7 @@ def consultation_bookings():
     else:
         # with every choice of doctor and hit search the booking with the choosen doctor is shown
         consultation_bookings = requests.get(
-            f"{API_URL}consultations/doctors/{chosen_doctor_id}")
+            f"{API_URL}consultations/doctors/{chosen_doctor_id }")
 
     bookings = json.loads(consultation_bookings.text)
 
@@ -468,7 +468,7 @@ def consultation_bookings():
     # TODO Better way to show date time
     return render_template('booking_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name), patients_name=dict(patients_id_name),
-                           cause=dict(choices_reason))
+                           cause=dict(choices_reason), doctor_id=chosen_doctor_id)
 
 
 @app.route("/delete_booking/<int:booking_id>", methods=['GET', 'PUT'])
