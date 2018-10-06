@@ -188,3 +188,4 @@ credentials/
 /service-account.json
 .env
 /Assistant/*.json
+log/

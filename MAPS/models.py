@@ -3,40 +3,6 @@ from marshmallow import fields
 from MAPS import db, ma
 
 
-class ConsultationDetails(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'), nullable=False)
-    description = db.Column(db.String(300))
-    additional_notes = db.Column(db.String(300), nullable=True)
-    symptoms = db.Column(db.String(120), nullable=True)
-    diagnosis = db.Column(db.String(120), nullable=True)
-    actual_start = db.Column(db.DateTime, nullable=True)
-    actual_end = db.Column(db.DateTime, nullable=True)
-    medication_id = db.relationship("Medication")
-    condition = db.relationship("Condition")
-    referral = db.relationship("Referral")
-    medical_certificate = db.relationship("MedicalCertificate")
-
-    def __init__(self, consultation_id, description, additional_notes, symptoms, diagnosis, actual_start, actual_end):
-        self.consultation_id = consultation_id
-        self.description = description
-        self.additional_notes = additional_notes
-        self.symptoms = symptoms
-        self.diagnosis = diagnosis
-        self.actual_start = actual_start
-        self.actual_end = actual_end
-
-    def __repr__(self):
-        """ for cli output"""
-        return f"<ConsultationDetails {self.description}>"
-
-
-class ConsultationDetailsSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'consultation_id', 'description', 'additional_notes',
-                  'symptoms', 'diagnosis', 'actual_start', 'actual_end')
-
-
 class Referral(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
@@ -44,9 +10,8 @@ class Referral(db.Model):
     procedure_name = db.Column(db.String(120))
     referred_practitioner = db.Column(db.String(120))
 
-    def __init__(self, patient_id, medication, consultation_details_id, procedure_name, referred_practitioner):
+    def __init__(self, patient_id, consultation_details_id, procedure_name, referred_practitioner):
         self.patient_id = patient_id
-        self.medication = medication
         self.consultation_details_id = consultation_details_id
         self.procedure_name = procedure_name
         self.referred_practitioner = referred_practitioner
@@ -124,6 +89,52 @@ class ConditionSchema(ma.Schema):
         fields = ('id', 'patient_id', 'consultation_details_id', 'condition')
 
 
+class ConsultationDetails(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'), nullable=False)
+    description = db.Column(db.String(300))
+    additional_notes = db.Column(db.String(300), nullable=True)
+    symptoms = db.Column(db.String(120), nullable=True)
+    diagnosis = db.Column(db.String(120), nullable=True)
+    actual_start = db.Column(db.DateTime, nullable=True)
+    actual_end = db.Column(db.DateTime, nullable=True)
+    medication_id = db.relationship("Medication")
+    condition = db.relationship("Condition")
+    referral = db.relationship("Referral")
+    medical_certificate = db.relationship("MedicalCertificate")
+
+    def __init__(self, consultation_id, description, additional_notes, symptoms, diagnosis, actual_start, actual_end):
+        self.consultation_id = consultation_id
+        self.description = description
+        self.additional_notes = additional_notes
+        self.symptoms = symptoms
+        self.diagnosis = diagnosis
+        self.actual_start = actual_start
+        self.actual_end = actual_end
+
+    def __repr__(self):
+        """ for cli output"""
+        return f"<ConsultationDetails {self.description}>"
+
+
+# class ConsultationDetailsSchema(ma.Schema):
+#     class Meta:
+#         fields = ('id', 'consultation_id', 'description', 'additional_notes',
+#                   'symptoms', 'diagnosis', 'actual_start', 'actual_end')
+class ConsultationDetailsSchema(ma.Schema):
+    id = fields.Int(dump_only=True)
+    consultation_id = fields.Int(dump_only=True)
+    description = fields.Str(dump_only=True)
+    additional_notes = fields.Str(dump_only=True)
+    symptoms = fields.Str(dump_only=True)
+    diagnosis = fields.Str(dump_only=True)
+    actual_start = fields.DateTime(dump_only=True)
+    actual_end = fields.DateTime(dump_only=True)
+    condition = fields.Nested(ConditionSchema, many=True)
+    referral = fields.Nested(ReferralSchema, many=True)
+    medical_certificate = fields.Nested(MedicalCertificateSchema, many=True)
+
+
 class Consultation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     appointment = db.Column(db.DateTime)
@@ -157,7 +168,7 @@ class ConsultationSchema(ma.Schema):
     duration = fields.Int(dump_only=True)
     cause = fields.Str(dump_only=True)
     cancelled = fields.Bool(dump_only=True)
-    google_event_id = fields.Int(dump_only=True)
+    google_event_id = fields.Str(dump_only=True)
 
 
 class FullConsultationSchema(ma.Schema):
@@ -168,7 +179,7 @@ class FullConsultationSchema(ma.Schema):
     duration = fields.Int(dump_only=True)
     cause = fields.Str(dump_only=True)
     cancelled = fields.Bool(dump_only=True)
-    google_event_id = fields.Int(dump_only=True)
+    google_event_id = fields.Str(dump_only=True)
     consultation_details = fields.Nested(ConsultationDetailsSchema, many=True)
 
 

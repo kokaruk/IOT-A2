@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField
 from wtforms.validators import DataRequired, Length, Email, InputRequired
+import datetime
 
 
 class RegistrationForm(FlaskForm):
@@ -16,8 +17,14 @@ class RegistrationForm(FlaskForm):
                          validators=[DataRequired()])
     address = TextAreaField('Address',
                             validators=[DataRequired()])
-    email = EmailField(label="Email", validators=[DataRequired(), Email()])
+    email = EmailField(label="Email",
+                       render_kw={"placeholder": "name@email.com",
+                                  "pattern": "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"},
+                       validators=[DataRequired(), Email()])
     phone = TelField('Telephone or Mobile',
+                     render_kw={
+                         "placeholder": "04 XXXX XXXX",
+                     "pattern": "^(\(04\)|04|\+614)([ ]?\d){8}$"},
                      validators=[DataRequired()])
     medicare = StringField('Medicare No',
                            validators=[Length(min=9, max=10, message="Medicare No. has to be 10 digits"),
@@ -30,8 +37,14 @@ class RegistrationForm(FlaskForm):
 
 
 class ConsultationForm(FlaskForm):
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    date = DateField('Consultation Date', default=datetime.datetime.today())
+    search = SubmitField('Search Appointments')
+
+
+class ConsultationDetailsForm(FlaskForm):
     # TODO pre fill information from booking
-    date = DateField('Consulation Date',
+    date = DateField('Consultation Date',
                      validators=[DataRequired()])
     start = TimeField('Start of Consultation', format='%H:%M',
                       validators=[DataRequired()])
@@ -46,17 +59,37 @@ class ConsultationForm(FlaskForm):
 
 
 class BookingForm(FlaskForm):
-
     date = DateField('Consultation Date', validators=[DataRequired()])
     start = TimeField('Consulation Time', format='%H:%M',
                       validators=[DataRequired()])
-    patient_id = SelectField('Please select patient', choices=[], validators=[InputRequired()])
-    doctor_id = SelectField('Please select doctors', choices=[], validators=[InputRequired()])
-    reason = SelectField('Please select reason for doctors Visit',
-                         choices=[('', 'Please select'), ('1', 'Pick up a prescription'),
-                                  ('2', 'Serious illness - e.g. flu'),
-                                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate'),
-                                  ('0', 'unknown')], validators=[DataRequired()])
+    patient_id = SelectField('Please select patient', choices=[], coerce=int, validators=[InputRequired()])
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
+    reason = SelectField('Please select reason for doctors Visit', choices=[], coerce=int, validators=[DataRequired()])
     cancelled = BooleanField('Cancelled Appointment')
 
-    submit = SubmitField('Book Consultation')
+    create = SubmitField('Book Consultation')
+    delete = SubmitField('Delete Consulation')
+
+
+class ConsultationBookings(FlaskForm):
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    search = SubmitField('Search Appointments')
+
+
+class ScheduleBookingForm(FlaskForm):
+    now = datetime.datetime.now()
+    doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
+    year = StringField('Please choose year', default=f"{now.year}")
+    calendar_week = StringField('Please choose year',
+                                default=datetime.date(now.year, now.month, now.day).strftime("%V"))
+    monday_morning = BooleanField('Monday Morning')
+    monday_afternoon = BooleanField('Monday Afternoon')
+    tuesday_morning = BooleanField('Tuesday Morning')
+    tuesday_afternoon = BooleanField('Tuesday Afternoon')
+    wednesday_morning = BooleanField('Wednesday Morning')
+    wednesday_afternoon = BooleanField('Wednesday Afternoon')
+    thursday_morning = BooleanField('Thursday Morning')
+    thursday_afternoon = BooleanField('Thursday Afternoon')
+    friday_morning = BooleanField('Friday Morning')
+    friday_afternoon = BooleanField('Friday Afternoon')
+    create_week = SubmitField('Book Availabilites')

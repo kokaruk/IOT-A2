@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block app_content %}
+<div class="content-section">
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Consultation Booking No {{ booking.id }}
+            <small class="text-muted">{{ booking.appointment.strftime("%d-%m-%Y") }} from {{
+                booking.appointment.strftime("%H:%M") }} until {{ end.strftime("%H:%M") }}
+            </small>
+        </legend>
+        <div>
+            <h2 class="article-title">Doctor: {{ doctor_name[booking.doctor_id] }} </a></h2>
+            <h2 class="article-title">Patient: {{ patient_name[booking.patient_id] }}</h2>
+            <p class="article-content">Reason for visit: {{ cause[booking.cause] }}</p>
+            {% if booking.cancelled == False %}
+            <p class="article-content">Appointment cancelled: No </p>
+            {% else %}
+            <p class="article-content">Appointment cancelled: Yes </p>
+            {% endif %}
+        </div>
+
+    </fieldset>
+</div>
+<div class="modal-footer">
+    <form action="{{ url_for('consultation_bookings') }}">
+        <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </form>
+    <form action="{{ url_for('consultation', consultation_id = booking.id) }}" method=["POST","GET"]>
+        <input class="btn btn-secondary" type="submit" value="Create Consultation Details">
+    </form>
+    {% if booking.cancelled == False %}
+    <form action="{{ url_for('cancel_booking', booking_id = booking.id)}}" method="PUT">
+        <input class="btn btn-danger" type="submit" value="Cancel Appointment">
+    </form>
+    {% else %}
+    <input class="btn btn-default" value="Already cancelled">
+    </form>
+    {% endif %}
+</div>
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Want to go back ? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
+    </small>
+</div>
+
+{% endblock app_content %}

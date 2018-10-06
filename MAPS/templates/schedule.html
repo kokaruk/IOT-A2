@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block app_content %}
+<h2>Weekly Schedule</h2>
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Availability Schedule Booking</legend>
+            <div class="form-group">
+                {{ form.doctor_id.label(class="form-control-label") }}
+                {% if form.doctor_id.errors %}
+                {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.doctor_id.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.doctor_id(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.year.label(class="form-control-label") }}
+                {% if form.year.errors %}
+                {{ form.year(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.start.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.year(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.calendar_week.label(class="form-control-label") }}
+                {% if form.calendar_week.errors %}
+                {{ form.calendar_week(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.calendar_week.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.calendar_week(class="form-control form-control-lg") }}
+                {% endif %}
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Day</th>
+                        <th scope="col">Morning (08:00am - 12:30pm)</th>
+                        <th scope="col">Afternoon (13:30m - 17:30pm)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">Monday</th>
+                        <td> {{ form.monday_morning(class="form-control form-control-lg") }}</td>
+                        <td> {{ form.monday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Tuesday</th>
+                        <td>{{ form.tuesday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.tuesday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Wednesday</th>
+                        <td>{{ form.wednesday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.wednesday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Thursday</th>
+                        <td> {{ form.thursday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.thursday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Friday</th>
+                        <td> {{ form.friday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.friday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+        </fieldset>
+        <div class="form-group">
+            {{ form.create_week(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Want to go back ? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
+    </small>
+</div>
+{% endblock app_content%}
