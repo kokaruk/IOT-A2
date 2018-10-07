@@ -1,16 +1,19 @@
 {% extends "layout.html" %}
+{% set active_page = "register" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+
+{% block section_title %}
+    <h2>Welcome to our Medical Clinic</h2>
+    <p>Please choose your next Step</p>
+{% endblock section_title %}
+
 {% block app_content %}
-    <h1>Patient Registration</h1>
     <div class="content-section">
-        <div class="form-group">
-            {{ wtf.quick_form(form) }}
+        <div class="container">
+            <div class="form-group">
+                {{ wtf.quick_form(form) }}
+            </div>
         </div>
-    </div>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Already Have An Account? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
-        </small>
     </div>
 {% endblock app_content %}

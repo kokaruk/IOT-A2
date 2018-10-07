@@ -1,24 +1,38 @@
 {% extends "layout.html" %}
+{% set active_page = "patient" %}
+
+{% block section_title %}
+    <h2>Welcome to our Medical Clinic</h2>
+    <p>Please choose your next Step</p>
+{% endblock section_title %}
+
 {% block app_content %}
-<h3>Welcome to our Medical Clinic </h3>
-<br><p>Please choose your next Step </p>
-<div class="container">
-    <div class="column">
-        <div class="col-sm">
-            <img class="rounded img-thumbnail" width="304" height="236"
-                 src="{{ url_for('static', filename='patient.jpg') }}">
-            <div class="media-body">
-                <p><a class="article-title" href="{{ url_for('register')}}">Patients - Go to Register</a></p>
+    <div class="container">
+        <a class="col-lg-4 col-md-6 single-service" href="{{ url_for('register') }}">
+            <div class="inner">
+                <div class="title">
+                    <div class="icon">
+                        <i class="fas fa-star-of-life"></i>
+                    </div>
+                    <h4>Register</h4>
+                </div>
+                <div class="content">
+                    <p>Tap here to register or book an appointment</p>
+                </div>
             </div>
-        </div>
-        <div class="col-sm">
-            <span class="border-0"></span>
-            <img class="rounded img-thumbnail" width="304" height="236"
-                 src="{{ url_for('static', filename='appointment.jpg') }}">
-            <div class="media-body">
-                <p><a class="article-title" href="{{ url_for('booking')}}">Book a Consultation Appointment</a></p>
+        </a>
+        <a class="col-lg-4 col-md-6 single-service" href="{{ url_for('booking') }}">
+            <div class="inner" >
+                <div class="title">
+                    <div class="icon">
+                         <i class="fas fa-screwdriver"></i>
+                    </div>
+                    <h4>Booking</h4>
+                </div>
+                <div class="content">
+                    <p>Tap here to access the admin panel</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
-</div>
 {% endblock app_content %}
