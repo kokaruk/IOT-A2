@@ -37,11 +37,8 @@ def concat_date_time(date, time):
 
 def format_datetime_str(date_time):
     """formats a datetime to string as YYYY-MM-DDTH:M:S"""
-    date_time_formatted = date_time.strftime("%Y-%m-%dT%H:%M:%S")
+    date_time_formatted = date_time.strftime("%Y-%m-%dT%H:%M:%S+11:00")
     return date_time_formatted
-
-
-
 
 
 def get_work_time(daytime, year, week, day):

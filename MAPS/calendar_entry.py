@@ -8,13 +8,14 @@ from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from MAPS.constants import *
-
 from oauth2client import file, client, tools
 from MAPS.utils import format_datetime_str
 from flask import flash
 import requests
 import json
 from datetime import datetime
+from MAPS import app
+from flask import url_for
 
 SCOPES_ADDRESS = 'https://www.googleapis.com/auth/calendar'
 STORAGE = 'MAPS/credentials/token.json'
@@ -94,10 +95,8 @@ def create_availability_entry(date_range, doctor_id):
     # Post data to Google Calendar API for event creation
     title = f"non-availability time"
 
-    start = format_datetime_str(date_range["start"])
-    end = format_datetime_str(date_range["end"])
-
-    google_calendar.book_doctor_times(start=start, end=end, title=title, doctor_id=doctor_id)
+    google_calendar.book_doctor_times(start=date_range["start"], end=date_range["end"], title=title,
+                                      doctor_id=doctor_id)
 
 
 class GoogleCalendarAPI:
@@ -115,8 +114,8 @@ class GoogleCalendarAPI:
         """
         # Formatting times for appointment
         start = format_datetime_str(date)
-        end = date + timedelta(minutes=duration)
-        end = format_datetime_str(end)
+        end_unformatted = date + timedelta(minutes=duration)
+        end = format_datetime_str(end_unformatted)
 
         # building message body
         event = {
@@ -149,11 +148,20 @@ class GoogleCalendarAPI:
             json_data = json.loads(doctor.text)
             for doctor in json_data:
                 if doctor['id'] == doctor_id:
-                    # sending the post recuest to google calendars
-                    event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
-                    print('Event created: {}'.format(event.get('htmlLink')))
-                    # returning googles event id
-                    return event.get('id')
+
+                    # check if time slot is available via free busy query of google calendar
+                    freebusy = self.check_busy(date, end_unformatted, doctor["calendar_id"])
+
+                    if freebusy is True:
+                        # sending the post recuest to google calendars
+                        event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
+                        print('Event created: {}'.format(event.get('htmlLink')))
+
+                        # returning googles event id
+                        return event.get('id')
+                    else:
+                        flash(f'Time slot already booked: please try again!', 'danger')
+                        return freebusy
         except Exception as err:
             # TODO better Exception handling
             print(err)
@@ -177,24 +185,28 @@ class GoogleCalendarAPI:
 
     def book_doctor_times(self, start, end, title, doctor_id):
         """
-        Similar to insert_calendar_entry method, it creates a event into the calendar but this is meant for busy times
-        and marking availabilities
+        Similar to insert_calendar_entry method, it creates an event into the calendar but this is meant for
+        blocking times where the doctor is not available
         :param start: Datetime
         :param end: DateTime
         :param title: String
         :param doctor_id: Int
         """
+
+        start_formatted = format_datetime_str(start)
+        end_formatted = format_datetime_str(end)
+
         # building message body
         event = {
             'summary': title,
             'transparency': "opaque",
             'visibility': "public",
             'start': {
-                'dateTime': str(start),
+                'dateTime': str(start_formatted),
                 'timeZone': 'Australia/Melbourne'
             },
             'end': {
-                'dateTime': str(end),
+                'dateTime': str(end_formatted),
                 'timeZone': 'Australia/Melbourne'
             }
         }
@@ -203,11 +215,63 @@ class GoogleCalendarAPI:
             json_data = json.loads(doctor.text)
             for doctor in json_data:
                 if doctor['id'] == doctor_id:
-                    # sending the post recuest to google calendars
-                    event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
-                    print('Event created: {}'.format(event.get('htmlLink')))
 
-                    return
+                    # check if time slot is available
+                    freebusy = self.check_busy(start, end, doctor["calendar_id"])
+
+                    if freebusy is True:
+                        # sending the post request to google calendars
+                        event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
+                        print('Event created: {}'.format(event.get('htmlLink')))
+                    else:
+                        flash(
+                            f'Busy time from {start.strftime("%d-%m-%Y at %H:%M")} to {end.strftime("%H:%M")} could not be created',
+                            'danger')
+
         except Exception as err:
             # TODO better Exception handling
             print(err)
+
+    def check_busy(self, start, end, google_calendar_id):
+        """
+        This method is to query a booking attempt against freebusy function to see if slot is available
+        :param start: datetime
+        :param end: datetime
+        :param google_calendar_id:
+        :return: Boolean if timeslot free
+        """
+        try:
+            SCOPES_ADDRESS = 'https://www.googleapis.com/calendar/v3/freeBusy'
+
+            # If modifying these scopes, delete the file token.json.
+            SCOPES = SCOPES_ADDRESS
+            store = file.Storage(STORAGE)
+            creds = store.get()
+            if not creds or creds.invalid:
+                flow = client.flow_from_clientsecrets(CLIENT_SECRETS, SCOPES)
+                creds = tools.run_flow(flow, store)
+            service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
+
+            start_formatted = format_datetime_str(start)
+            end_formatted = format_datetime_str(end)
+
+            body = {
+                "timeMin": start_formatted,
+                "timeMax": end_formatted,
+                "timeZone": "Australia/Melbourne",
+                "items": [{"id": google_calendar_id}]
+            }
+
+            freebusy = service.freebusy().query(body=body).execute()
+
+            busy = freebusy["calendars"][google_calendar_id]['busy']
+
+            if not busy:
+                free = True
+            else:
+                free = False
+
+            return free
+        except Exception as err:
+            app.logger.error(err)
+            return url_for('500.html'), 500
