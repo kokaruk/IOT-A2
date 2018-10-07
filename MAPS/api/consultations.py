@@ -77,6 +77,10 @@ def create_consultation():
         appointment, patient_id, doctor_id, duration, cause, cancelled, google_event_id)
     db.session.add(new_consultation)
     db.session.commit()
+    consultation_detail = ConsultationDetails(
+        new_consultation.id, None, None, None, None, None, None)
+    db.session.add(consultation_detail)
+    db.session.commit()
     return consultation_schema.jsonify(new_consultation)
 
 
