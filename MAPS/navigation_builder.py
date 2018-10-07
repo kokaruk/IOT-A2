@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
 """
+from flask import render_template
 from flask.views import MethodView
 
 
@@ -29,3 +30,12 @@ class MainPage(MethodView):
 
 class PageWithNavigation(MainPage):
     navigation = True
+
+
+class ContentPage(PageWithNavigation):
+    def get(self):
+        page = {}  # here you do your magic to get page data
+        self.context['page'] = page
+        # self.context['bread']=bread
+        # self.context['something_Else']=something_Else
+        return render_template('page.html', **self.context)
