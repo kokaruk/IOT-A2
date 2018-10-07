@@ -6,6 +6,7 @@
 """
 
 from flask import render_template, url_for, flash, redirect, request
+from flask.views import View
 
 from MAPS.api_connector import *
 from MAPS.constants import *
@@ -21,6 +22,19 @@ from datetime import timedelta, datetime
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization)
 CHOICES_REASON = [(0, 'Please select'), (1, 'Pick up a prescription'), (2, 'Serious illness - e.g. flu'),
                   (3, 'Medical exam'), (4, 'Vaccination'), (5, 'Pick up a medical certificate')]
+
+
+class MyRequest(View):
+    methods = ['POST']
+
+    def dispatch_request(self):
+        # request.method == 'POST'
+        return 'Hello'
+
+
+app.add_url_rule(
+    '/say-hi', view_func=MyRequest.as_view('my_request')
+)
 
 
 @app.route("/")

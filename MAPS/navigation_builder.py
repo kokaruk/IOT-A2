@@ -9,7 +9,6 @@ from flask.views import MethodView
 
 
 class MainPage(MethodView):
-    """Top ca"""
     navigation = False
     context = {}
 
@@ -33,6 +32,20 @@ class PageWithNavigation(MainPage):
 
 
 class ContentPage(PageWithNavigation):
+    def prepare(self):
+        if self.navigation:
+            self.context['navigation'] = {
+                # building navigation
+                # in your case based on request.args.get('page')
+            }
+        else:
+            self.context['navigation'] = None
+        # added another if to point on changes, but you can combine with previous one
+        if self.navigation:
+            self.context['extends_with'] = "templates/page_with_navigation.html"
+        else:
+            self.context['extends_with'] = "templates/main_page.html"
+
     def get(self):
         page = {}  # here you do your magic to get page data
         self.context['page'] = page
