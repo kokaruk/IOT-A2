@@ -25,7 +25,7 @@ choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2',
 
 
 def get_user(user_type):
-    """This methods purpose is to provide tubles of either doctor or patient id and name or id and name"""
+    """This methods purpose is to provide tuples of either doctor or patient id and name or id and name"""
     if user_type == "patient":
 
         user = requests.get(f"{API_URL}patients")
