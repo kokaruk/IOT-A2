@@ -1,86 +1,83 @@
-{# adding flask_bootstrap support #}
 {% extends 'bootstrap/base.html' %}
 
 {% block head %}
-{{ super() }}
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 {% endblock %}
 
 {% block title %}
-{% if title %}MAPS - {{ title }}{% else %}Medical Appointment System{% endif %}
+    {% if title %}MAPS - {{ title }}{% else %}Medical Appointment System{% endif %}
 {% endblock %}
 
 {% block styles %}
-{{ super() }}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 {% endblock %}
 
-{%  block metas %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, shrink-to-fit=no">
+{% block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, shrink-to-fit=no">
 {% endblock %}
+
+{% set navigation_bar = navigation|default([
+    ('/', 'home', 'Home'),
+    ('/about', 'about', 'About')
+]) -%}
+{% set active_page = active_page|default('home') -%}
 
 {% block navbar %}
-<nav class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('home') }}">MAPS</a>
+    <header id="header" class="navbar-fixed-top">
+        <div id="header-wrap">
+            <div class="container">
+                <nav class="navbar navbar-inverse">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <div id="logo">
+                                <a class="navbar-brand" href="{{ url_for('home') }}">MAPS</a>
+                            </div>
+                        </div>
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav navbar-right">
+                                {% for href, id, caption in navigation_bar %}
+                                    <li>
+                                        <a {% if id == active_page %} class="active"{% endif %}
+                                                                      href="{{ href|e }}">{{ caption|e }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
         </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('about') }}">About</a></li>
-                {% if request.url_rule.rule == "/home" or request.url_rule.rule == "/about" or request.url_rule.rule ==
-                "/" %}
-                <li><a href="{{ url_for('patient') }}">Patient</a></li>
-                <li><a href="{{ url_for('clerk') }}">Clerk</a></li>
-                <li><a href="{{ url_for('doctor') }}">Doctor</a></li>
-                {% elif request.url_rule.rule == "/patient" or request.url_rule.rule == "/register" or
-                request.url_rule.rule == "/booking" %}
-                <li><a href="{{ url_for('patient') }}">Patient</a></li>
-                <li><a href="{{ url_for('register') }}">Register</a></li>
-                <li><a href="{{ url_for('booking') }}">Booking</a></li>
-                {% elif request.url_rule.rule == "/calendar_all" or request.url_rule.rule == "/consultation_bookings" or
-                request.url_rule.rule == "/booking" or request.url_rule.rule == "/clerk" %}
-                <li><a href="{{ url_for('clerk') }}">Clerk</a></li>
-                <li><a href="{{ url_for('calendar_all') }}">Calendar</a></li>
-                <li><a href="{{ url_for('consultation_bookings') }}">BookingList</a></li>
-                <li><a href="{{ url_for('booking') }}">Booking</a></li>
-                <li><a href="{{ url_for('statistics') }}">Statistics</a></li>
-                {% elif request.url_rule.rule == "/doctor" or request.url_rule.rule == "/consultation" or
-                request.url_rule.rule == "/schedule" or request.url_rule.rule == "/consultation_list" %}
-                <li><a href="{{ url_for('doctor') }}">Doctor</a></li>
-                <li><a href="{{ url_for('consultation_list') }}">Consultation Notes</a></li>
-                <li><a href="{{ url_for('schedule') }}">Weekly Schedule</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</nav>
+
+    </header>
 {% endblock %}
 
 
 {% block content %}
-<main role="main" class="container">
-    <div class="row">
-        <div class="col-md-8">
+    <main role="main" class="container">
+        <div class="section-title">
+            {% block section_title %}
+            {% endblock section_title %}
+        </div>
+        <div class="row">
             {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-            {% endif %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endwith %}
             {% block app_content %}{% endblock %}
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}

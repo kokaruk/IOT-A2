@@ -1,68 +1,76 @@
 {% extends "layout.html" %}
+{% set active_page = "consultation_bookings" %}
 {% block app_content %}
-<!---->
-<form method="POST" action="">
-    <div class="form-group">
-        {{ form.doctor_id.label(class="form-control-label") }}
-        {% if form.doctor_id.errors %}
-        {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
-        <div class="invalid-feedback">
-            {% for error in form.doctor_id.errors %}
-            <span>{{ error }}</span>
+    <div class="content-section">
+        <div class="container">
+            <form method="POST" action="">
+                <div class="form-group">
+                    {{ form.doctor_id.label(class="form-control-label") }}
+                    {% if form.doctor_id.errors %}
+                        {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.doctor_id.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.doctor_id(class="form-control form-control-lg") }}
+                    {% endif %}
+                    <div class="form-group">
+                        {{ form.search(class="btn btn-default") }}
+                    </div>
+                </div>
+                {% if doctor_id == None %}
+                    <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+                            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
+                {% elif doctor_id == 3 %}
+                    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+                            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
+                {% elif doctor_id == 4 %}
+                    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;ctz=Australia%2FMelbourne"
+                            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
+                {% elif doctor_id == 5 %}
+                    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+                            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
+                {% elif doctor_id == 1 %}
+                    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
+                            style="border-width:0" width="750" height="600" frameborder="0" scrolling="no"></iframe>
+                {% else %}
+                    <p>Missing Calendar - contact administrator</p>
+                {% endif %}
+            </form>
+            {% for bookings in bookings %}
+                <article class="media content-section">
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            <a class="mr-4" href="{{ url_for('consultation_booking', booking_id=bookings.id) }}">Consultation
+                                Booking
+                                No. {{ bookings.id }} </a>
+                            <small class="text-muted">{{ bookings.appointment.strftime("%d-%m-%Y") }}
+                                from {{ bookings.appointment.strftime("%H:%M") }}
+                                until {{ bookings.appointment_end.strftime("%H:%M") }}
+                            </small>
+                        </div>
+                        <h2><a class="article-title"
+                               href="{{ url_for('consultation_booking', booking_id=bookings.id) }}">
+                            Patient {{ patients_name[bookings.patient_id] }}</a></h2>
+                        <p class="article-content">Reason for visit: {{ cause[bookings.cause] }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        {% if bookings.cancelled == False %}
+                            <form action="{{ url_for('consultation', consultation_id = bookings.id) }}"
+                                  method=["POST","GET"]>
+                                <input class="btn btn-success" type="submit" value="Create Consultation Details">
+                            </form>
+                            <form action="{{ url_for('cancel_booking', booking_id = bookings.id) }}" method="PUT">
+                                <input class="btn btn-danger" type="submit" value="Cancel Appointment">
+                            </form>
+                        {% else %}
+                            <input class="btn btn-default" value="Already cancelled">
+                        {% endif %}
+                    </div>
+                </article>
             {% endfor %}
         </div>
-        {% else %}
-        {{ form.doctor_id(class="form-control form-control-lg") }}
-        {% endif %}
-        <div class="form-group">
-            {{ form.search(class="btn btn-default") }}
-        </div>
     </div>
-    {% if doctor_id == None %}
-    <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
-            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
-    {% elif doctor_id == 3 %}
-    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
-            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
-    {% elif doctor_id == 4 %}
-    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%23691426&amp;ctz=Australia%2FMelbourne"
-            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
-    {% elif doctor_id == 5 %}
-    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=2&amp;hl=en_GB&amp;bgcolor=%23FFFFFF&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
-            style="border-width:0" width="750" height="550" frameborder="0" scrolling="no"></iframe>
-    {% elif doctor_id == 1 %}
-    <iframe src="https://calendar.google.com/calendar/embed?showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
-            style="border-width:0" width="750" height="600" frameborder="0" scrolling="no"></iframe>
-    {% else %}
-    <p>Missing Calendar - contact administrator</p>
-    {% endif %}
-</form>
-{% for bookings in bookings %}
-<article class="media content-section">
-    <div class="media-body">
-        <div class="article-metadata">
-            <a class="mr-4" href="{{ url_for('consultation_booking', booking_id=bookings.id) }}">Consultation Booking
-                No. {{ bookings.id }} </a>
-            <small class="text-muted">{{ bookings.appointment.strftime("%d-%m-%Y") }} from {{
-                bookings.appointment.strftime("%H:%M") }} until {{ bookings.appointment_end.strftime("%H:%M") }}
-            </small>
-        </div>
-        <h2><a class="article-title" href="{{ url_for('consultation_booking', booking_id=bookings.id) }}"> Patient {{
-            patients_name[bookings.patient_id] }}</a></h2>
-        <p class="article-content">Reason for visit: {{ cause[bookings.cause] }}</p>
-    </div>
-    <div class="modal-footer">
-        {% if bookings.cancelled == False %}
-        <form action="{{ url_for('consultation', consultation_id = bookings.id) }}" method=["POST","GET"]>
-            <input class="btn btn-success" type="submit" value="Create Consultation Details">
-        </form>
-        <form action="{{ url_for('cancel_booking', booking_id = bookings.id)}}" method="PUT">
-            <input class="btn btn-danger" type="submit" value="Cancel Appointment">
-        </form>
-        {% else %}
-        <input class="btn btn-default" value="Already cancelled">
-        {% endif %}
-    </div>
-</article>
-{% endfor %}
 {% endblock app_content %}

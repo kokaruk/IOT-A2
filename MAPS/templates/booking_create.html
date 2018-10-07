@@ -1,86 +1,86 @@
 {% extends "layout.html" %}
+{% set active_page = "booking" %}
 {% block app_content %}
-<div class="content-section">
-    <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=500&amp;wkst=2&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%235229A3&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%232F6213&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%238C500B&amp;ctz=Australia%2FMelbourne"
-            style="border-width:0" width="700" height="500" frameborder="0" scrolling="no"></iframe>
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Consultation Booking</legend>
-            <div class="form-group required">
-                {{ form.date.label(class="control-label") }}
-                {% if form.date.errors %}
-                {{ form.date(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.date.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.date(class="form-control form-control-lg") }}
-                {% endif %}
+    <div class="content-section">
+        <div class="container">
+            <div class="form-group">
+                <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=500&amp;wkst=2&amp;bgcolor=%23FFFFFF&amp;src=cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com&amp;color=%235229A3&amp;src=co63bbo22htf8jqombkb2tguh8%40group.calendar.google.com&amp;color=%232F6213&amp;src=9kn05ti5cef5mt9kcpup4sjt4g%40group.calendar.google.com&amp;color=%23B1365F&amp;src=b39vt2t31sb4iihjgontdoikgg%40group.calendar.google.com&amp;color=%238C500B&amp;ctz=Australia%2FMelbourne"
+                    style="border-width:0" width="700" height="500" frameborder="0" scrolling="no"></iframe>
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Consultation Booking</legend>
+                        <div class="form-group required">
+                            {{ form.date.label(class="control-label") }}
+                            {% if form.date.errors %}
+                                {{ form.date(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.date.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.date(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group required">
+                            {{ form.start.label(class="control-label") }}
+                            {% if form.start.errors %}
+                                {{ form.start(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.start.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.start(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group required">
+                            {{ form.patient_id.label(class="control-label") }}
+                            {% if form.patient_id.errors %}
+                                {{ form.patient_id(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.patient_id.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.patient_id(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group required">
+                            {{ form.doctor_id.label(class="control-label") }}
+                            {% if form.doctor_id.errors %}
+                                {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.doctor_id.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.doctor_id(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group required">
+                            {{ form.reason.label(class="control-label") }}
+                            {% if form.reason.errors %}
+                                {{ form.reason(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.reason.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.reason(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group required">
+                        {{ form.create(class="btn btn-outline-info") }}
+                    </div>
+                </form>
             </div>
-            <div class="form-group required">
-                {{ form.start.label(class="control-label") }}
-                {% if form.start.errors %}
-                {{ form.start(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.start.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.start(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <div class="form-group required">
-                {{ form.patient_id.label(class="control-label") }}
-                {% if form.patient_id.errors %}
-                {{ form.patient_id(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.patient_id.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.patient_id(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <div class="form-group required">
-                {{ form.doctor_id.label(class="control-label") }}
-                {% if form.doctor_id.errors %}
-                {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.doctor_id.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.doctor_id(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <div class="form-group required">
-                {{ form.reason.label(class="control-label") }}
-                {% if form.reason.errors %}
-                {{ form.reason(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.reason.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.reason(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-        </fieldset>
-        <div class="form-group required">
-            {{ form.create(class="btn btn-outline-info") }}
         </div>
-    </form>
-</div>
-<div class="border-top pt-3">
-    <small class="text-muted">
-        Want to go back ? <a class="ml-2" href="{{ url_for('home') }}">back to main page</a>
-    </small>
-</div>
-{% endblock app_content%}
+    </div>
+{% endblock app_content %}

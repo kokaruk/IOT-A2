@@ -5,13 +5,13 @@
 .. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
 """
 
-from flask import render_template, url_for, flash, redirect, request
-
+from flask import render_template, url_for, redirect, request
 from MAPS.api_connector import *
 from MAPS.calendar_entry import *
 from MAPS.forms import RegistrationForm, ConsultationDetailsForm, BookingForm, ConsultationBookings, \
     ScheduleBookingForm, ConsultationForm
 from MAPS import app
+from MAPS.navigation_bar import primary_nav, patient_nav, clerk_nav, doctor_nav
 from MAPS.utils import *
 import json
 from datetime import timedelta, datetime
@@ -39,7 +39,7 @@ def about():
     Route to about page for rending view
     :return: render_template with about.html
     """
-    return render_template('about.html', title='About')
+    return render_template('about.html', title='About', navigation=primary_nav())
 
 
 @app.route("/patient")
@@ -48,7 +48,7 @@ def patient():
     Route to patient start page for rending view
     :return: render_template with patient.html
     """
-    return render_template('patient.html', title='Patient')
+    return render_template('patient.html', title='Patient', navigation=patient_nav())
 
 
 @app.route("/clerk")
@@ -57,7 +57,7 @@ def clerk():
     Route to patient start page for rending view
     :return: render_template with clerk.html
     """
-    return render_template('clerk.html', title='Clerk')
+    return render_template('clerk.html', title='Clerk', navigation=clerk_nav())
 
 
 @app.route("/doctor")
@@ -66,7 +66,7 @@ def doctor():
     Route to doctors start page for rending view
     :return: render_template with clerk.html
     """
-    return render_template('doctor.html', title='Doctor')
+    return render_template('doctor.html', title='Doctor', navigation=doctor_nav())
 
 
 @app.route("/schedule", methods=['GET', 'POST'])
@@ -136,7 +136,7 @@ def schedule():
 
         # schedule_dict = {"doctor_id": form.doctor_id.data}
 
-    return render_template('schedule.html', title='Schedule', form=form)
+    return render_template('schedule.html', title='Schedule', form=form, navigation=doctor_nav())
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -180,7 +180,7 @@ def register():
                         f'Your registration failed. {reason}. Please try again!', 'danger')
                     app.logger.error(f"failed registration{reason}")
                 return redirect(url_for('register'))
-        return render_template('patient_register.html', title='Register', form=form)
+        return render_template('patient_register.html', title='Register', form=form, navigation=patient_nav())
     except Exception as err:
         app.logger.error(err)
         return render_template('500.html'), 500
@@ -221,7 +221,7 @@ def consultation_list():
                                      timedelta(minutes=CONSULTATION_DURATION)
 
     return render_template('consultation_list.html', title='Consultation Bookings List', form=form,
-                           bookings=bookings, doctors_name=dict(doctors_id_name))
+                           bookings=bookings, doctors_name=dict(doctors_id_name), navigation=doctor_nav())
 
 
 @app.route("/consultation/<consultation_id>", methods=['GET', 'POST', 'PUT'])
@@ -360,8 +360,7 @@ def booking():
             con_id = dict(json_data)
             id = con_id['id']
             return redirect(url_for('consultation_booking', booking_id=id))
-
-        return render_template('booking_create.html', title='Consultation Booking', form=form)
+        return render_template('booking_create.html', title='Consultation Booking', form=form, navigation=patient_nav())
     except Exception as err:
         # TODO better Exception handling
         print(err)
@@ -376,7 +375,7 @@ def calendar_all():
     # TODO needs overwork to post the correct calendar API
     doctor_id = 0
 
-    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id, navigation=clerk_nav())
 
 
 @app.route("/calendar/<int:doctor_id>")
@@ -390,7 +389,7 @@ def calendar(doctor_id):
 
     # doctor = read_text_file(PATH_DOCTOR)
 
-    return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
+    return render_template('calendar.html', title='calendar', doctor_id=doctor_id, navigation=clerk_nav())
 
 
 @app.route("/statistics")
@@ -400,7 +399,7 @@ def statistics():
     :return: render_template with statistics.html
     """
 
-    return render_template('statistics.html', title='statistics')
+    return render_template('statistics.html', title='statistics', navigation=clerk_nav())
 
 
 @app.route("/consultation_booking/<int:booking_id>")
@@ -433,7 +432,8 @@ def consultation_booking(booking_id):
     # TODO Better way to show date time
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
                            cause=dict(CHOICES_REASON),
-                           doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end)
+                           doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end,
+                           navigation=clerk_nav())
 
 
 @app.route("/consultation_bookings", methods=['POST', 'GET'])
@@ -481,7 +481,7 @@ def consultation_bookings():
     # TODO Better way to show date time
     return render_template('booking_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name), patients_name=dict(patients_id_name),
-                           cause=dict(CHOICES_REASON), doctor_id=chosen_doctor_id)
+                           cause=dict(CHOICES_REASON), doctor_id=chosen_doctor_id, navigation=clerk_nav())
 
 
 @app.route("/delete_booking/<int:booking_id>", methods=['GET', 'PUT'])
