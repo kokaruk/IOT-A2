@@ -143,6 +143,15 @@ def get_work_time(daytime, year, week, day):
 
 
 def build_default_busy_times(doctor_id, year, week):
+    """
+    Method for building the default time where doctors is not working(busy as per google calendar entry)
+    These times are Saturday and Sunday entirely and Monday to Friday 00:00 - 7:59 (morning), Lunch Break (12:31 - 13:29)
+    and evening (17:31 - 23:59)
+    :param doctor_id: doctor_id: id of the doctor for this event
+    :param year: %Y format of year (2018)
+    :param week: format %W (1-52)
+
+    """
     for weekdays in WEEKDAYS:
 
         if weekdays == "saturday" or weekdays == "sunday":
@@ -153,7 +162,7 @@ def build_default_busy_times(doctor_id, year, week):
 
             weekend_times = dict({"start": start, "end": end})
 
-            create_availablitiy_entry(weekend_times, doctor_id)
+            create_availability_entry(weekend_times, doctor_id)
 
         else:
             start_morning = datetime.strptime(
@@ -163,7 +172,7 @@ def build_default_busy_times(doctor_id, year, week):
 
             morning = dict({"start": start_morning, "end": end_morning})
 
-            create_availablitiy_entry(morning, doctor_id)
+            create_availability_entry(morning, doctor_id)
 
             start_break = datetime.strptime(
                 f"{year}-{week}-{WEEKDAYS[weekdays]} 12:31", "%Y-%W-%w %H:%M")
@@ -172,7 +181,7 @@ def build_default_busy_times(doctor_id, year, week):
 
             break_time = dict({"start": start_break, "end": end_break})
 
-            create_availablitiy_entry(break_time, doctor_id)
+            create_availability_entry(break_time, doctor_id)
 
             start_evening = datetime.strptime(
                 f"{year}-{week}-{WEEKDAYS[weekdays]} 17:31", "%Y-%W-%w %H:%M")
@@ -181,13 +190,14 @@ def build_default_busy_times(doctor_id, year, week):
 
             evening = dict({"start": start_evening, "end": end_evening})
 
-            create_availablitiy_entry(evening, doctor_id)
+            create_availability_entry(evening, doctor_id)
 
 @app.route("/schedule", methods=['GET', 'POST'])
 def schedule():
     """
-    Rendering scheduling page for creating the weekly availabilities for doctors
-    :return: render_template with schedule.html
+    Rendering scheduling page for creating the weekly availabilities or better busy times for doctors
+    and invoking methods for creating them in google
+    :return: render_template with schedule.html and form data
     """
     form = ScheduleBookingForm()
     # TODO Find a way to store globally
@@ -209,54 +219,59 @@ def schedule():
 
         if form.monday_morning.data:
             monday_morning_times = get_work_time("morning", year, week, 'monday')
-            create_availablitiy_entry(monday_morning_times, chosen_doctor_id)
+            create_availability_entry(monday_morning_times, chosen_doctor_id)
 
         if form.monday_afternoon.data:
             monday_afternoon_times = get_work_time("afternoon", year, week, 'monday')
-            create_availablitiy_entry(monday_afternoon_times, chosen_doctor_id)
+            create_availability_entry(monday_afternoon_times, chosen_doctor_id)
 
         if form.tuesday_morning.data:
             tuesday_morning_times = get_work_time("morning", year, week, 'tuesday')
-            create_availablitiy_entry(tuesday_morning_times, chosen_doctor_id)
+            create_availability_entry(tuesday_morning_times, chosen_doctor_id)
 
         if form.tuesday_afternoon.data:
             tuesday_afternoon_times = get_work_time("afternoon", year, week, 'tuesday')
-            create_availablitiy_entry(tuesday_afternoon_times, chosen_doctor_id)
+            create_availability_entry(tuesday_afternoon_times, chosen_doctor_id)
 
         if form.wednesday_morning.data:
             wednesday_morning_times = get_work_time("morning", year, week, 'wednesday')
-            create_availablitiy_entry(wednesday_morning_times, chosen_doctor_id)
+            create_availability_entry(wednesday_morning_times, chosen_doctor_id)
 
         if form.wednesday_afternoon.data:
             wednesday_afternoon_times = get_work_time("afternoon", year, week, 'wednesday')
-            create_availablitiy_entry(wednesday_afternoon_times, chosen_doctor_id)
+            create_availability_entry(wednesday_afternoon_times, chosen_doctor_id)
 
         if form.thursday_morning.data:
             thursday_morning_times = get_work_time("morning", year, week, 'thursday')
-            create_availablitiy_entry(thursday_morning_times, chosen_doctor_id)
+            create_availability_entry(thursday_morning_times, chosen_doctor_id)
 
         if form.thursday_afternoon.data:
             thursday_afternoon_times = get_work_time("afternoon", year, week, 'thursday')
-            create_availablitiy_entry(thursday_afternoon_times, chosen_doctor_id)
+            create_availability_entry(thursday_afternoon_times, chosen_doctor_id)
 
         if form.friday_morning.data:
             friday_morning_times = get_work_time("morning", year, week, 'friday')
-            create_availablitiy_entry(friday_morning_times, chosen_doctor_id)
+            create_availability_entry(friday_morning_times, chosen_doctor_id)
 
         if form.friday_afternoon.data:
             friday_afternoon_times = get_work_time("afternoon", year, week, 'friday')
-            create_availablitiy_entry(friday_afternoon_times, chosen_doctor_id)
+            create_availability_entry(friday_afternoon_times, chosen_doctor_id)
 
         # schedule_dict = {"doctor_id": form.doctor_id.data}
 
     return render_template('schedule.html', title='Schedule', form=form)
 
 
-def create_availablitiy_entry(date_range, doctor_id):
+def create_availability_entry(date_range, doctor_id):
+    """
+    Method for creating the entries of busy times
+    :param date_range: has to be a dictionary of with ["start":Datetime, "end":Datetime]
+    :param doctor_id: id of the doctor for this event
+    """
     google_calendar = gc_api()
+
     # Post data to Google Calendar API for event creation
     title = f"non-availability time"
-    # date = concat_date_time(form.date.data, form.start.data)
 
     start = format_datetime_str(date_range["start"])
     end = format_datetime_str(date_range["end"])
@@ -495,15 +510,6 @@ def calendar_all():
     # TODO needs overwork to post the correct calendar API
     doctor_id = 0
 
-    # Getting the google Calendar ID which is attached to doctor
-    # doctor = requests.get(f"{API_URL}doctors/{doctor_id}")
-    # doctor = json.loads(doctor.text)
-    # google_calendar_id = dict(doctor)["calendar_id"]
-    # google_calendar_id = 'cvrsdsk7jjae29p9fg9t6vcr94%40group.calendar.google.com'
-
-    # src=f"https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=WEEK&amp;height=600&amp;wkst=1&amp;hl=en&amp;bgcolor=%23FFFFFF&amp;src={google_calendar_id}&amp;color=%23B1365F&amp;ctz=Australia%2FMelbourne"
-    # iframe = f'<iframe src="{src}" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>'
-
     return render_template('calendar.html', title='calendar', doctor_id=doctor_id)
 
 
@@ -524,7 +530,7 @@ def calendar(doctor_id):
 @app.route("/statistics")
 def statistics():
     """
-    Posting and rendering embedded google data studio statistics from datastudio
+    Posting and rendering embedded google data studio statistics iframe
     :return: render_template with statistics.html
     """
 
@@ -533,7 +539,12 @@ def statistics():
 
 @app.route("/consultation_booking/<int:booking_id>")
 def consultation_booking(booking_id):
-    """show to singular booking content for clerk to overview or to cancel if necessary"""
+    """
+    Show to singular booking content for clerk to overview or to cancel if necessary
+    :param booking_id:
+    :return: render_template containing booking_show.html with booking: = booking data, patient_name and doctor_name
+    (instead of ID), cause = the reason for the consultation, end = calculated end of the consultation
+    """
 
     booking = requests.get(f"{API_URL}consultations/{booking_id}")
     consultation_booking = json.loads(booking.text)
@@ -561,7 +572,12 @@ def consultation_booking(booking_id):
 
 @app.route("/consultation_bookings", methods=['POST', 'GET'])
 def consultation_bookings():
-    """ Showing the list of all consultation bookings - filter by doctor"""
+    """
+    Showing the list of all consultation bookings - filterable by doctor - meant for clerk
+    :return: render_template containing booking_list.html with form = form data, bookings = booking data (all bookings),
+    doctors_name = dictionary of doctors name and id, patients_name dictionary of doctors name and id,
+    cause = the reason for the consultation and the id of the doctor chosen by the user
+    """
 
     form = ConsultationBookings()
 
@@ -604,13 +620,17 @@ def consultation_bookings():
 
 @app.route("/delete_booking/<int:booking_id>", methods=['GET', 'PUT'])
 def cancel_booking(booking_id):
-    """show to singular booking content for clerk to overview or to set cancel if necessary"""
+    """
+    Route for cancelling an appointment (in database set to cancelled true and google calendar - delete event
+    :param booking_id: int
+    :return: render_template containing redirect to route for consultation_booking/booking_show.html with booking id
+    """
 
     URL = f"{API_URL}consultations/{booking_id}"
     mark_booking_cancelled = {
         "cancelled": True
     }
-    # Send PUT request to database API for booking (its not delete - only a marking it cancelled
+    # Send PUT request to database API for booking (its not delete - only a marking it cancelled)
     api_response = requests.put(url=URL, json=mark_booking_cancelled)
     if api_response.status_code != 200:
         flash(
@@ -621,6 +641,8 @@ def cancel_booking(booking_id):
               'success')
 
     # TODO make doctor ID somehow global and draw from there values
+    # collecting data for sending out the delete request to google Calendar API
+
     booking = requests.get(f"{API_URL}consultations/{booking_id}")
     consultation_booking = json.loads(booking.text)
 

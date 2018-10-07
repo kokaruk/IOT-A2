@@ -34,7 +34,15 @@ class GoogleCalendarAPI:
     """ Purpose of this class is to manage the access calls to the google calendar API"""
 
     def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor_id, duration):
-        """ This method calls google API for creating Events based on the entries from the Users"""
+        """This method calls google API for creating Events based on the entries from the Users"
+        :param title: String
+        :param date: DateTime
+        :param patient_email: String
+        :param doctor_email: String
+        :param doctor_id: Int
+        :param duration: Int
+        :return: google event_id (necessary if deletion is desired)
+        """
         # Formatting times for appointment
         start = format_datetime_str(date)
         end = date + timedelta(minutes=duration)
@@ -81,7 +89,11 @@ class GoogleCalendarAPI:
             print(err)
 
     def delete_calendar_entry(self, google_calendar_id, google_event_id):
-        """NOT READY YET """
+        """
+        Method for deleting an google calendar entry
+        :param google_calendar_id: String
+        :param google_event_id: String
+        """
         # TODO Implement delete - issue how to get event ID
         try:
             delete = service.events().delete(calendarId=google_calendar_id, eventId=google_event_id).execute()
@@ -94,7 +106,14 @@ class GoogleCalendarAPI:
             print(err)
 
     def book_doctor_times(self, start, end, title, doctor_id):
-
+        """
+        Similar to insert_calendar_entry method, it creates a event into the calendar but this is meant for busy times
+        and marking availabilities
+        :param start: Datetime
+        :param end: DateTime
+        :param title: String
+        :param doctor_id: Int
+        """
         # building message body
         event = {
             'summary': title,
@@ -117,8 +136,8 @@ class GoogleCalendarAPI:
                     # sending the post recuest to google calendars
                     event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
                     print('Event created: {}'.format(event.get('htmlLink')))
-                    # returning googles event id
-                    return event.get('id')
+
+                    return
         except Exception as err:
             # TODO better Exception handling
             print(err)
