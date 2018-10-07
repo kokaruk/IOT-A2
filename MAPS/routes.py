@@ -12,10 +12,11 @@ import MAPS.constants as config
 API_URL = "http://127.0.0.1:5000/api/"
 # base_url = request.host_url
 
-# Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization
-choices_reason = [('0', 'Please select'), ('1', 'Pick up a prescription'), ('2', 'Serious illness - e.g. flu'),
-                  ('3', 'Medical exam'), ('4', 'Vaccination'), ('5', 'Pick up a medical certificate')]
+# Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization)
+CHOICES_REASON = [(0, 'Please select'), (1, 'Pick up a prescription'), (2, 'Serious illness - e.g. flu'),
+                  (3, 'Medical exam'), (4, 'Vaccination'), (5, 'Pick up a medical certificate')]
 
+WEEKDAYS = dict({"monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5, "saturday": 6, "sunday": 0})
 
 def get_user(user_type):
     """
@@ -116,24 +117,62 @@ def get_work_time(daytime, year, week, day):
     afternoon_start = "13:00"
     afternoon_end = "18:30"
 
-    weekday = dict({"monday": 1, "tuesday": 2, "wednesday": 3,
-                    "thursday": 4, "friday": 5})
-
     if daytime == "morning":
         start = datetime.strptime(
-            f"{year}-{week}-{weekday[day]} {morning_start}", "%Y-%W-%w %H:%M")
+            f"{year}-{week}-{WEEKDAYS[day]} {morning_start}", "%Y-%W-%w %H:%M")
         end = datetime.strptime(
-            f"{year}-{week}-{weekday[day]}  {morning_end}", "%Y-%W-%w %H:%M")
+            f"{year}-{week}-{WEEKDAYS[day]}  {morning_end}", "%Y-%W-%w %H:%M")
     else:
         start = datetime.strptime(
-            f"{year}-{week}-{weekday[day]} {afternoon_start}", "%Y-%W-%w %H:%M")
+            f"{year}-{week}-{WEEKDAYS[day]} {afternoon_start}", "%Y-%W-%w %H:%M")
         end = datetime.strptime(
-            f"{year}-{week}-{weekday[day]}  {afternoon_end}", "%Y-%W-%w %H:%M")
+            f"{year}-{week}-{WEEKDAYS[day]}  {afternoon_end}", "%Y-%W-%w %H:%M")
 
     from_to = dict({"start": start, "end": end})
 
     return from_to
 
+
+def build_default_busy_times(doctor_id, year, week):
+    for weekdays in WEEKDAYS:
+
+        if weekdays == "saturday" or weekdays == "sunday":
+            start = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 00:00", "%Y-%W-%w %H:%M")
+            end = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 23:59", "%Y-%W-%w %H:%M")
+
+            weekend_times = dict({"start": start, "end": end})
+
+            create_availablitiy_entry(weekend_times, doctor_id)
+
+        else:
+            start_morning = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 00:00", "%Y-%W-%w %H:%M")
+            end_morning = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 07:59", "%Y-%W-%w %H:%M")
+
+            morning = dict({"start": start_morning, "end": end_morning})
+
+            create_availablitiy_entry(morning, doctor_id)
+
+            start_break = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 12:31", "%Y-%W-%w %H:%M")
+            end_break = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 13:29", "%Y-%W-%w %H:%M")
+
+            break_time = dict({"start": start_break, "end": end_break})
+
+            create_availablitiy_entry(break_time, doctor_id)
+
+            start_evening = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 17:31", "%Y-%W-%w %H:%M")
+            end_evening = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 23:59", "%Y-%W-%w %H:%M")
+
+            evening = dict({"start": start_evening, "end": end_evening})
+
+            create_availablitiy_entry(evening, doctor_id)
 
 @app.route("/schedule", methods=['GET', 'POST'])
 def schedule():
@@ -142,49 +181,78 @@ def schedule():
     :return: render_template with schedule.html
     """
     form = ScheduleBookingForm()
-    doctors = get_user("doctor")
-
-    year = form.year.data
-
-    week = form.calendar_week.data
-
-    if form.monday_morning.data:
-        monday_morning_times = get_work_time("morning", year, week, 'monday')
-    if form.monday_afternoon.data:
-        monday_afternoon_times = get_work_time(
-            "afternoon", year, week, 'monday')
-    if form.tuesday_morning.data:
-        tuesday_morning_times = get_work_time("morning", year, week, 'tuesday')
-    if form.tuesday_afternoon.data:
-        tuesday_afternoon_times = get_work_time(
-            "afternoon", year, week, 'tuesday')
-    if form.wednesday_morning.data:
-        wednesday_morning_times = get_work_time(
-            "morning", year, week, 'wednesday')
-    if form.wednesday_afternoon.data:
-        wednesday_afternoon_times = get_work_time(
-            "afternoon", year, week, 'wednesday')
-    if form.thursday_morning.data:
-        thursday_morning_times = get_work_time(
-            "morning", year, week, 'thursday')
-    if form.thursday_afternoon.data:
-        thursday_afternoon_times = get_work_time(
-            "afternoon", year, week, 'thursday')
-    if form.friday_morning.data:
-        friday_morning_times = get_work_time("morning", year, week, 'friday')
-    if form.friday_afternoon.data:
-        friday_afternoon_times = get_work_time(
-            "afternoon", year, week, 'friday')
-
     # TODO Find a way to store globally
+    doctors = get_user("doctor")
     doctors_id_name = doctors[0]  # contains tuples of doctor id and names
 
     # passing the tuples for doctor over to forms for access on View
     form.doctor_id.choices = doctors_id_name
 
-    schedule_dict = {"doctor_id": form.doctor_id.data}
+    if form.validate_on_submit():
+        # retrieve the selected doctor and patient id from forms
+        chosen_doctor_id = form.doctor_id.data
+
+        year = form.year.data
+
+        week = form.calendar_week.data
+
+        build_default_busy_times(chosen_doctor_id, year, week)
+
+        if form.monday_morning.data:
+            monday_morning_times = get_work_time("morning", year, week, 'monday')
+            create_availablitiy_entry(monday_morning_times, chosen_doctor_id)
+
+        if form.monday_afternoon.data:
+            monday_afternoon_times = get_work_time("afternoon", year, week, 'monday')
+            create_availablitiy_entry(monday_afternoon_times, chosen_doctor_id)
+
+        if form.tuesday_morning.data:
+            tuesday_morning_times = get_work_time("morning", year, week, 'tuesday')
+            create_availablitiy_entry(tuesday_morning_times, chosen_doctor_id)
+
+        if form.tuesday_afternoon.data:
+            tuesday_afternoon_times = get_work_time("afternoon", year, week, 'tuesday')
+            create_availablitiy_entry(tuesday_afternoon_times, chosen_doctor_id)
+
+        if form.wednesday_morning.data:
+            wednesday_morning_times = get_work_time("morning", year, week, 'wednesday')
+            create_availablitiy_entry(wednesday_morning_times, chosen_doctor_id)
+
+        if form.wednesday_afternoon.data:
+            wednesday_afternoon_times = get_work_time("afternoon", year, week, 'wednesday')
+            create_availablitiy_entry(wednesday_afternoon_times, chosen_doctor_id)
+
+        if form.thursday_morning.data:
+            thursday_morning_times = get_work_time("morning", year, week, 'thursday')
+            create_availablitiy_entry(thursday_morning_times, chosen_doctor_id)
+
+        if form.thursday_afternoon.data:
+            thursday_afternoon_times = get_work_time("afternoon", year, week, 'thursday')
+            create_availablitiy_entry(thursday_afternoon_times, chosen_doctor_id)
+
+        if form.friday_morning.data:
+            friday_morning_times = get_work_time("morning", year, week, 'friday')
+            create_availablitiy_entry(friday_morning_times, chosen_doctor_id)
+
+        if form.friday_afternoon.data:
+            friday_afternoon_times = get_work_time("afternoon", year, week, 'friday')
+            create_availablitiy_entry(friday_afternoon_times, chosen_doctor_id)
+
+        # schedule_dict = {"doctor_id": form.doctor_id.data}
 
     return render_template('schedule.html', title='Schedule', form=form)
+
+
+def create_availablitiy_entry(date_range, doctor_id):
+    google_calendar = gc_api()
+    # Post data to Google Calendar API for event creation
+    title = f"non-availability time"
+    # date = concat_date_time(form.date.data, form.start.data)
+
+    start = format_datetime_str(date_range["start"])
+    end = format_datetime_str(date_range["end"])
+
+    google_calendar.book_doctor_times(start=start, end=end, title=title, doctor_id=doctor_id)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -347,7 +415,7 @@ def booking():
         form.doctor_id.choices = doctors_id_name
 
         # getting a list of doctorid and name tuples for the dynamic selectfield
-        form.reason.choices = choices_reason
+        form.reason.choices = CHOICES_REASON
 
         if form.validate_on_submit():
             if request.method == 'POST':
@@ -402,7 +470,7 @@ def booking():
                               'success')
                 elif form.delete.data is True:
                     flash(f'Appointment', 'success')
-            return redirect(url_for('consultation_list'))
+            return redirect(url_for('booking'))
         return render_template('booking_create.html', title='Consultation Booking', form=form)
     except Exception as err:
         # TODO better Exception handling
@@ -477,7 +545,7 @@ def consultation_booking(booking_id):
 
     # TODO Better way to show date time
     return render_template('booking_show.html', title='Consultation Booking', booking=consultation_booking,
-                           cause=dict(choices_reason),
+                           cause=dict(CHOICES_REASON),
                            doctor_name=dict(doctors_id_name), patient_name=dict(patients_id_name), end=consultation_end)
 
 
@@ -521,7 +589,7 @@ def consultation_bookings():
     # TODO Better way to show date time
     return render_template('booking_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name), patients_name=dict(patients_id_name),
-                           cause=dict(choices_reason), doctor_id=chosen_doctor_id)
+                           cause=dict(CHOICES_REASON), doctor_id=chosen_doctor_id)
 
 
 @app.route("/delete_booking/<int:booking_id>", methods=['GET', 'PUT'])

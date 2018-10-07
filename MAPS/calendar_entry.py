@@ -44,6 +44,7 @@ service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
 
 class GoogleCalendarAPI:
     """ Purpose of this class is to manage the access calls to the google calendar API"""
+
     def insert_calendar_entry(self, title, date, patient_email, doctor_email, doctor_id, duration):
         """ This method calls google API for creating Events based on the entries from the Users"""
         # Formatting times for appointment
@@ -51,10 +52,12 @@ class GoogleCalendarAPI:
         end = date + timedelta(minutes=duration)
         end = format_datetime_str(end)
 
-        #building message body
+        # building message body
         event = {
             'summary': title,
             'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
+            'transparency': "opaque",
+            'visibility': "private",
             'start': {
                 'dateTime': str(start),
                 'timeZone': 'Australia/Melbourne',
@@ -80,10 +83,10 @@ class GoogleCalendarAPI:
             json_data = json.loads(doctor.text)
             for doctor in json_data:
                 if doctor['id'] == doctor_id:
-                    #sending the post recuest to google calendars
+                    # sending the post recuest to google calendars
                     event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
                     print('Event created: {}'.format(event.get('htmlLink')))
-                    #returning googles event id
+                    # returning googles event id
                     return event.get('id')
         except Exception as err:
             # TODO better Exception handling
@@ -102,29 +105,32 @@ class GoogleCalendarAPI:
             # TODO better Exception handling
             print(err)
 
-    def book_doctor_times(self, title, date, patient_email, doctor_email, doctor_id, duration):
+    def book_doctor_times(self, start, end, title, doctor_id):
 
         # building message body
         event = {
             'summary': title,
-            'location': 'PoIT Medical, Collins Street 60, Melbourne 3000',
+            'transparency': "opaque",
+            'visibility': "public",
             'start': {
                 'dateTime': str(start),
-                'timeZone': 'Australia/Melbourne',
+                'timeZone': 'Australia/Melbourne'
             },
             'end': {
                 'dateTime': str(end),
-                'timeZone': 'Australia/Melbourne',
-            },
-            'attendees': [
-                {'email': str(patient_email)},
-                {'email': str(doctor_email)}
-            ],
-            'reminders': {
-                'useDefault': False,
-                'overrides': [
-                    {'method': 'email', 'minutes': 5},
-                    {'method': 'popup', 'minutes': 10},
-                ],
+                'timeZone': 'Australia/Melbourne'
             }
         }
+        try:
+            doctor = requests.get(f"{API_URL}doctors")
+            json_data = json.loads(doctor.text)
+            for doctor in json_data:
+                if doctor['id'] == doctor_id:
+                    # sending the post recuest to google calendars
+                    event = service.events().insert(calendarId=doctor["calendar_id"], body=event).execute()
+                    print('Event created: {}'.format(event.get('htmlLink')))
+                    # returning googles event id
+                    return event.get('id')
+        except Exception as err:
+            # TODO better Exception handling
+            print(err)
