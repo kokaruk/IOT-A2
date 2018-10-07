@@ -8,8 +8,9 @@ from MAPS.constants import *
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
+
 from oauth2client import file, client, tools
-from MAPS.utils import format_datetime_str
+from MAPS.utils import *
 from flask import flash
 import requests
 import json
