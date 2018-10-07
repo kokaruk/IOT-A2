@@ -138,3 +138,11 @@ pip install -r requirements.txt
 source env/bin/activate
 <br>
 python3 src/AssitantPi.py
+<br>
+<br>
+### Add modified greeter_server.py
+This script has been modded from week 7 tutorial.
+<br>
+It is to be place in /home/pi/AIY-projects-python/src along side AssistantPi.py.
+<br>
+It needs a separate python runner.
