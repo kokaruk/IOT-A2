@@ -23,7 +23,6 @@ It is available for Raspberry Pi 2/3 only; Pi Zero is not supported.
 
 import logging
 import platform
-import subprocess
 import sys
 import json
 import socket
@@ -64,16 +63,32 @@ field = ''
 
 
 def convert(time_string):
+    """
+    Accepts a datetime string in the format YYYY-MM-DDTHH-mm-ss+00:00
+    :param time_string datetime as a string:
+    :return: datetime
+    """
     return datetime.datetime.strptime(time_string, '%Y-%m-%dT%H:%M:%S')
 
 
 def responder(assistant, response):
+    """
+    Accpets an assistant instance, and a response. Prints the response, says the response with the assistant, and starts
+    a conversation to listen to next voice command.
+    :param assistant:
+    :param String response:
+    """
     print(response)
     aiy.audio.say(response)
     assistant.start_conversation()
 
 
 def get_patients(speak):
+    """
+    Returns list of registered patients. Will read them out if True is passed.
+    :param Bool speak:
+    :return: JSON array of users
+    """
     print("--------------")
     print("get_patients()")
     print("Getting registered patients")
@@ -91,6 +106,11 @@ def get_patients(speak):
 
 
 def get_consultations(patient):
+    """
+    Returns all consultations for the provided patient.
+    :param JSON object patient:
+    :return: JSON array of consultations
+    """
     print("--------------")
     print("get_consultation()")
     print("Getting consultation for patient")
@@ -101,7 +121,12 @@ def get_consultations(patient):
 
 
 def add_consultation_note_who(assistant):
-    global previous_intent
+    """
+    Prompts doctor for patient's first name.
+    Accepts an assistant, to pass to the responder.
+    :param assistant:
+    :return: String of this intent name
+    """
     print("--------------")
     print("add_consultation_note_who")
     response = 'Sure, who is this for?'
@@ -110,6 +135,13 @@ def add_consultation_note_who(assistant):
 
 
 def add_consultation_note_patient(assistant, text):
+    """
+    Searches list of registered patients against previous response.
+    If there's a match, prompts for day.
+    :param assistant:
+    :param previous response as String text:
+    :return: JSON object of patient if match or empty if no match
+    """
     global previous_intent
     global selected_patient
     print("--------------")
@@ -127,8 +159,14 @@ def add_consultation_note_patient(assistant, text):
     return {}
 
 
-# TODO move this to which patient, and make it just check which field to update
 def add_consultation_note_day(assistant, text):
+    """
+    Converts Today, Yesterday etc... into datetimes and checks against the consultation list.
+    Currently only today is supported.
+    :param assistant:
+    :param previous response as String text:
+    :return: JSON object of matched consultation of empty object.
+    """
     global previous_intent
     global selected_patient
     global selected_day
@@ -155,6 +193,13 @@ def add_consultation_note_day(assistant, text):
 
 
 def add_consultation_note_field(assistant, text):
+    """
+    Prompts doctor to record note.
+    Sets the global variable field to previous response, which is the consultation details field to be updated.
+    :param assistant:
+    :param previous response as String text:
+    :return: String field
+    """
     global previous_intent
     global field
     field = text
@@ -165,10 +210,15 @@ def add_consultation_note_field(assistant, text):
 
 
 def record_note(assistant, text):
+    """
+    Updates consultation details with recorded note.
+    :param assistant:
+    :param previous response as String text:
+    :return: True if success, False if unsuccessful.
+    """
     global field
     global selected_consultation
     consultation_detail = selected_consultation['consultation_details'][0]
-    response = ''
     if field == 'diagnosis':
         consultation_detail['diagnosis'] = text
         print(consultation_detail)
@@ -197,6 +247,11 @@ def record_note(assistant, text):
 
 
 def process_event(assistant, event):
+    """
+    Modified function - added custom intents to record consultation details via conversation.
+    :param assistant:
+    :param event:
+    """
     global previous_intent
     global selected_patient
     global selected_day
