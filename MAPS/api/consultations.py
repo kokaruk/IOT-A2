@@ -1,3 +1,9 @@
+"""
+.. module:: MAPS.api.consultations
+    :synopsis: Consultations restful api
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+"""
 from flask import jsonify, request
 from MAPS.api import bp
 from MAPS import db
@@ -14,7 +20,7 @@ consultation_details_schema = ConsultationDetailsSchema(many=True)
 @bp.route('/consultations/<int:id>', methods=['GET'])
 def get_consultation(id):
     """
-        This route returns a single consultation matching the id provided. Includes related data.
+    This route returns a single consultation matching the id provided. Includes related data.
     :param consultation id:
     :return: Consultation as a JSON object.
     """
@@ -27,7 +33,7 @@ def get_consultation(id):
 @bp.route('/consultations/doctors/<int:id>', methods=['GET'])
 def get_consultations_doctor(id):
     """
-        This route returns all the consultations for the doctor of the id provided.
+    This route returns all the consultations for the doctor of the id provided.
     :param doctor id:
     :return: JSON array of consultations.
     """
@@ -41,7 +47,7 @@ def get_consultations_doctor(id):
 @bp.route('/consultations/patients/<int:id>', methods=['GET'])
 def get_consultations_patient(id):
     """
-        This route returns all the consultations for the patient of the id provided.
+    This route returns all the consultations for the patient of the id provided.
     :param patient id:
     :return: JSON array of consultations.
     """
@@ -55,7 +61,7 @@ def get_consultations_patient(id):
 @bp.route('/consultations', methods=['POST'])
 def create_consultation():
     """
-         This route accepts a Consultation JSON object, and adds to the database.
+    This route accepts a Consultation JSON object, and adds to the database.
     :return: Consultation as a JSON object.
     """
     # get all information from body
@@ -78,7 +84,7 @@ def create_consultation():
 @bp.route('/consultations/<int:id>', methods=['PUT'])
 def update_consultation(id):
     """
-         This route updates a consultation cancelled status.
+    This route updates a consultation cancelled status.
     :param Consultation id:
     :return: Consultation as a JSON object.
     """
@@ -92,7 +98,7 @@ def update_consultation(id):
 @bp.route('/consultations/details/<int:id>', methods=['GET'])
 def get_consultation_detail(id):
     """
-        This route returns a the consultation detail for a consultation of the id provided.
+    This route returns a the consultation detail for a consultation of the id provided.
     :param consultation id:
     :return: Consultation detail JSON object.
     """
@@ -105,7 +111,7 @@ def get_consultation_detail(id):
 @bp.route('/consultations/details', methods=['POST'])
 def create_consultation_detail():
     """
-        This route creates a ConsultationDetails, and adds to the database.
+    This route creates a ConsultationDetails, and adds to the database.
     :return: ConsultationDetails JSON object.
     """
     # get updated information from body
@@ -133,8 +139,8 @@ def create_consultation_detail():
 @bp.route('/consultations/details/<int:id>', methods=['PUT'])
 def edit_consultation_detail(id):
     """
-        This route updates a ConsultationDetails. Provide the entire ConsultationDetails in the request body. All fields
-        are saved.
+    This route updates a ConsultationDetails. Provide the entire ConsultationDetails in the request body. All fields
+    are saved.
     :param ConsultationDetails id:
     :return: ConsultationDetails JSON object.
     """
@@ -166,7 +172,7 @@ def edit_consultation_detail(id):
 @bp.route('/consultations/details/<int:id>', methods=['DELETE'])
 def delete_consultation_detail(id):
     """
-        This route deletes a ConsultationDetails.
+    This route deletes a ConsultationDetails.
     :param ConsultationDetails id:
     :return: ConsultationDetails JSON object.
     """

@@ -1,4 +1,13 @@
+"""
+.. module:: MAPS.routes
+    :synopsis: Schemas and models. Persistence layer
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+"""
+
 from flask import render_template, url_for, flash, redirect, request
+
+from MAPS.constants import *
 from MAPS.forms import RegistrationForm, ConsultationDetailsForm, BookingForm, ConsultationBookings, \
     ScheduleBookingForm, ConsultationForm
 from MAPS import app
@@ -476,6 +485,7 @@ def booking():
         # TODO better Exception handling
         print(err)
 
+
 @app.route("/calendar_all/")
 def calendar_all():
     """
@@ -569,7 +579,7 @@ def consultation_bookings():
     else:
         # with every choice of doctor and hit search the booking with the choosen doctor is shown
         consultation_bookings = requests.get(
-            f"{API_URL}consultations/doctors/{chosen_doctor_id }")
+            f"{API_URL}consultations/doctors/{chosen_doctor_id}")
 
     bookings = json.loads(consultation_bookings.text)
 

@@ -1,3 +1,10 @@
+"""
+.. module:: MAPS.api.doctors
+    :synopsis: Doctors restful api
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+"""
+
 from flask import request, jsonify
 
 from MAPS import db
@@ -15,7 +22,7 @@ full_doctors_schema = FullDoctorSchema(many=True)
 @bp.route('/doctors', methods=['GET'])
 def get_doctors():
     """
-        This route returns all the doctors.
+    This route returns all the doctors.
     :return: JSON array of doctors.
     """
     all_doctors = Doctor.query.all()
@@ -27,7 +34,7 @@ def get_doctors():
 @bp.route('/doctors/<int:id>', methods=['GET'])
 def get_doctor(id):
     """
-        This route gets a doctor by id.
+    This route gets a doctor by id.
     :param Doctor id:
     :return: Doctor JSON object.
     """
@@ -40,7 +47,7 @@ def get_doctor(id):
 @bp.route('/doctors/<int:id>/all', methods=['GET'])
 def get_doctor_include_related(id):
     """
-        This route gets a doctor by id. It includes related data.
+    This route gets a doctor by id. It includes related data.
     :param Doctor id:
     :return: Doctor JSON object.
     """
@@ -53,7 +60,7 @@ def get_doctor_include_related(id):
 @bp.route('/doctors/email/<string:email>', methods=['GET'])
 def get_doctor_by_email(email):
     """
-        This route gets a doctor by email.
+    This route gets a doctor by email.
     :param Doctor email:
     :return: Doctor JSON object.
     """
@@ -66,7 +73,7 @@ def get_doctor_by_email(email):
 @bp.route('/doctors', methods=['POST'])
 def create_doctor():
     """
-        This route creates a Doctor and adds it to the database.
+    This route creates a Doctor and adds it to the database.
     :return: Doctor JSON object.
     """
     first_name = request.json['first_name']
@@ -86,7 +93,7 @@ def create_doctor():
 @bp.route('/doctors/<int:id>', methods=['DELETE'])
 def delete_doctor(id):
     """
-        This route deletes the Doctor with the provided id.
+    This route deletes the Doctor with the provided id.
     :param Doctor id:
     :return: Doctor JSON object.
     """
@@ -100,7 +107,7 @@ def delete_doctor(id):
 @bp.route('/doctors/<int:id>', methods=['PUT'])
 def update_doctor(id):
     """
-        This route updates the Doctor with the provided id.
+    This route updates the Doctor with the provided id.
     :param Doctor id:
     :return: Doctor JSON object.
     """

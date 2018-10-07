@@ -1,3 +1,12 @@
+"""
+.. module:: MAPS.forms
+    :synopsis: WTF form module
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+
+Various information capturing forms present in the project
+"""
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField

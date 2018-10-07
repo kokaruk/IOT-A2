@@ -1,3 +1,10 @@
+"""
+.. module:: MAPS.api
+    :synopsis: API call to database
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+"""
+
 import os
 
 from dotenv import load_dotenv

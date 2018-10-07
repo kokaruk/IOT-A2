@@ -1,3 +1,10 @@
+"""
+.. module:: MAPS.models
+    :synopsis: Schemas and models. Persistence layer
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+"""
+
 from marshmallow import fields
 
 from MAPS import db, ma

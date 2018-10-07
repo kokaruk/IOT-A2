@@ -1,3 +1,11 @@
+"""
+.. module:: MAPS
+    :synopsis: Top level package
+
+.. moduleauthor:: Dzmitry Kakaruk
+.. moduleauthor:: Calvin Schnierer
+.. moduleauthor:: Patrick Jacob
+"""
 from flask import Flask
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
@@ -20,7 +28,6 @@ bootstrap = Bootstrap(app)
 from MAPS.api import bp as api_bp
 from MAPS import routes, models, errors
 
-
 # setup logger
 logs_dir = 'logs'
 if not os.path.exists(logs_dir):
@@ -40,9 +47,5 @@ else:
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info('MAPS startup in debug mode')
-
-
-
-
 
 app.register_blueprint(api_bp, url_prefix='/api')
