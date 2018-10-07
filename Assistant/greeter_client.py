@@ -13,25 +13,15 @@
 # limitations under the License.
 """The Python implementation of the GRPC helloworld.Greeter client."""
 from __future__ import print_function
-import os
-import grpc
 
+import grpc
 import helloworld_pb2
 import helloworld_pb2_grpc
 
 
-def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
-    # get the IP address of your Raspberry Pi
-    host = input("Enter your server's IP address: ")
+def notify(host, message):
     with grpc.insecure_channel('{}:50051'.format(host)) as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
-        message = input("Enter message: ")
         response = stub.SayHello(helloworld_pb2.HelloRequest(name=message))
-    print("Greeter client received: " + response.message)
-
-
-if __name__ == '__main__':
-    run()
+        print("Greeter client received: " + response.message)
+        return response
