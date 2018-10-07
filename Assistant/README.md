@@ -9,9 +9,8 @@ source env/bin/activate
 <br>
 python src/Assistant.py
 <br>
-
 You'll be promted for the ip address of the api. If you are running this service on the same pi as api, just press enter, otherwise enter the ip of the pi with the api running on it.
-### -------------------------------------------------------------
+<br>
 ## Instructions from tutorial sheet
 ### Working with Google Assistant Library (on Raspberry Pi)
 Google Assistant Library is a convenient subset of the Google Assistant Service, which takes
