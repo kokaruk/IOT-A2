@@ -7,13 +7,12 @@
 
 from flask import render_template, url_for, flash, redirect, request
 
+from MAPS.api_connector import *
 from MAPS.constants import *
 from MAPS.forms import RegistrationForm, ConsultationDetailsForm, BookingForm, ConsultationBookings, \
     ScheduleBookingForm, ConsultationForm
 from MAPS import app
-from MAPS.utils import concat_date_time, read_text_file, format_datetime_str
-from MAPS.calendar_entry import GoogleCalendarAPI as gc_api
-import requests
+from MAPS.utils import *
 import json
 from datetime import timedelta, datetime
 
@@ -22,46 +21,6 @@ from datetime import timedelta, datetime
 # Choices for selection field - why a patient wants to visit the clinc (should be basis for scheduling optimization)
 CHOICES_REASON = [(0, 'Please select'), (1, 'Pick up a prescription'), (2, 'Serious illness - e.g. flu'),
                   (3, 'Medical exam'), (4, 'Vaccination'), (5, 'Pick up a medical certificate')]
-
-WEEKDAYS = dict({"monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5, "saturday": 6, "sunday": 0})
-
-
-def get_user(user_type):
-    """
-    This methods purpose is to provide tuples of either doctor or patient id and name or id and name
-    :param: user_type either 'patient' or 'doctor' expected
-    :return: two tuples (<patient or doctor> id : <patient or doctor> name and <patient or doctor> id : <patient or doctor> email
-    """
-
-    if user_type == "patient":
-
-        user = requests.get(f"{API_URL}patients")
-    else:
-        user = requests.get(f"{API_URL}doctors")
-
-    # Turning json to list
-    user_data = json.loads(user.text)
-
-    list_id = []
-    list_name = []
-    list_email = []
-
-    # extract the email, id and name to sperate list
-    for value in user_data:
-        list_id.append(value['id'])
-        list_email.append(f"{value['email']}")
-        if user_type == "patient":
-            list_name.append(
-                f"{value['first_name']} {value['second_name']} {value['last_name']}")
-
-        else:
-            list_name.append(f"Dr. {value['last_name']}")
-
-    # join list together
-    tuple_id_name = list(zip(list_id, list_name))
-    tuple_id_emails = list(zip(list_id, list_email))
-
-    return tuple_id_name, tuple_id_emails
 
 
 @app.route("/")
@@ -108,88 +67,6 @@ def doctor():
     :return: render_template with clerk.html
     """
     return render_template('doctor.html', title='Doctor')
-
-
-def get_work_time(daytime, year, week, day):
-    """
-    This is a helper method for taking the week and weekday and cast to a datetime format for further processing
-    :param daytime: Either "morning" or "afternoon"
-    :param year: %Y format of year (2018)
-    :param week: format %W (1-52)
-    :param day: String (one of "monday" - "friday")
-    :return: dict with two datetime 8start to end )
-    """
-    morning_start = "08:00"
-    morning_end = "12:30"
-
-    afternoon_start = "13:00"
-    afternoon_end = "18:30"
-
-    if daytime == "morning":
-        start = datetime.strptime(
-            f"{year}-{week}-{WEEKDAYS[day]} {morning_start}", "%Y-%W-%w %H:%M")
-        end = datetime.strptime(
-            f"{year}-{week}-{WEEKDAYS[day]}  {morning_end}", "%Y-%W-%w %H:%M")
-    else:
-        start = datetime.strptime(
-            f"{year}-{week}-{WEEKDAYS[day]} {afternoon_start}", "%Y-%W-%w %H:%M")
-        end = datetime.strptime(
-            f"{year}-{week}-{WEEKDAYS[day]}  {afternoon_end}", "%Y-%W-%w %H:%M")
-
-    from_to = dict({"start": start, "end": end})
-
-    return from_to
-
-
-def build_default_busy_times(doctor_id, year, week):
-    """
-    Method for building the default time where doctors is not working(busy as per google calendar entry)
-    These times are Saturday and Sunday entirely and Monday to Friday 00:00 - 7:59 (morning), Lunch Break (12:31 - 13:29)
-    and evening (17:31 - 23:59)
-    :param doctor_id: doctor_id: id of the doctor for this event
-    :param year: %Y format of year (2018)
-    :param week: format %W (1-52)
-
-    """
-    for weekdays in WEEKDAYS:
-
-        if weekdays == "saturday" or weekdays == "sunday":
-            start = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 00:00", "%Y-%W-%w %H:%M")
-            end = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 23:59", "%Y-%W-%w %H:%M")
-
-            weekend_times = dict({"start": start, "end": end})
-
-            create_availability_entry(weekend_times, doctor_id)
-
-        else:
-            start_morning = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 00:00", "%Y-%W-%w %H:%M")
-            end_morning = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 07:59", "%Y-%W-%w %H:%M")
-
-            morning = dict({"start": start_morning, "end": end_morning})
-
-            create_availability_entry(morning, doctor_id)
-
-            start_break = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 12:31", "%Y-%W-%w %H:%M")
-            end_break = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 13:29", "%Y-%W-%w %H:%M")
-
-            break_time = dict({"start": start_break, "end": end_break})
-
-            create_availability_entry(break_time, doctor_id)
-
-            start_evening = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 17:31", "%Y-%W-%w %H:%M")
-            end_evening = datetime.strptime(
-                f"{year}-{week}-{WEEKDAYS[weekdays]} 23:59", "%Y-%W-%w %H:%M")
-
-            evening = dict({"start": start_evening, "end": end_evening})
-
-            create_availability_entry(evening, doctor_id)
 
 
 @app.route("/schedule", methods=['GET', 'POST'])
@@ -260,23 +137,6 @@ def schedule():
         # schedule_dict = {"doctor_id": form.doctor_id.data}
 
     return render_template('schedule.html', title='Schedule', form=form)
-
-
-def create_availability_entry(date_range, doctor_id):
-    """
-    Method for creating the entries of busy times
-    :param date_range: has to be a dictionary of with ["start":Datetime, "end":Datetime]
-    :param doctor_id: id of the doctor for this event
-    """
-    google_calendar = gc_api()
-
-    # Post data to Google Calendar API for event creation
-    title = f"non-availability time"
-
-    start = format_datetime_str(date_range["start"])
-    end = format_datetime_str(date_range["end"])
-
-    google_calendar.book_doctor_times(start=start, end=end, title=title, doctor_id=doctor_id)
 
 
 @app.route("/register", methods=['GET', 'POST'])
