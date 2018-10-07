@@ -259,7 +259,7 @@ def consultation(consultation_id):
                     flash(
                         f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
                 return redirect(url_for('consultation_list'))
-        return render_template('consultation_details.html', title='Consultation', form=form)
+        return render_template('consultation_details.html', title='Consultation', form=form, navigation=doctor_nav())
     except Exception as err:
         # TODO better Exception handling
         print(err)
