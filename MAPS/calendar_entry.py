@@ -4,16 +4,17 @@
 
 .. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
 """
-from MAPS.constants import *
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
+from MAPS.constants import *
 
 from oauth2client import file, client, tools
-from MAPS.utils import *
+from MAPS.utils import format_datetime_str
 from flask import flash
 import requests
 import json
+from datetime import datetime
 
 SCOPES_ADDRESS = 'https://www.googleapis.com/auth/calendar'
 STORAGE = 'MAPS/credentials/token.json'
@@ -29,6 +30,74 @@ if not creds or creds.invalid:
     flow = client.flow_from_clientsecrets(CLIENT_SECRETS, SCOPES)
     creds = tools.run_flow(flow, store)
 service = build(BUILD_DEF, BUILD_NO, http=creds.authorize(Http()))
+
+
+def build_default_busy_times(doctor_id, year, week):
+    """
+    Method for building the default time where doctors is not working(busy as per google calendar entry)
+    These times are Saturday and Sunday entirely and Monday to Friday 00:00 - 7:59 (morning), Lunch Break (12:31 - 13:29)
+    and evening (17:31 - 23:59)
+    :param doctor_id: doctor_id: id of the doctor for this event
+    :param year: %Y format of year (2018)
+    :param week: format %W (1-52)
+
+    """
+    for weekdays in WEEKDAYS:
+
+        if weekdays == "saturday" or weekdays == "sunday":
+            start = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 00:00", "%Y-%W-%w %H:%M")
+            end = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 23:59", "%Y-%W-%w %H:%M")
+
+            weekend_times = dict({"start": start, "end": end})
+
+            create_availability_entry(weekend_times, doctor_id)
+
+        else:
+            start_morning = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 00:00", "%Y-%W-%w %H:%M")
+            end_morning = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 07:59", "%Y-%W-%w %H:%M")
+
+            morning = dict({"start": start_morning, "end": end_morning})
+
+            create_availability_entry(morning, doctor_id)
+
+            start_break = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 12:31", "%Y-%W-%w %H:%M")
+            end_break = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 13:29", "%Y-%W-%w %H:%M")
+
+            break_time = dict({"start": start_break, "end": end_break})
+
+            create_availability_entry(break_time, doctor_id)
+
+            start_evening = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 17:31", "%Y-%W-%w %H:%M")
+            end_evening = datetime.strptime(
+                f"{year}-{week}-{WEEKDAYS[weekdays]} 23:59", "%Y-%W-%w %H:%M")
+
+            evening = dict({"start": start_evening, "end": end_evening})
+
+            create_availability_entry(evening, doctor_id)
+
+
+def create_availability_entry(date_range, doctor_id):
+    """
+    Method for creating the entries of busy times
+    :param date_range: has to be a dictionary of with ["start":Datetime, "end":Datetime]
+    :param doctor_id: id of the doctor for this event
+    """
+    google_calendar = GoogleCalendarAPI()
+
+    # Post data to Google Calendar API for event creation
+    title = f"non-availability time"
+
+    start = format_datetime_str(date_range["start"])
+    end = format_datetime_str(date_range["end"])
+
+    google_calendar.book_doctor_times(start=start, end=end, title=title, doctor_id=doctor_id)
 
 
 class GoogleCalendarAPI:

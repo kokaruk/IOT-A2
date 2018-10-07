@@ -8,7 +8,7 @@
 from flask import render_template, url_for, flash, redirect, request
 
 from MAPS.api_connector import *
-from MAPS.constants import *
+from MAPS.calendar_entry import *
 from MAPS.forms import RegistrationForm, ConsultationDetailsForm, BookingForm, ConsultationBookings, \
     ScheduleBookingForm, ConsultationForm
 from MAPS import app
@@ -304,7 +304,7 @@ def booking():
             if request.method == 'POST':
 
                 # instatiating google API class
-                google_calendar = gc_api()
+                google_calendar = GoogleCalendarAPI()
 
                 # retrieve the selected doctor and patient id from forms
                 chosen_doctor_id = form.doctor_id.data
@@ -496,7 +496,7 @@ def cancel_booking(booking_id):
             f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
         # return redirect(url_for('consultation_booking', booking_id = booking_id))
     else:
-        flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
+        flash(f'Appointment with google event no. {booking_id} with was successfully created!',
               'success')
 
     # TODO make doctor ID somehow global and draw from there values
@@ -514,7 +514,7 @@ def cancel_booking(booking_id):
     doctor = json.loads(doctor.text)
     google_calendar_id = dict(doctor)["calendar_id"]
 
-    google_calendar = gc_api()
+    google_calendar = GoogleCalendarAPI()
     # Calling delete method for google calendar entry (event)
     google_calendar.delete_calendar_entry(google_calendar_id, google_event_id)
 
