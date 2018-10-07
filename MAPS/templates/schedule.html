@@ -44,7 +44,9 @@
                 {% else %}
                 {{ form.calendar_week(class="form-control form-control-lg") }}
                 {% endif %}
-
+                <br>
+                <h4>Please mark times of unavailability </h4>
+                <br>
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -81,6 +83,7 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
         </fieldset>
         <div class="form-group">
             {{ form.create_week(class="btn btn-outline-info") }}

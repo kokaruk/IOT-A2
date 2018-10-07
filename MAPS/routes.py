@@ -327,6 +327,8 @@ def booking():
                                                                             doctor_email=doctor_email,
                                                                             doctor_id=chosen_doctor_id,
                                                                             duration=CONSULTATION_DURATION)
+                    if google_event_id is False:
+                        return redirect(url_for('booking'))
 
                     # Building Message Body for database post request
                     consultation = {
@@ -338,7 +340,6 @@ def booking():
                         "cancelled": form.cancelled.data,
                         'google_event_id': google_event_id
                     }
-                    print(consultation)
 
                     URL = f"{API_URL}consultations"
 
@@ -347,13 +348,19 @@ def booking():
                     if api_response.status_code != 200:
                         flash(
                             f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
-                        return redirect(url_for('calendar', doctor_id=chosen_doctor_id))
+                        return redirect(url_for('booking'))
                     else:
                         flash(f'Appointment with google event no. {google_event_id} with was successfully created!',
                               'success')
                 elif form.delete.data is True:
                     flash(f'Appointment', 'success')
-            return redirect(url_for('booking'))
+
+            # parsing for booking id from api response for forwarding to booking information
+            json_data = json.loads(api_response.text)
+            con_id = dict(json_data)
+            id = con_id['id']
+            return redirect(url_for('consultation_booking', booking_id=id))
+
         return render_template('booking_create.html', title='Consultation Booking', form=form)
     except Exception as err:
         # TODO better Exception handling
