@@ -20,6 +20,12 @@ import helloworld_pb2_grpc
 
 
 def notify(host, message):
+    """
+    Sends grpc message to server.
+    :param ip of host:
+    :param String message:
+    :return: response from host
+    """
     with grpc.insecure_channel('{}:50051'.format(host)) as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
         response = stub.SayHello(helloworld_pb2.HelloRequest(name=message))
