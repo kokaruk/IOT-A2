@@ -1,3 +1,12 @@
+"""
+.. module:: MAPS.forms
+    :synopsis: WTF form module
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+
+Various information capturing forms present in the project
+"""
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField, TimeField
@@ -64,7 +73,7 @@ class BookingForm(FlaskForm):
                       validators=[DataRequired()])
     patient_id = SelectField('Please select patient', choices=[], coerce=int, validators=[InputRequired()])
     doctor_id = SelectField('Please select doctors', choices=[], coerce=int, validators=[InputRequired()])
-    reason = SelectField('Please select reason for doctors Visit', choices=[], coerce=int, validators=[DataRequired()])
+    reason = SelectField('Please select reason for doctors visit', choices=[], coerce=int, validators=[DataRequired()])
     cancelled = BooleanField('Cancelled Appointment')
 
     create = SubmitField('Book Consultation')

@@ -10,7 +10,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+build
 develop-eggs/
 dist/
 downloads/
@@ -189,3 +189,5 @@ credentials/
 .env
 /Assistant/*.json
 log/
+Будет удалено source/_static/
+Будет удалено source/_templates/

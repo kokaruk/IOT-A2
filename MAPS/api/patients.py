@@ -1,3 +1,9 @@
+"""
+.. module:: MAPS.api.patients
+    :synopsis: Patients restful api
+
+.. moduleauthor:: Dzmitry Kakaruk, Calvin Schnierer, Patrick Jacob
+"""
 from flask import request, jsonify, abort
 
 from MAPS.api import bp
@@ -31,7 +37,7 @@ referrals_schema = ReferralSchema(many=True)
 @bp.route('/patients', methods=['GET'])
 def get_patients():
     """
-        This route returns all patients in the database
+    This route returns all patients in the database
     :return: JSON array of patients
     """
     all_patients = Patient.query.all()
@@ -43,7 +49,7 @@ def get_patients():
 @bp.route('/patients/<int:id>', methods=['GET'])
 def get_patient(id):
     """
-        This route returns a single patient matching the id provided. Does not include related data.
+    This route returns a single patient matching the id provided. Does not include related data.
     :param patient id:
     :return: Patient as a JSON object.
     """
@@ -56,7 +62,7 @@ def get_patient(id):
 @bp.route('/patients/<int:id>/all', methods=['GET'])
 def get_patient_include_related_data(id):
     """
-        This route returns a single patient matching the id provided. Includes related data.
+    This route returns a single patient matching the id provided. Includes related data.
     :param patient id:
     :return: Patient as a JSON object, with related data.
     """
@@ -69,7 +75,7 @@ def get_patient_include_related_data(id):
 @bp.route('/patients', methods=['POST'])
 def create_patient():
     """
-        This route accepts a Patient JSON object, and adds to the database.
+    This route accepts a Patient JSON object, and adds to the database.
     :return: Patient as a JSON object.
     """
     first_name = request.json['first_name']
@@ -99,7 +105,7 @@ def create_patient():
 @bp.route("/patients", methods=["DELETE"])
 def delete_patient():
     """
-        This route accepts a json object of the patient's id to delete.
+    This route accepts a json object of the patient's id to delete.
     :return: Deleted Patient as a JSON object.
     """
     id = request.json['id']
@@ -115,8 +121,8 @@ def delete_patient():
 @bp.route("/patients/<int:patient_id>/medications", methods=["POST"])
 def add_medication_to_patient(patient_id):
     """
-        This route accepts a patient id and medication JSON object from request
-        to create a medication for a patient.
+    This route accepts a patient id and medication JSON object from request
+    to create a medication for a patient.
     :param patient_id:
     :return: Medication JSON object.
     """
@@ -132,7 +138,7 @@ def add_medication_to_patient(patient_id):
 @bp.route("/patients/<int:patient_id>/medications", methods=["GET"])
 def get_all_medication_for_patient(patient_id):
     """
-        This route accepts a patient id and returns all the patient's medications.
+    This route accepts a patient id and returns all the patient's medications.
     :param patient_id:
     :return: JSON array of patient's medications.
     """
@@ -166,8 +172,8 @@ def delete_medication(patient_id):
 @bp.route("/patients/<int:patient_id>/conditions", methods=["POST"])
 def add_condition_to_patient(patient_id):
     """
-        This route takes a patient id, and condition JSON object from the request to add a condition for a
-        patient.
+    This route takes a patient id, and condition JSON object from the request to add a condition for a
+    patient.
     :param patient_id:
     :return: Condition JSON object for patient.
     """
@@ -183,7 +189,7 @@ def add_condition_to_patient(patient_id):
 @bp.route("/patients/<int:patient_id>/conditions", methods=["GET"])
 def get_all_condition_for_patient(patient_id):
     """
-        This route takes a patient id to return all the conditions for a patient.
+    This route takes a patient id to return all the conditions for a patient.
     :param patient_id:
     :return: JSON array of conditions for a patient.
     """
@@ -196,8 +202,8 @@ def get_all_condition_for_patient(patient_id):
 @bp.route("/patients/<int:patient_id>/conditions", methods=["DELETE"])
 def delete_condition(patient_id):
     """
-        This route takes a patient id and condition id from JSON object in request to delete a condition for a
-        patient.
+    This route takes a patient id and condition id from JSON object in request to delete a condition for a
+    patient.
     :param patient_id:
     :return: JSON array of all conditions for a patient.
     """
@@ -216,9 +222,9 @@ def delete_condition(patient_id):
 @bp.route("/patients/<int:patient_id>/certificates", methods=["POST"])
 def add_medical_certificate_to_patient(patient_id):
     """
-        This route takes a patient id, and medical certificate JSON object from the request to add a condition for a
-        patient.
-    :param patient_id:
+    This route takes a patient id, and medical certificate JSON object from the request to add a condition for a
+    patient.
+    :param patient_id
     :return: Medical certificate JSON object for patient.
     """
     certificate = request.json['certificate']
@@ -233,7 +239,7 @@ def add_medical_certificate_to_patient(patient_id):
 @bp.route("/patients/<int:patient_id>/certificates", methods=["GET"])
 def get_all_medical_certificate_for_patient(patient_id):
     """
-        This route takes a patient id to return all the medical certificates for a patient.
+    This route takes a patient id to return all the medical certificates for a patient.
     :param patient_id:
     :return: JSON array of medical certificate for a patient.
     """
@@ -267,8 +273,8 @@ def delete_medical_certificate(patient_id):
 @bp.route("/patients/<int:patient_id>/referrals", methods=["POST"])
 def add_referral_to_patient(patient_id):
     """
-        This route takes a patient id, and referral JSON object from the request to add a referral for a
-        patient.
+    This route takes a patient id, and referral JSON object from the request to add a referral for a
+    patient.
     :param patient_id:
     :return: Referral JSON object for patient.
     """
@@ -285,7 +291,7 @@ def add_referral_to_patient(patient_id):
 @bp.route("/patients/<int:patient_id>/referrals", methods=["GET"])
 def get_all_referrals_for_patient(patient_id):
     """
-        This route takes a patient id to return all the referrals for a patient.
+    This route takes a patient id to return all the referrals for a patient.
     :param patient_id:
     :return: JSON array of referrals for a patient.
     """
@@ -298,8 +304,8 @@ def get_all_referrals_for_patient(patient_id):
 @bp.route("/patients/<int:patient_id>/referrals", methods=["DELETE"])
 def delete_referral(patient_id):
     """
-        This route takes a patient id and condition id from JSON object in request to delete a condition for a
-        patient.
+    This route takes a patient id and condition id from JSON object in request to delete a condition for a
+    patient.
     :param patient_id:
     :return: JSON array of all conditions for a patient.
     """
