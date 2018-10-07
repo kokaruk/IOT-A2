@@ -62,6 +62,7 @@ def get_consultations_patient(id):
 def create_consultation():
     """
     This route accepts a Consultation JSON object, and adds to the database.
+    It also creates an empty consultation details from the new consultation.
     :return: Consultation as a JSON object.
     """
     # get all information from body
