@@ -93,7 +93,78 @@
                 <div class="form-group">
                     {{ form.create_week(class="btn btn-outline-info") }}
                 </div>
-            </form>
+                {% else %}
+                {{ form.doctor_id(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.year.label(class="form-control-label") }}
+                {% if form.year.errors %}
+                {{ form.year(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.start.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.year(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.calendar_week.label(class="form-control-label") }}
+                {% if form.calendar_week.errors %}
+                {{ form.calendar_week(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.calendar_week.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.calendar_week(class="form-control form-control-lg") }}
+                {% endif %}
+                <br>
+                <h4>Please mark times of unavailability </h4>
+                <br>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Day</th>
+                        <th scope="col">Morning (08:00am - 12:30pm)</th>
+                        <th scope="col">Afternoon (13:30m - 17:30pm)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">Monday</th>
+                        <td> {{ form.monday_morning(class="form-control form-control-lg") }}</td>
+                        <td> {{ form.monday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Tuesday</th>
+                        <td>{{ form.tuesday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.tuesday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Wednesday</th>
+                        <td>{{ form.wednesday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.wednesday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Thursday</th>
+                        <td> {{ form.thursday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.thursday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Friday</th>
+                        <td> {{ form.friday_morning(class="form-control form-control-lg ") }}</td>
+                        <td>{{ form.friday_afternoon(class="form-control form-control-lg ") }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.create_week(class="btn btn-outline-info") }}
         </div>
     </div>
 {% endblock app_content %}
