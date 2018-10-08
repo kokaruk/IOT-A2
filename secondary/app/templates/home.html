@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block app_content %}
+    <div class="container">
+        <a class="col-lg-4 col-md-6 single-service" href="{{ url_for('checkin') }}">
+            <div class="inner">
+                <div class="title">
+                    <div class="icon">
+                        <i class="fas fa-star-of-life"></i>
+                    </div>
+                    <h4>Patients</h4>
+                </div>
+                <div class="content">
+                    <p>Tap here to check in</p>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endblock app_content %}

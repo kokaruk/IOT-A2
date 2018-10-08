@@ -187,7 +187,7 @@ credentials/
 /client-secret.json
 /service-account.json
 .env
-/Assistant/*.json
+/assistant/*.json
 log/
 Будет удалено source/_static/
 Будет удалено source/_templates/
