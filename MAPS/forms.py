@@ -47,6 +47,7 @@ class RegistrationForm(FlaskForm):
 
 class ConsultationForm(FlaskForm):
     doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
+    patient_id = SelectField('Please select patient', choices=[], coerce=int)
     date = DateField('Consultation Date', default=datetime.datetime.today())
     search = SubmitField('Search Appointments')
 
@@ -77,12 +78,12 @@ class BookingForm(FlaskForm):
     cancelled = BooleanField('Cancelled Appointment')
 
     create = SubmitField('Book Consultation')
-    delete = SubmitField('Delete Consulation')
+    delete = SubmitField('Delete Consultation')
 
 
 class ConsultationBookings(FlaskForm):
     doctor_id = SelectField('Please select doctors', choices=[], coerce=int, default=(1, 'Dr. Parker'))
-    search = SubmitField('Search Appointments')
+    search = SubmitField('Search Consultations')
 
 
 class ScheduleBookingForm(FlaskForm):

@@ -199,7 +199,12 @@ def consultation_list():
     doctors_id_name = doctors[0]  # contains tuples of doctor id and names
     form.doctor_id.choices = doctors_id_name
 
+    patients = get_user("patient")
+    patient_id_name = patients[0]  # contains tuples of doctor id and names
+    form.patient_id.choices = patient_id_name
+
     chosen_doctor_id = form.doctor_id.data
+    chosen_patient_id = form.patient_id.data
 
     if chosen_doctor_id is None:
         # initially the first doctor select field is shown
@@ -210,15 +215,37 @@ def consultation_list():
             f"{API_URL}consultations/doctors/{chosen_doctor_id}")
 
     bookings = json.loads(consultations.text)
+    if chosen_patient_id is None:
+        bookings = [booking_data for booking_data in bookings if booking_data['patient_id'] == 17]
+    else:
+        bookings = [booking_data for booking_data in bookings if booking_data['patient_id'] == chosen_patient_id]
 
     # Bringing json string of date to datetime
     for booking in bookings:
         booking_date = booking['appointment']
         booking['appointment'] = datetime.strptime(
             booking_date, FORMAT_JSON_DATE_STRING)
+
+        # start_date = booking["consultation_details"][0]["actual_start"]
+        # booking["consultation_details"][0]["actual_start"] = datetime.strptime(
+        #     start_date, FORMAT_JSON_DATE_STRING)
+
+        # end_date = booking["consultation_details"][0]["actual_start"]
+        # booking["consultation_details"][0]["actual_end"] = datetime.strptime(
+        #   end_date, FORMAT_JSON_DATE_STRING)
+
         # Adding an end time for it
         booking['appointment_end'] = booking['appointment'] + \
                                      timedelta(minutes=CONSULTATION_DURATION)
+        if not booking["consultation_details"]:
+            print("no details")
+        else:
+            print(booking["consultation_details"][0]["actual_start"])
+            print(booking["consultation_details"][0]["actual_end"])
+            print(booking["consultation_details"][0]["description"])
+            print(booking["consultation_details"][0]["diagnosis"])
+            print(booking["consultation_details"][0]["symptoms"])
+            print(booking["consultation_details"][0]["additional_notes"])
 
     return render_template('consultation_list.html', title='Consultation Bookings List', form=form,
                            bookings=bookings, doctors_name=dict(doctors_id_name), navigation=doctor_nav())
@@ -503,7 +530,7 @@ def cancel_booking(booking_id):
             f'An Error happened, reason: {api_response.reason} please try again!', 'danger')
         # return redirect(url_for('consultation_booking', booking_id = booking_id))
     else:
-        flash(f'Appointment with google event no. {booking_id} with was successfully created!',
+        flash(f'Appointment  booking no. {booking_id} with was successfully deleted!',
               'success')
 
     # TODO make doctor ID somehow global and draw from there values

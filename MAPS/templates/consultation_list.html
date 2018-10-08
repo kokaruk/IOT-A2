@@ -1,45 +1,68 @@
 {% extends "layout.html" %}
 {% set active_page = "consultation_list" %}
 {% block app_content %}
-    <div class="content-section">
+<div class="content-section">
 
-        <form method="POST" action="">
+    <form method="POST" action="">
+        <div class="form-group">
+            {{ form.doctor_id.label(class="form-control-label") }}
+            {% if form.doctor_id.errors %}
+            {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in form.doctor_id.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            {{ form.doctor_id(class="form-control form-control-lg") }}
+            {% endif %}
+
             <div class="form-group">
-                {{ form.doctor_id.label(class="form-control-label") }}
-                {% if form.doctor_id.errors %}
-                    {{ form.doctor_id(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.doctor_id.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
+                {{ form.patient_id.label(class="form-control-label") }}
+                {% if form.patient_id.errors %}
+                {{ form.patient_id(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.patient_id.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
                 {% else %}
-                    {{ form.doctor_id(class="form-control form-control-lg") }}
+                {{ form.patient_id(class="form-control form-control-lg") }}
                 {% endif %}
+
                 <div class="form-group">
                     {{ form.search(class="btn btn-outline-info") }}
                 </div>
             </div>
-        </form>
-        {% for bookings in bookings %}
-            <article class="media content-section">
-                <div class="media-body">
-                    <div class="article-metadata">
-                        <a class="mr-4">Consultation Booking No. {{ bookings.id }} </a>
-                        <small class="text-muted">{{ bookings.appointment.strftime("%d-%m-%Y") }}
-                            from {{ bookings.appointment.strftime("%H:%M") }}
-                            until {{ bookings.appointment_end.strftime("%H:%M") }}
-                        </small>
-                    </div>
-                    <div>
-                        <form action="{{ url_for('consultation', consultation_id = bookings.id) }}"
-                              method=["POST","GET"]>
-                            <input class="btn btn-info" type="submit" value="Create Consultation Details">
-                        </form>
-                    </div>
-                </div>
+        </div>
+    </form>
+    {% for bookings in bookings %}
+    <article class="media content-section">
+        <div class="media-body">
 
-            </article>
-        {% endfor %}
-    </div>
+            <div class="article-metadata">
+                <a class="mr-4">Consultation Booking No. {{ bookings.id }} </a>
+                <small class="text-muted">{{ bookings.appointment.strftime("%d-%m-%Y") }}
+                    from {{ bookings.appointment.strftime("%H:%M") }}
+                    until {{ bookings.appointment_end.strftime("%H:%M") }}
+                </small>
+            </div>
+            <div>
+                {% for book in bookings.consultation_details %}
+                <p> Description: {{ book.description }}</p>
+                <p> Diagnosis: {{ book.diagnosis }}</p>
+                <p> Symptoms: {{ book.symptoms }}</p>
+                <p> Additional Notes: {{ book.additional_notes }}</p>
+                <input class="btn btn-default" type="submit" value="Consultation already created">
+                {% endfor %}
+
+                <form action="{{ url_for('consultation', consultation_id = bookings.id) }}"
+                      method=["POST","GET"]>
+                    <input class="btn btn-info" type="submit" value="Create Consultation Details">
+                </form>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+</div>
 {% endblock app_content %}
